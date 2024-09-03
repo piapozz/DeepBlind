@@ -312,10 +312,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   managementEnemy: 1
-  enemies: []
-  createEnemies: 
-  player: {fileID: 0}
-  generateStage: {fileID: 0}
+  enemies:
+  - {fileID: 1636975099}
+  createEnemies: 01000000
+  player: {fileID: 255332078}
+  generateStage: {fileID: 1115948082}
 --- !u!1 &392306567
 GameObject:
   m_ObjectHideFlags: 0

@@ -948,6 +948,6 @@ public class GenerateStage : MonoBehaviour
     {
         int rand = UnityEngine.Random.Range(0, roomPos.Count);
 
-        return GetPos(roomPos[rand].GetLength(0), roomPos[rand].GetLength(1));
+        return GetPos(roomPos[rand][0], roomPos[rand][1]);
     }
 }
