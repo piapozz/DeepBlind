@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
         moveVec.Normalize();
         moveVec = moveVec * moveSpeed;
 
+        // Input.system‚É’¼‚·
+
         characterController.Move(moveVec * Time.deltaTime);
     }
 
