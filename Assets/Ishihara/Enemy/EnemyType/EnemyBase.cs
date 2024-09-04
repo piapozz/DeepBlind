@@ -53,6 +53,8 @@ public abstract class EnemyBase : MonoBehaviour
         MAX
     }
 
+    [SerializeField] GameObject meshObject;     // メッシュ
+
     protected EnemyInfo myInfo;   // ステータス
     private State oldState;               // 一つ前のステート
     protected IEnemyState enemyState;       // ステートクラス
@@ -97,49 +99,44 @@ public abstract class EnemyBase : MonoBehaviour
         myInfo.animator = GetComponent<Animator>();
 
         // 自身の形を取得
-        myInfo.bounds = GetBounds(this.gameObject, new Bounds());
+        myInfo.bounds = GetBounds(meshObject, new Bounds());
 
     }
 
     // 自身の形を取得
     private Bounds GetBounds(GameObject obj, Bounds bounds) 
     {
-        // 全ての子オブジェクトをチェックする
-        foreach (Transform child in transform)
+        
+        // メッシュフィルターの存在確認
+        MeshFilter filter = obj.GetComponent<MeshFilter>();
+
+        if (filter != null)
         {
-            // メッシュフィルターの存在確認
-            MeshFilter filter = child.gameObject.GetComponent<MeshFilter>();
+            // オブジェクトのワールド座標とサイズを取得する
+            Vector3 ObjWorldPosition = obj.transform.position;
+            Vector3 ObjWorldScale = obj.transform.lossyScale;
 
-            if (filter != null)
+            // フィルターのメッシュ情報からバウンドボックスを取得する
+            Bounds meshBounds = filter.mesh.bounds;
+
+            // バウンドのワールド座標とサイズを取得する
+            Vector3 meshBoundsWorldCenter = meshBounds.center + ObjWorldPosition;
+            Vector3 meshBoundsWorldSize = Vector3.Scale(meshBounds.size, ObjWorldScale);
+
+            // バウンドの最小座標と最大座標を取得する
+            Vector3 meshBoundsWorldMin = meshBoundsWorldCenter - (meshBoundsWorldSize / 2);
+            Vector3 meshBoundsWorldMax = meshBoundsWorldCenter + (meshBoundsWorldSize / 2);
+
+            // 取得した最小座標と最大座標を含むように拡大/縮小を行う
+            if (bounds.size == Vector3.zero)
             {
-                // オブジェクトのワールド座標とサイズを取得する
-                Vector3 ObjWorldPosition = child.position;
-                Vector3 ObjWorldScale = child.lossyScale;
-
-                // フィルターのメッシュ情報からバウンドボックスを取得する
-                Bounds meshBounds = filter.mesh.bounds;
-
-                // バウンドのワールド座標とサイズを取得する
-                Vector3 meshBoundsWorldCenter = meshBounds.center + ObjWorldPosition;
-                Vector3 meshBoundsWorldSize = Vector3.Scale(meshBounds.size, ObjWorldScale);
-
-                // バウンドの最小座標と最大座標を取得する
-                Vector3 meshBoundsWorldMin = meshBoundsWorldCenter - (meshBoundsWorldSize / 2);
-                Vector3 meshBoundsWorldMax = meshBoundsWorldCenter + (meshBoundsWorldSize / 2);
-
-                // 取得した最小座標と最大座標を含むように拡大/縮小を行う
-                if (bounds.size == Vector3.zero)
-                {
-                    // 元バウンドのサイズがゼロの場合はバウンドを作り直す
-                    bounds = new Bounds(meshBoundsWorldCenter, Vector3.zero);
-                }
-                bounds.Encapsulate(meshBoundsWorldMin);
-                bounds.Encapsulate(meshBoundsWorldMax);
+                // 元バウンドのサイズがゼロの場合はバウンドを作り直す
+                bounds = new Bounds(meshBoundsWorldCenter, Vector3.zero);
             }
-
-            // 再帰処理
-            bounds = GetBounds(child.gameObject, bounds);
+            bounds.Encapsulate(meshBoundsWorldMin);
+            bounds.Encapsulate(meshBoundsWorldMax);
         }
+            
         return bounds;
     }
 
@@ -176,6 +173,8 @@ public abstract class EnemyBase : MonoBehaviour
 
         // 現在の座標を取得
         myInfo.status.position = enemyAgent.nextPosition;
+
+        Debug.Log(myInfo.status.targetPos);
     }
 
     // 初期化
