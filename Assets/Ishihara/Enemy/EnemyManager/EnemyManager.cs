@@ -33,11 +33,29 @@ public class EnemyManager : MonoBehaviour
     void Update()
     {
         // 探索状態のエネミーの目標位置を振り分ける
+        DispatchTargetPosition();
 
         // 音の管理
 
         // 接触判定管理
 
+    }
+
+    // 探索状態のエネミーの目標位置を振り分ける
+    private void DispatchTargetPosition()
+    {
+        // エネミーの数だけ繰り返す
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            // 探索状態かどうか
+            if (enemyList[i].GetNowState() != EnemyBase.State.SEACH) return;
+
+            // 到達しているかどうか
+            if (enemyList[i].CheckReachingPosition()) return;
+
+            // 目標位置を設定
+            enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
+        }
     }
 
     // エネミーの生成
