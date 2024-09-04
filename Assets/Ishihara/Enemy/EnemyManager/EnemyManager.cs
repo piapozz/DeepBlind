@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -68,8 +69,8 @@ public class EnemyManager : MonoBehaviour
         {
             // プレイヤーの情報更新
             enemyList[i].SetPlayerStatus(playerStatus);
+
+            enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
         }
     }
-
-
 }

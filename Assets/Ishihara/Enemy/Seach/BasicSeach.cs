@@ -28,8 +28,6 @@ public class BasicSeach : ISeach
         // XV
         StatusUpdate(info);
 
-        Debug.Log(enemyInfo);
-
         return enemyInfo;
     }
 
