@@ -13,10 +13,10 @@ public class BasicEnemy : EnemyBase
     {
         // 参照ステータスの初期化
         myInfo.id = 0;
-        myInfo.spped = 1.0f;
+        myInfo.spped = 10.0f;
         myInfo.threatRange = 1.0f;
         myInfo.fieldOfView = 25.0f;
-        myInfo.viewLength = 5.0f;
+        myInfo.viewLength = 20.0f;
 
         //ステート初期化
         seach = _seach;

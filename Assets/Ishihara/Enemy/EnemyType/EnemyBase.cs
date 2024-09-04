@@ -101,6 +101,7 @@ public abstract class EnemyBase : MonoBehaviour
         // 自身の形を取得
         myInfo.bounds = GetBounds(meshObject, new Bounds());
 
+
     }
 
     // 自身の形を取得
@@ -174,7 +175,7 @@ public abstract class EnemyBase : MonoBehaviour
         // 現在の座標を取得
         myInfo.status.position = enemyAgent.nextPosition;
 
-        Debug.Log(myInfo.status.targetPos);
+        enemyAgent.acceleration = 10;
     }
 
     // 初期化
@@ -217,4 +218,10 @@ public abstract class EnemyBase : MonoBehaviour
 
     // 目標位置の設定
     public void SetTargetPos(Vector3 pos) { myInfo.status.targetPos = pos; }
+
+    // 現在のステート
+    public State GetNowState() { return myInfo.status.state; }
+
+    // 目標位置にたどり着いたかどうか
+    public bool CheckReachingPosition() { return myInfo.status.position == enemyAgent.nextPosition; }
 }
