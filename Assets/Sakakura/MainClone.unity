@@ -210,6 +210,7 @@ GameObject:
   - component: {fileID: 255332077}
   - component: {fileID: 255332079}
   - component: {fileID: 255332078}
+  - component: {fileID: 255332080}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -267,6 +268,19 @@ CharacterController:
   m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: -0.5, z: 0}
+--- !u!114 &255332080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255332076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0661440348824944abeec0b5181a051d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generateStage: {fileID: 1115948082}
 --- !u!1 &346562573
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,7 +759,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1105849586
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1049,7 +1063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1290606233
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1857,7 +1871,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1963403272
 RectTransform:
   m_ObjectHideFlags: 0

@@ -937,8 +937,8 @@ public class GenerateStage : MonoBehaviour
     // ‹æ‰æ‚©‚çÀ•W‚ğ•Ô‚·ŠÖ”
     public Vector3 GetPos(int w, int h)
     {
-        float width = w * GetSectionSize() + GetSectionSize() / 2;
-        float height = h * GetSectionSize() + GetSectionSize() / 2;
+        float width = w * GetSectionSize();
+        float height = h * GetSectionSize();
 
         return new Vector3(width, 0, height);
     }
