@@ -53,39 +53,43 @@ public class BasicTracking : ITracking
         {
             string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
 
-            if (tag != "Player") return;                                                                         // プレイヤー以外なら終わる
+            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos) * 180 / Mathf.PI;   // プレイヤーへの角度
+            float myAngle = Template(enemyInfo.status.dir);                                                // 向いてる角度
 
-            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos) + 180;   // プレイヤーへの角度
-            float myAngle = Template(enemyInfo.status.dir) + 180;                                                // 向いてる角度
+            Debug.Log(toPlayerAngle);
 
             // 視野範囲内なら
-            if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
-                myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle)
+            if ((myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
+                myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle) &&
+                tag == "Player")
             {
                 // 追跡継続
+                Debug.Log("見つけ");
 
                 // 直前まで見失っていたなら
                 if (enemyInfo.status.isTargetLost) enemyInfo.status.isTargetLost = false; // 再発見
             }
             // 初めて見失っていたら
-            else if (enemyInfo.status.isTargetLost == false)
+            else if (enemyInfo.status.isTargetLost == false && tag != "Player")
             {
                 // ロストポジションを設定
                 enemyInfo.status.lostPos = enemyInfo.playerStatus.playerPos;
                 enemyInfo.status.isTargetLost = true;
+
+                Debug.Log("見失った");
             }
             // 最後の見失った地点に到達してなお見つけられなかったら
-            else if(enemyInfo.status.position == enemyInfo.status.lostPos)
+            else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 1.0f && tag != "Player")
             {
                 seach = true;
+
+                Debug.Log("探索に戻る");
             }
         }
     }
     private float Template(Vector3 point1)
     {
         float temp;
-
-        point1.Normalize();
 
         temp = Mathf.Atan2(point1.z, point1.x);
 
@@ -95,9 +99,6 @@ public class BasicTracking : ITracking
     private float Template(Vector3 point1, Vector3 point2)
     {
         float temp;
-
-        point1.Normalize();
-        point2.Normalize();
 
         temp = Mathf.Atan2(point1.z - point2.z, point1.x - point2.x);
 
@@ -114,19 +115,21 @@ public class BasicTracking : ITracking
     // 特殊処理
     public void Ability()
     {
-        Plane[] planes;
+        //Plane[] planes;
 
-        // カメラの視錐台を求める
-        planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
+        //// カメラの視錐台を求める
+        //planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
 
-        // カメラに写っているか判定
-        if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
-        {
-            // 映っていたら制止する
-            enemyInfo.status.targetPos = enemyInfo.status.position; // 目標位置を現在位置に
-            enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
-        }
-        else enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //// カメラに写っているか判定
+        //if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
+        //{
+        //    // 映っていたら制止する
+        //    enemyInfo.status.targetPos = enemyInfo.status.position; // 目標位置を現在位置に
+        //    enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
+        //}
+        //else enemyInfo.animator.speed = 1.0f;   // 通常再生
+
+        enemyInfo.animator.speed = 2.0f;
     }
 
     // 情報の更新

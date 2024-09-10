@@ -14,6 +14,8 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] Player player;     // プレイヤー
 
     [SerializeField] GenerateStage generateStage;
+
+    [SerializeField] GameObject targetpos;
     
     // マップの情報
 
@@ -35,6 +37,9 @@ public class EnemyManager : MonoBehaviour
         // 探索状態のエネミーの目標位置を振り分ける
         DispatchTargetPosition();
 
+        // エネミーの情報を更新
+        UpdateEnemyData();
+
         // 音の管理
 
         // 接触判定管理
@@ -51,10 +56,28 @@ public class EnemyManager : MonoBehaviour
             if (enemyList[i].GetNowState() != EnemyBase.State.SEACH) return;
 
             // 到達しているかどうか
-            if (enemyList[i].CheckReachingPosition()) return;
+            if (!enemyList[i].CheckReachingPosition()) return;
 
             // 目標位置を設定
             enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
+
+            targetpos.transform.position = enemyList[i].GetTargetPos();
+        }
+    }
+
+    // エネミーの情報を更新
+    private void UpdateEnemyData()
+    {
+
+        // プレイヤーから情報をもらう
+        playerStatus.cam = player.GetCamera();
+        playerStatus.playerPos = player.GetPosition();
+
+        // エネミーの数だけ繰り返す
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            // プレイヤーの情報更新
+            enemyList[i].SetPlayerStatus(playerStatus);
         }
     }
 
