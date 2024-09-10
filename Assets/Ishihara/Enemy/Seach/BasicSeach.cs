@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static EnemyBase;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class BasicSeach : ISeach
 {
@@ -48,17 +48,23 @@ public class BasicSeach : ISeach
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+
+        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
+            Debug.DrawLine(ray.origin, hit.point, Color.red,0.01f);
+            Debug.DrawLine(ray.origin, ray.origin + (enemyInfo.status.dir * enemyInfo.viewLength), Color.blue, 0.01f);
+
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
             
             if(tag != "Player") return;                                                          // プレイヤー以外なら終わる
 
-            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos) + 180;   // プレイヤーへの角度
-            float myAngle = Template(enemyInfo.status.dir) + 180;                                     // 向いてる角度
+            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
+            float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
+
+            Debug.Log(toPlayerAngle);
 
             // 視野範囲内なら
-            if(myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
+            if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
                 myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle)
             {
                 // 見つけた
@@ -81,8 +87,8 @@ public class BasicSeach : ISeach
     {
         float temp;
 
-        point1.Normalize();
-        point2.Normalize();
+        // point1.Normalize();
+        // point2.Normalize();
 
         temp = Mathf.Atan2(point1.z - point2.z , point1.x - point2.x);
 
@@ -93,24 +99,113 @@ public class BasicSeach : ISeach
     // 特殊処理(見られていたら止まる)
     public void Ability()
     {
-        Plane[] planes;
+        //    Plane[] planes;
 
-        // カメラの視錐台を求める
-        planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
+        //    // カメラの視錐台を求める
+        //    planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
 
-        // カメラに写っているか判定
-        if(GeometryUtility.TestPlanesAABB(planes , enemyInfo.bounds))
-        {
-            // 映っていたら制止する
-            enemyInfo.status.targetPos = enemyInfo.status.position; // 目標位置を現在位置に
-            enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
-        }
-        else enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //    // カメラに写っているか判定
+        //    if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
+        //    {
+        //        // カメラ位置からコーナーへのレイキャスト
+        //        Vector3 direction = enemyInfo.status.position - enemyInfo.playerStatus.cam.transform.position;
+        //        Ray ray = new Ray(enemyInfo.playerStatus.cam.transform.position, direction.normalized);
+        //        RaycastHit hit;
+        //        // レイキャストがコーナーに直接当たるか確認
+        //        if (Physics.Raycast(ray, out hit, direction.magnitude + 1))
+        //        {
+        //            Debug.DrawLine(ray.origin, hit.point, Color.yellow, 0.01f);
 
+        //            // 障害物がなく直接当たった場合に true を返す
+        //            if (hit.collider.tag == "Enemy")
+        //            {
+        //                // 映っていたら制止する
+        //                enemyInfo.status.targetPos = enemyInfo.status.position; // 目標位置を現在位置に
+        //                enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
+        //                Debug.Log("見られている");
+        //                enemyInfo.status.isAblity = true;
+        //            }
+        //            else
+        //            {
+        //                enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //                enemyInfo.status.isAblity = false;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //            enemyInfo.status.isAblity = false;
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //        enemyInfo.status.isAblity = false;
+        //    }
+
+        //Vector3[] targetPoints = new Vector3[8];
+
+        //targetPoints[0] = enemyInfo.bounds.min;
+        //targetPoints[1] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.min.z);
+        //targetPoints[2] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
+        //targetPoints[3] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
+        //targetPoints[4] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
+        //targetPoints[5] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
+        //targetPoints[6] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.max.z);
+        //targetPoints[7] = enemyInfo.bounds.max;
+
+        //// 各コーナーがカメラのビューポートに収まっているかをチェック
+
+        ////　カメラ内にオブジェクトがあるかどうか
+        //bool isInsideCamera = false;
+        ////　カメラのビューポート位置
+        //Vector2 viewportPoint;
+        ////　ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
+        //foreach (var targetPoint in targetPoints)
+        //{
+        //    //　ビューポートの計算
+        //    viewportPoint = Camera.main.WorldToViewportPoint(targetPoint);
+
+        //    if (0f <= viewportPoint.x && viewportPoint.x <= 1f
+        //        && 0f <= viewportPoint.y && viewportPoint.y <= 1f
+        //        )
+        //    {
+        //        // カメラ位置からコーナーへのレイキャスト
+        //        Vector3 direction = targetPoint - enemyInfo.playerStatus.cam.transform.position;
+        //        Ray ray = new Ray(enemyInfo.playerStatus.cam.transform.position, direction.normalized);
+        //        RaycastHit hit;
+        //        // レイキャストがコーナーに直接当たるか確認
+        //        if (Physics.Raycast(ray, out hit, direction.magnitude + 1))
+        //        {
+        //            Debug.DrawLine(ray.origin, hit.point, Color.yellow , 0.01f);
+
+        //            // 障害物がなく直接当たった場合に true を返す
+        //            if (hit.collider.tag == "Enemy")
+        //            {
+        //                isInsideCamera = true;
+        //            }
+        //        }
+        //    }
+        //}
+
+        //if (isInsideCamera)
+        //{
+        //    //映っていたら制止する
+        //    enemyInfo.status.targetPos = enemyInfo.status.position; // 目標位置を現在位置に
+        //    enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
+        //    enemyInfo.status.isAblity = true;
+        //}
+        //else
+        //{
+        //    enemyInfo.animator.speed = 1.0f;   // 通常再生
+        //    enemyInfo.status.isAblity = false;
+        //}
+        enemyInfo.animator.speed = 2.0f;
     }
 
-    // 警戒条件を満たしたかどうか
-    public void CheckVigilance()
+        // 警戒条件を満たしたかどうか
+        public void CheckVigilance()
     {
 
     }

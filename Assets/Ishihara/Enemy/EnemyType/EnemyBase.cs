@@ -6,6 +6,7 @@ using UnityEngine.AI;
 using UnityEngine.Scripting.APIUpdating;
 using System;
 using System.Windows.Input;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 // エネミーの元となる親クラス
 
@@ -34,6 +35,7 @@ public abstract class EnemyBase : MonoBehaviour
         public bool isTargetLost;   // 見失っているかどうか
         public Vector3 dir;         // 進行方向
         public State state;         // 現在のステート
+        public bool isAblity;
     }
 
     // プレイヤーからもらう情報
@@ -141,8 +143,6 @@ public abstract class EnemyBase : MonoBehaviour
         return bounds;
     }
 
-
-
     // ステートの切り替え処理
     private void StateSwitching()
     {
@@ -172,10 +172,11 @@ public abstract class EnemyBase : MonoBehaviour
         // 速度の変更
         enemyAgent.speed = myInfo.spped;
 
-        // 現在の座標を取得
-        myInfo.status.position = enemyAgent.nextPosition;
+        // 向いている方向を取得
+        myInfo.status.dir = Vector3.Normalize(enemyAgent.nextPosition - myInfo.status.position);
 
-        enemyAgent.acceleration = 10;
+        // 現在の座標を取得
+        myInfo.status.position = this.transform.position;
     }
 
     // 初期化
@@ -189,19 +190,21 @@ public abstract class EnemyBase : MonoBehaviour
         {
             case State.SEACH:
 
-                enemyState = (ISeach)seach;
+                enemyState = seach;
 
                 break;
 
             case State.VIGILANCE:
 
-                enemyState = (IVigilance)vigilance;
+                enemyState = vigilance;
 
                 break;
 
             case State.TRACKING:
 
-                enemyState = (ITracking)tracking;
+                enemyState = tracking;
+
+                Debug.Log("追跡");
 
                 break;
         }
@@ -219,9 +222,12 @@ public abstract class EnemyBase : MonoBehaviour
     // 目標位置の設定
     public void SetTargetPos(Vector3 pos) { myInfo.status.targetPos = pos; }
 
+    // 目標位置の取得
+    public Vector3 GetTargetPos() { return myInfo.status.targetPos; }
+
     // 現在のステート
     public State GetNowState() { return myInfo.status.state; }
 
     // 目標位置にたどり着いたかどうか
-    public bool CheckReachingPosition() { return myInfo.status.position == enemyAgent.nextPosition; }
+    public bool CheckReachingPosition() { return (Vector3.Distance(myInfo.status.targetPos, myInfo.status.position) < 3.0f) && (!myInfo.status.isAblity); }
 }
