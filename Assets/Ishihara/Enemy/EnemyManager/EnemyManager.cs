@@ -50,13 +50,16 @@ public class EnemyManager : MonoBehaviour
         // エネミーの数だけ繰り返す
         for (int i = 0; i < enemyList.Count; i++)
         {
+
             // 探索状態かどうか
-            if (enemyList[i].GetNowState() != EnemyBase.State.SEACH) return;
+            if (enemyList[i].GetNowState() != EnemyBase.State.SEACH) continue;
 
+            // Debug.LogError("s");
             // 到達しているかどうか
-            if (!enemyList[i].CheckReachingPosition()) return;
+            if (!enemyList[i].CheckReachingPosition()) continue;
 
-            // 目標位置を設定
+
+            // 目標位置を再設定
             enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
         }
     }
@@ -86,7 +89,7 @@ public class EnemyManager : MonoBehaviour
             for (int j = 0; j < createEnemies[i]; j++)
             {
                 // 生成
-                var enemy = Instantiate(enemies[i], generateStage.GetRandRoomPos(), Quaternion.identity);
+                var enemy = Instantiate(enemies[i], generateStage.GetRandCorridorPos(), Quaternion.identity);
 
                 // リストに追加
                 enemyList.Add(enemy.GetComponent<EnemyBase>());
