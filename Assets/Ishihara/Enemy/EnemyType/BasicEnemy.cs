@@ -15,7 +15,7 @@ public class BasicEnemy : EnemyBase
     {
         // 参照ステータスの初期化
         myInfo.id = 0;
-        myInfo.spped = 1.0f;
+        myInfo.spped =1.0f;
         myInfo.threatRange = 1.0f;
         myInfo.fieldOfView = 120.0f;
         myInfo.viewLength = 10.0f;
@@ -25,7 +25,8 @@ public class BasicEnemy : EnemyBase
         vigilance = _vigilance;
         tracking = _tracking;
 
-        myInfo.status.targetPos = new Vector3(1.0f, 1.0f, 1.0f);
+       // myInfo.status.targetPos = new Vector3(20.0f, 0.0f, 0.0f);
+        myInfo.status.position = this.transform.position;
 
         enemyState = _seach;
     }

@@ -81,11 +81,16 @@ public class BasicTracking : ITracking
                 Debug.Log("Œ©¸‚Á‚½");
             }
             // ÅŒã‚ÌŒ©¸‚Á‚½’n“_‚É“’B‚µ‚Ä‚È‚¨Œ©‚Â‚¯‚ç‚ê‚È‚©‚Á‚½‚ç
-            else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 1.0f && tag != "Player")
+            else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)
             {
                 seach = true;
 
                 Debug.Log("’Tõ‚É–ß‚é");
+            }
+
+            if (enemyInfo.status.isTargetLost)
+            {
+                Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.lostPos, Color.magenta);
             }
         }
     }
