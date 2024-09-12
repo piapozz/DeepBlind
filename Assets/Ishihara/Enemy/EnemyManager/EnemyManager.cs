@@ -14,8 +14,6 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] Player player;     // プレイヤー
 
     [SerializeField] GenerateStage generateStage;
-
-    [SerializeField] GameObject targetpos;
     
     // マップの情報
 
@@ -60,8 +58,6 @@ public class EnemyManager : MonoBehaviour
 
             // 目標位置を設定
             enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
-
-            targetpos.transform.position = enemyList[i].GetTargetPos();
         }
     }
 
