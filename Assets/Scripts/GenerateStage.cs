@@ -31,6 +31,7 @@ public class GenerateStage : MonoBehaviour
     GameObject[] corridors;     // 廊下のプレハブ
 
     List<int[]> roomPos = new List<int[]>();      // 部屋の配列
+    List<int[]> corridorPos = new List<int[]>();  // 廊下の配列
 
     // 方角
     public enum Direction
@@ -822,6 +823,21 @@ public class GenerateStage : MonoBehaviour
                 }
             }
         }
+        // 部屋の配列を作る
+        for (int w = 0; w < stageLayout.GetLength(0); w++)
+        {
+            for (int h = 0; h < stageLayout.GetLength(1); h++)
+            {
+                if (stageLayout[w, h].type == SectionType.CrossCorridor ||
+                    stageLayout[w, h].type == SectionType.OverCorridor)
+                {
+                    int[] pos = new int[2];
+                    pos[0] = w;
+                    pos[1] = h;
+                    corridorPos.Add(pos);
+                }
+            }
+        }
     }
 
     // 区画の生成をする関数
@@ -949,5 +965,13 @@ public class GenerateStage : MonoBehaviour
         int rand = UnityEngine.Random.Range(0, roomPos.Count);
 
         return GetPos(roomPos[rand][0], roomPos[rand][1]);
+    }
+
+    // ランダムな部屋の座標を返す関数
+    public Vector3 GetRandCorridorPos()
+    {
+        int rand = UnityEngine.Random.Range(0, corridorPos.Count);
+
+        return GetPos(corridorPos[rand][0], corridorPos[rand][1]);
     }
 }

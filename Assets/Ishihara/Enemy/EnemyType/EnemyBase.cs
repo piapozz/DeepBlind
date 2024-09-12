@@ -177,6 +177,8 @@ public abstract class EnemyBase : MonoBehaviour
 
         // Œ»İ‚ÌÀ•W‚ğæ“¾
         myInfo.status.position = this.transform.position;
+
+        
     }
 
     // ‰Šú‰»

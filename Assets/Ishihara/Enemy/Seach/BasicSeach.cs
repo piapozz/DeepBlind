@@ -51,7 +51,7 @@ public class BasicSeach : ISeach
 
         if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
-            Debug.DrawLine(ray.origin, hit.point, Color.red,0.01f);
+            Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red,0.01f);
             Debug.DrawLine(ray.origin, ray.origin + (enemyInfo.status.dir * enemyInfo.viewLength), Color.blue, 0.01f);
 
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
@@ -64,9 +64,6 @@ public class BasicSeach : ISeach
             // 0 ~ 360にクランプ
             toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
             myAngle = Mathf.Repeat(myAngle, 360);
-
-            Debug.Log(toPlayerAngle);
-            Debug.Log(myAngle);
 
             // 視野範囲内なら
             if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
