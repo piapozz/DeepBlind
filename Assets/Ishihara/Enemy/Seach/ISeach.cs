@@ -9,7 +9,7 @@ public interface ISeach : IEnemyState
     public void GetTarget(EnemyInfo info);
 
     // Œ©‚Â‚¯‚½‚©‚Ç‚¤‚©
-    public void ChekTracking();
+    public void CheckTracking();
 
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance();

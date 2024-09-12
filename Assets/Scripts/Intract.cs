@@ -13,15 +13,13 @@ public class Intract : MonoBehaviour
 
     private void Update()
     {
-        if (inputStay == true) Debug.Log("true");
-        else Debug.Log("false");
+
     }
 
     // ActionsのFireに登録されているキーが押されたときに入力値を取得
     public void OnFire(InputValue inputValue)
     {
         if (inputStay == true) intract = true;
-        Debug.Log("インタ");
     }
 
     void OnTriggerStay(Collider other)
@@ -41,7 +39,6 @@ public class Intract : MonoBehaviour
             // if (Input.GetKeyDown(KeyCode.E) == true)
             if(intract == true)
             {
-                Debug.Log("開閉");
                 door.OpenDoor();
             }
 

@@ -56,7 +56,9 @@ public class BasicTracking : ITracking
             float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos) * 180 / Mathf.PI;   // プレイヤーへの角度
             float myAngle = Template(enemyInfo.status.dir);                                                // 向いてる角度
 
-            Debug.Log(toPlayerAngle);
+            // 0 ~ 360にクランプ
+            toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
+            myAngle = Mathf.Repeat(myAngle, 360);
 
             // 視野範囲内なら
             if ((myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
