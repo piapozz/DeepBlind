@@ -17,7 +17,7 @@ public class BasicSeach : ISeach
         GetTarget(info);
 
         // 見つけたかどうか
-        ChekTracking();
+        CheckTracking();
 
         // 警戒条件を満たしたかどうか
         CheckVigilance();
@@ -40,7 +40,7 @@ public class BasicSeach : ISeach
     }
 
     // 見つけたかどうか
-    public void ChekTracking()
+    public void CheckTracking()
     {
         // プレイヤーとの間に障害物があるかどうか
         Vector3 origin = enemyInfo.status.position;                                                   // 原点
@@ -58,10 +58,15 @@ public class BasicSeach : ISeach
             
             if(tag != "Player") return;                                                          // プレイヤー以外なら終わる
 
-            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
+            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos) * 180 / Mathf.PI;   // プレイヤーへの角度
             float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
 
+            // 0 ~ 360にクランプ
+            toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
+            myAngle = Mathf.Repeat(myAngle, 360);
+
             Debug.Log(toPlayerAngle);
+            Debug.Log(myAngle);
 
             // 視野範囲内なら
             if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
@@ -76,7 +81,7 @@ public class BasicSeach : ISeach
     {
         float temp;
 
-        point1.Normalize();
+        // point1.Normalize();
 
         temp = Mathf.Atan2(point1.z , point1.x);
 
