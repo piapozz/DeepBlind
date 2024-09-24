@@ -52,9 +52,11 @@ public class EnemyManager : MonoBehaviour
         {
 
             // 探索状態かどうか
-            if (enemyList[i].GetNowState() != EnemyBase.State.SEACH) continue;
+            if (enemyList[i].GetNowState() != EnemyBase.State.SEARCH) continue;
 
-            // Debug.LogError("s");
+            // 警戒状態かどうか
+            // if (enemyList[i].GetNowState() != EnemyBase.State.VIGILANCE) continue;
+
             // 到達しているかどうか
             if (!enemyList[i].CheckReachingPosition()) continue;
 
@@ -71,6 +73,7 @@ public class EnemyManager : MonoBehaviour
         // プレイヤーから情報をもらう
         playerStatus.cam = player.GetCamera();
         playerStatus.playerPos = player.GetPosition();
+        // playerStatus.moveValue = player.GetMoveVec();
 
         // エネミーの数だけ繰り返す
         for (int i = 0; i < enemyList.Count; i++)
