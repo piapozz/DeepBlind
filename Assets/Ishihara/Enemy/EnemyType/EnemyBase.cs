@@ -16,7 +16,8 @@ public abstract class EnemyBase : MonoBehaviour
     public struct EnemyInfo
     {
         public int id;                      // エネミーの識別番号
-        public float spped;                 // エネミーの速さ
+        public float speed;                 // エネミーの速さ
+        public float accelerate;            // エネミーの加速度
         public float threatRange;           // 脅威範囲
         public float viewLength;            // 視界の長さ
         public float fieldOfView;           // 視野角
@@ -29,6 +30,8 @@ public abstract class EnemyBase : MonoBehaviour
     // ステータス構造体 (操作用)
     public struct EnemyStatus
     {
+        public float nowSpeed;                 // エネミーの速さ
+        public float nowAccelerate;            // エネミーの加速度
         public Vector3 position;    // 現在位置
         public Vector3 targetPos;   // 目標位置
         public Vector3 lostPos;     // 見失った位置
@@ -38,17 +41,24 @@ public abstract class EnemyBase : MonoBehaviour
         public bool isAblity;
     }
 
+    // アビリティステータス
+    public struct AbilityStatus
+    {
+
+    }
+
     // プレイヤーからもらう情報
     public struct PlayerStatus
     {
         public Camera cam;          // カメラ
         public Vector3 playerPos;   // プレイヤーの位置
+        public Vector3 moveValue;   // プレイヤーの移動量
     }
 
     // ステート
     public enum State
     {
-        SEACH,         // 探索
+        SEARCH,         // 探索
         VIGILANCE,     // 警戒
         TRACKING,      // 追跡
 
@@ -78,21 +88,21 @@ public abstract class EnemyBase : MonoBehaviour
 
     void Update()
     {
-        // ステートの切り替え処理
-        StateSwitching();
+        // ナビメッシュの移動
+        MoveNavAgent();
 
         // 行動
         Active();
 
-        // ナビメッシュの移動
-        MoveNavAgent();
+        // ステートの切り替え処理
+        StateSwitching();
     }
 
     // 初期化
     private void BaseInit()
     {
         // ステート初期化
-        oldState = myInfo.status.state = State.SEACH;
+        oldState = myInfo.status.state = State.SEARCH;
 
         // ナビメッシュ取得
         enemyAgent = GetComponent<NavMeshAgent>();
@@ -100,10 +110,7 @@ public abstract class EnemyBase : MonoBehaviour
         // アニメーター取得
         myInfo.animator = GetComponent<Animator>();
 
-        // 自身の形を取得
-        myInfo.bounds = GetBounds(meshObject, new Bounds());
-
-
+        
     }
 
     // 自身の形を取得
@@ -111,35 +118,38 @@ public abstract class EnemyBase : MonoBehaviour
     {
         
         // メッシュフィルターの存在確認
-        MeshFilter filter = obj.GetComponent<MeshFilter>();
+        SkinnedMeshRenderer filter = obj.GetComponent<SkinnedMeshRenderer>();
 
-        if (filter != null)
-        {
-            // オブジェクトのワールド座標とサイズを取得する
-            Vector3 ObjWorldPosition = obj.transform.position;
-            Vector3 ObjWorldScale = obj.transform.lossyScale;
+        //if (filter != null)
+        //{
+        //    // オブジェクトのワールド座標とサイズを取得する
+        //    Vector3 ObjWorldPosition = obj.transform.position;
+        //    Vector3 ObjWorldScale = obj.transform.lossyScale;
 
-            // フィルターのメッシュ情報からバウンドボックスを取得する
-            Bounds meshBounds = filter.mesh.bounds;
+        //    // フィルターのメッシュ情報からバウンドボックスを取得する
+        //    Bounds meshBounds = filter.bounds;
 
-            // バウンドのワールド座標とサイズを取得する
-            Vector3 meshBoundsWorldCenter = meshBounds.center + ObjWorldPosition;
-            Vector3 meshBoundsWorldSize = Vector3.Scale(meshBounds.size, ObjWorldScale);
+        //    // バウンドのワールド座標とサイズを取得する
+        //    Vector3 meshBoundsWorldCenter = meshBounds.center + ObjWorldPosition;
+        //    Vector3 meshBoundsWorldSize = Vector3.Scale(meshBounds.size, ObjWorldScale);
 
-            // バウンドの最小座標と最大座標を取得する
-            Vector3 meshBoundsWorldMin = meshBoundsWorldCenter - (meshBoundsWorldSize / 2);
-            Vector3 meshBoundsWorldMax = meshBoundsWorldCenter + (meshBoundsWorldSize / 2);
+        //    // バウンドの最小座標と最大座標を取得する
+        //    Vector3 meshBoundsWorldMin = meshBoundsWorldCenter - (meshBoundsWorldSize / 2);
+        //    Vector3 meshBoundsWorldMax = meshBoundsWorldCenter + (meshBoundsWorldSize / 2);
 
-            // 取得した最小座標と最大座標を含むように拡大/縮小を行う
-            if (bounds.size == Vector3.zero)
-            {
-                // 元バウンドのサイズがゼロの場合はバウンドを作り直す
-                bounds = new Bounds(meshBoundsWorldCenter, Vector3.zero);
-            }
-            bounds.Encapsulate(meshBoundsWorldMin);
-            bounds.Encapsulate(meshBoundsWorldMax);
-        }
-            
+        //    // 取得した最小座標と最大座標を含むように拡大/縮小を行う
+        //    if (bounds.size == Vector3.zero)
+        //    {
+        //        // 元バウンドのサイズがゼロの場合はバウンドを作り直す
+        //        bounds = new Bounds(meshBoundsWorldCenter, Vector3.zero);
+        //    }
+        //    bounds.Encapsulate(meshBoundsWorldMin);
+        //    bounds.Encapsulate(meshBoundsWorldMax);
+        //}
+
+        // フィルターのメッシュ情報からバウンドボックスを取得する
+        bounds = filter.bounds;
+
         return bounds;
     }
 
@@ -166,11 +176,21 @@ public abstract class EnemyBase : MonoBehaviour
     // ナビメッシュで移動する
     private void MoveNavAgent()
     {
+        // 自身の形を取得
+        myInfo.bounds = GetBounds(meshObject, myInfo.bounds);
+
+        if (myInfo.status.isAblity)
+        {
+            enemyAgent.SetDestination(this.transform.position);
+            return;
+        }
+
         // 目標位置を設定
         enemyAgent.SetDestination(myInfo.status.targetPos);
 
         // 速度の変更
-        enemyAgent.speed = myInfo.spped;
+        enemyAgent.speed = myInfo.status.nowSpeed;
+        enemyAgent.acceleration = myInfo.status.nowAccelerate;
 
         // 向いている方向を取得
         myInfo.status.dir = Vector3.Normalize(enemyAgent.nextPosition - myInfo.status.position);
@@ -178,7 +198,6 @@ public abstract class EnemyBase : MonoBehaviour
         // 現在の座標を取得
         myInfo.status.position = this.transform.position;
 
-        
     }
 
     // 初期化
@@ -190,7 +209,7 @@ public abstract class EnemyBase : MonoBehaviour
         // ステートを切り替える
         switch (myInfo.status.state)
         {
-            case State.SEACH:
+            case State.SEARCH:
 
                 enemyState = seach;
 
@@ -205,8 +224,6 @@ public abstract class EnemyBase : MonoBehaviour
             case State.TRACKING:
 
                 enemyState = tracking;
-
-                Debug.Log("追跡");
 
                 break;
         }
@@ -231,5 +248,5 @@ public abstract class EnemyBase : MonoBehaviour
     public State GetNowState() { return myInfo.status.state; }
 
     // 目標位置にたどり着いたかどうか
-    public bool CheckReachingPosition() { return (Vector3.Distance(myInfo.status.targetPos, myInfo.status.position) < 3.0f) && (!myInfo.status.isAblity); }
+    public bool CheckReachingPosition() { return (Vector3.Distance(myInfo.status.targetPos, myInfo.status.position) < 2.0f) && (!myInfo.status.isAblity); }
 }
