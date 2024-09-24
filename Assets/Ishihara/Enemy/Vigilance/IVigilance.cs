@@ -1,17 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static EnemyBase;
 
 public interface IVigilance : IEnemyState
 {
     // –Ú•WˆÊ’u‚Ìæ“¾
-    public void GetTarget();
+    public void GetTarget(EnemyInfo info);
 
     // Š®‘S‚ÉŒ©¸‚Á‚½‚©‚Ç‚¤‚©
-    public void CheckTargetLost();
-
-    // Œ©‚Â‚¯‚½‚©‚Ç‚¤‚©
-    public void ChekTracking();
+    public void CheckLookAround();
 
     // “Áêˆ—
     public void Ability();
