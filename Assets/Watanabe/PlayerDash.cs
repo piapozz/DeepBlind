@@ -4,7 +4,7 @@ using UnityEngine;
 
 // ‘–‚èó‘Ô‚Ìê‡‚Ì“®‚«
 
-public class PlayerDash : IMove
+public class PlayerDash : PlayerState
 {
     public void Move()
     {
