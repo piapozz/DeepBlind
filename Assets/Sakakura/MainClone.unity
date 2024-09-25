@@ -880,7 +880,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1115948080}
   - component: {fileID: 1115948082}
-  - component: {fileID: 1115948083}
   - component: {fileID: 1115948084}
   - component: {fileID: 1115948085}
   - component: {fileID: 1115948086}
@@ -936,18 +935,6 @@ MonoBehaviour:
   wall: {fileID: 7066392458623672592, guid: d2cb35151fbb6714098c058752ea7a93, type: 3}
   WIDTH_ROOM_MAX: 6
   HEIGHT_ROOM_MAX: 4
---- !u!114 &1115948083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1115948078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56a199365112f1743876a7e730cd21af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1115948084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1682,7 +1669,6 @@ MonoBehaviour:
     rid: 5759521710375960577
   _tracking:
     rid: 5759521710375960578
-  lostPos: {fileID: 0}
   references:
     version: 2
     RefIds:
