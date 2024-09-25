@@ -15,12 +15,12 @@ public class PlayerManager : MonoBehaviour
         public float soundRange;            // プレイヤーが出してしまう音の範囲
     }
 
-    [SerializeField] IMove iMove;
+    [SerializeField] PlayerState playerState;
 
     // 初期化
     void Start()
     {
-        iMove = new PlayerWalk();
+        playerState = new PlayerWalk();
     }
 
     // 処理
@@ -29,7 +29,7 @@ public class PlayerManager : MonoBehaviour
         if (canMove)
         {
             // 動く
-            iMove.Move();
+            playerState.Move();
 
             // もし～キーが押されている状態ならダッシュに切り替える
             // iMove = new PlayerDash();

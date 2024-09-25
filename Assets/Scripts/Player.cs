@@ -1,6 +1,8 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.EventSystems.StandaloneInputModule;
@@ -10,36 +12,46 @@ public class Player : MonoBehaviour
     [SerializeField] GenerateStage generateStage;
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
+    // 制御対象のカメラ
+
+    const float STAMINA_MAX = 50.0f;                    // スタミナの最大値
+    const float WALK_SPEED = 1.0f;                      // 歩く速度
+    const float DASH_SPEED = 5.0f;                      // 走る速度
+    const float TIRED_SPEED = 0.2f;                     // 疲弊しているときの速度
+
+    CinemachineVirtualCamera virtualCamera;
 
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
 
     // プレイヤーのステータス値
     public struct PlayerStatus
-    {   
+    {
         public float stamina;                                       // スタミナ量
         public float speed;                                         // 動く速さ
         public float fear;                                          // 怖気度
         public float soundRange;                                    // プレイヤーが出してしまう音の範囲
     }
 
-    Vector3 offsetgenPos = new Vector3(0, 1.5f, 0);
-    float moveSpeed = 10.0f;
-    float rotateSpeed = 1.0f;
-    Vector2 rotateVec;
+    PlayerStatus status;
+
+    bool isTired = false;                                           // 疲れているかを管理
+
+    Vector3 offsetGenPos = new Vector3(0, 0, 0);                    // 初期位置        
 
     Vector2 inputMove;                                              // InputSystemで得たWASDの入力値を管理する
     Vector2 inputCursor;                                            // InputSystemで得たマウスのカーソルの入力値を管理する
     float inputDash;                                                // InputSystemを使ってダッシュの管理
 
-    // 移動量
-    Vector3 moveVec;
+    Vector3 moveVec;                                                // 移動量
 
     private void Awake()
     {
+        // Virtual Camera 取得
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+
         if (hold == null) return;
 
         // InputActionReferenceのholdにハンドラを登録する
-        // hold.action.started += OnDash;
         hold.action.performed += OnDash;
 
         // 入力を受け取るために有効化
@@ -48,28 +60,98 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        transform.position = generateStage.GetStartPos() + offsetgenPos;
+        status.stamina = STAMINA_MAX;
+
+        transform.position = generateStage.GetStartPos() + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
+        Debug.Log(status.stamina);
 
-        // カメラを考慮した移動(InputSystemとCharacterController使用)
         Move();
+    }
 
-        // カメラの回転
-        // Rotate();
+    // カメラを考慮した移動(InputSystemとCharacterController使用)
+    void Move()
+    {
+        // 入力でもらった値を使って移動量を計算
+        moveVec = new Vector3(inputMove.x, 0, inputMove.y);
 
+        // 値の正規化
+        moveVec.Normalize();
+
+        // カメラの角度分だけ移動量を回転
+        moveVec = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * moveVec;
+
+        // フレームごとの移動量を計算し動かす
+        characterController.Move(moveVec * Time.deltaTime * status.speed);
+
+        // スタミナが足りなかったら
+        if (isTired == true)
+        {
+            // 疲れている状態だったら歩く速度を変更
+            status.speed = TIRED_SPEED;
+
+            // 徐々にスタミナ回復
+            status.stamina += Time.deltaTime * 1.0f;
+
+            // 四分の位置回復したら疲れている状態を解除
+            if (status.stamina >= STAMINA_MAX * 0.25f) isTired = false;
+
+        }
+
+        // スタミナが足りていたらただの歩き
+        else 
+        { 
+            // 歩く速さを変更
+            status.speed = WALK_SPEED;
+        }
+
+        // 動いていたら実行
+        if (inputMove.x != 0 || inputMove.y != 0)
+        {
+            // ノイズの値を変更
+            NoiseValue(1.0f, 1.0f);
+
+            // ダッシュのキーが押されたとき移動する速さを変更する
+            if (inputDash != 0 && isTired == false)
+            {
+                // 走っていたら速度変更
+                status.speed = DASH_SPEED;
+
+                // スタミナを消費
+                status.stamina -= Time.deltaTime * 2.0f;
+
+                // Noiseをダッシュ仕様に変更
+                NoiseValue(2.0f, 1.5f);
+            }
+        }
+
+        // 止まっていたらノイズの変更なし
+        else { NoiseValue(0.5f, 1.0f); }
+
+        // スタミナを見て疲れている状態に変える
+        if (status.stamina <= STAMINA_MAX * 0.1f) isTired = true;
+    }
+
+    // VirtualCameraにあるNoiseProfileの値をスクリプトから変更します
+    // amplitudeGainには振幅を入力・frequencyGainには周波数(カメラが振動する速さ)を入力してください
+    private void NoiseValue(float amplitudeGain, float frequencyGain)
+    {
+        // VirtualCameraのノイズの設定を変更
+        virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = amplitudeGain;
+        virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = frequencyGain;
     }
 
     // DeepBlindのアクションマップのMoveに登録されているキーが押されたときに入力値を取得
     public void OnMove(InputAction.CallbackContext context)
-    {   
+    {
         inputMove = context.ReadValue<Vector2>();
     }
 
-    // ActionsのLookに割り当てられている入力があったなら実行（未実装）
+    // ActionsのLookに割り当てられている入力があったなら実行
     public void OnLook(InputAction.CallbackContext context)
     {
         inputCursor = context.ReadValue<Vector2>();
@@ -81,32 +163,12 @@ public class Player : MonoBehaviour
         inputDash = context.ReadValue<float>();
     }
 
-    // 移動
-    void Move()
-    {
-        // ダッシュのキーが押されたとき移動する速さを変更する
-        if (inputDash != 0) moveSpeed = 5.0f;
-        else moveSpeed = 2.0f;
-
-        // 入力でもらった値を使って移動量を計算
-        moveVec = new Vector3(inputMove.x, 0, inputMove.y);
-
-        // 値の正規化
-        moveVec.Normalize();
-
-        // カメラの角度分だけ移動量を回転
-        moveVec = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * moveVec;
-
-        // フレームごとの移動量を計算し動かす
-        characterController.Move(moveVec * Time.deltaTime * moveSpeed);
-    }
-
     // 回転
     void Rotate()
     {
         Quaternion temp = transform.rotation;
 
-        temp = Quaternion.Euler(0, inputCursor.x * rotateSpeed, 0) * temp * Quaternion.Euler(-inputCursor.y * rotateSpeed, 0, 0);
+        // temp = Quaternion.Euler(0, inputCursor.x * rotateSpeed, 0) * temp * Quaternion.Euler(-inputCursor.y * rotateSpeed, 0, 0);
 
         Vector3 angle = temp.eulerAngles;
 
@@ -128,6 +190,11 @@ public class Player : MonoBehaviour
         return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
     }
 
+    public float GetSoundRange()
+    {
+        return status.soundRange;
+    }
+
     // 現在の座標を返す関数
     public Vector3 GetPosition()
     {
@@ -138,5 +205,11 @@ public class Player : MonoBehaviour
     public Camera GetCamera()
     {
         return Camera.main;
+    }
+
+    // 現在の座標を返す関数
+    public Vector3 GetMoveVec()
+    {
+        return Quaternion.Euler(0, -camera.gameObject.transform.eulerAngles.y, 0) * moveVec; ;
     }
 }

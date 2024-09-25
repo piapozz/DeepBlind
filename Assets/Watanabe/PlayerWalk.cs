@@ -4,7 +4,7 @@ using UnityEngine;
 
 // •à‚«ó‘Ô‚Ìê‡‚Ì“®‚«
 
-public class PlayerWalk : IMove
+public class PlayerWalk : PlayerState
 {
     public void Move()
     {
