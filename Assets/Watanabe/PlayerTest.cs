@@ -12,16 +12,13 @@ public class PlayerTest : MonoBehaviour
     [SerializeField] GenerateStage generateStage;
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
-    // 制御対象のカメラ
-
-    const float STAMINA_MAX = 50.0f;                    // スタミナの最大値
-    const float WALK_SPEED = 1.0f;                      // 歩く速度
-    const float DASH_SPEED = 5.0f;                      // 走る速度
-    const float TIRED_SPEED = 0.2f;                     // 疲弊しているときの速度
-
-    CinemachineVirtualCamera virtualCamera;
-
+    CinemachineVirtualCamera virtualCamera;                         // 制御対象のカメラ
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
+
+    const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
+    const float WALK_SPEED = 1.0f;                                  // 歩く速度
+    const float DASH_SPEED = 5.0f;                                  // 走る速度
+    const float TIRED_SPEED = 0.2f;                                 // 疲弊しているときの速度
 
     // プレイヤーのステータス値
     public struct PlayerStatus
@@ -87,7 +84,6 @@ public class PlayerTest : MonoBehaviour
 
         // フレームごとの移動量を計算し動かす
         characterController.Move(moveVec * Time.deltaTime * status.speed);
-
 
         // スタミナを見て疲れている状態に変える
         if (status.stamina <= STAMINA_MAX * 0.1f) isTired = true;
