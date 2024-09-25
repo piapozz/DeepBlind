@@ -35,6 +35,9 @@ public class EnemyManager : MonoBehaviour
         // 探索状態のエネミーの目標位置を振り分ける
         DispatchTargetPosition();
 
+        // 警戒状態のエネミーに探索部屋を割り当てる
+        SpecifiedExpectedPosition();
+
         // エネミーの情報を更新
         UpdateEnemyData();
 
@@ -42,6 +45,23 @@ public class EnemyManager : MonoBehaviour
 
         // 接触判定管理
 
+    }
+
+    // 警戒状態のエネミーに探索部屋を割り当てる
+    void SpecifiedExpectedPosition()
+    {
+        // エネミーの数だけ繰り返す
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            // 警戒状態かどうか
+            if (enemyList[i].GetNowState() != EnemyBase.State.VIGILANCE) continue;
+
+            // 推測するかどうか
+            if (!enemyList[i].CheckPrediction()) return;
+
+            // 目標位置を再設定
+            enemyList[i].SetTargetPos(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));
+        }
     }
 
     // 探索状態のエネミーの目標位置を振り分ける
@@ -73,7 +93,7 @@ public class EnemyManager : MonoBehaviour
         // プレイヤーから情報をもらう
         playerStatus.cam = player.GetCamera();
         playerStatus.playerPos = player.GetPosition();
-        // playerStatus.moveValue = player.GetMoveVec();
+        playerStatus.moveValue = player.GetMoveVec();
 
         // エネミーの数だけ繰り返す
         for (int i = 0; i < enemyList.Count; i++)
@@ -106,6 +126,7 @@ public class EnemyManager : MonoBehaviour
         // プレイヤーから情報をもらう
         playerStatus.cam = player.GetCamera();
         playerStatus.playerPos = player.GetPosition();
+        playerStatus.moveValue = player.GetMoveVec();
 
         // エネミーの数だけ繰り返す
         for(int i = 0;i < enemyList.Count; i++)

@@ -18,6 +18,7 @@ public abstract class EnemyBase : MonoBehaviour
         public int id;                      // エネミーの識別番号
         public float speed;                 // エネミーの速さ
         public float accelerate;            // エネミーの加速度
+        public float animSpeed;             // アニメーションの速さ
         public float threatRange;           // 脅威範囲
         public float viewLength;            // 視界の長さ
         public float fieldOfView;           // 視野角
@@ -30,15 +31,17 @@ public abstract class EnemyBase : MonoBehaviour
     // ステータス構造体 (操作用)
     public struct EnemyStatus
     {
-        public float nowSpeed;                 // エネミーの速さ
-        public float nowAccelerate;            // エネミーの加速度
+        public float nowSpeed;      // エネミーの速さ
+        public float nowAccelerate; // エネミーの加速度
         public Vector3 position;    // 現在位置
         public Vector3 targetPos;   // 目標位置
         public Vector3 lostPos;     // 見失った位置
         public bool isTargetLost;   // 見失っているかどうか
         public Vector3 dir;         // 進行方向
         public State state;         // 現在のステート
-        public bool isAblity;
+        public bool isAblity;       // アビリティ中
+        public Vector3 lostMoveVec; // 見失った時のプレイヤーの移動量
+        public bool prediction;     // 推測
     }
 
     // アビリティステータス
@@ -181,9 +184,25 @@ public abstract class EnemyBase : MonoBehaviour
 
         if (myInfo.status.isAblity)
         {
-            enemyAgent.SetDestination(this.transform.position);
+            enemyAgent.velocity = Vector3.zero;
+            enemyAgent.angularSpeed = 0;
             return;
         }
+
+        enemyAgent.angularSpeed = 360;
+
+        // 以下を追加
+        if (Vector3.Distance(enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
+        {
+            enemyAgent.speed = myInfo.speed/ 2;
+        }
+        else
+        {
+            enemyAgent.speed = myInfo.speed;
+        }
+
+        enemyAgent.velocity = (enemyAgent.steeringTarget - myInfo.status.position).normalized * enemyAgent.speed;
+        // transform.forward = enemyAgent.steeringTarget - myInfo.status.position;
 
         // 目標位置を設定
         enemyAgent.SetDestination(myInfo.status.targetPos);
@@ -232,6 +251,17 @@ public abstract class EnemyBase : MonoBehaviour
         enemyState.Init();
     }
 
+    // プレイヤーが逃げた場所を推測するかどうか
+    public bool CheckPrediction()
+    {
+        if (myInfo.status.prediction)
+        {
+            myInfo.status.prediction = false;
+            return true;
+        }
+        return false;
+    }
+
     // 情報の更新
     public void SetEnemyInfo(EnemyInfo info) { myInfo = info; }
 
@@ -249,4 +279,10 @@ public abstract class EnemyBase : MonoBehaviour
 
     // 目標位置にたどり着いたかどうか
     public bool CheckReachingPosition() { return (Vector3.Distance(myInfo.status.targetPos, myInfo.status.position) < 2.0f) && (!myInfo.status.isAblity); }
+
+    // 見失った地点の取得
+    public Vector3 GetLostPos() { return myInfo.status.lostPos; }
+
+    // 見失った時の移動量を取得
+    public Vector3 GetLostMoveVec() {  return myInfo.status.lostMoveVec;}
 }

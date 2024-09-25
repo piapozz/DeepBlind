@@ -2494,6 +2494,8 @@ MonoBehaviour:
   XCorridor: {fileID: 398994191585729828, guid: d6d63a37bb0119c4cb7e5daf2004e7c2, type: 3}
   door: {fileID: 1617343635293591955, guid: f57cc6e2d44a14244aa7d5e8dd4d00d7, type: 3}
   wall: {fileID: 7066392458623672592, guid: d2cb35151fbb6714098c058752ea7a93, type: 3}
+  WIDTH_ROOM_MAX: 6
+  HEIGHT_ROOM_MAX: 4
 --- !u!114 &1781965666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2660,7 +2662,7 @@ MonoBehaviour:
   managementEnemy: 1
   enemies:
   - {fileID: 7832492252065794931, guid: 6b8f8a8a1c5a0a34aba72e469b3176a4, type: 3}
-  createEnemies: 01000000
+  createEnemies: 0a000000
   player: {fileID: 1613814783}
   generateStage: {fileID: 1781965665}
 --- !u!1 &2127415508

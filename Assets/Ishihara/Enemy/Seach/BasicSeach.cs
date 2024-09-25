@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static EnemyBase;
+using static UnityEngine.Rendering.HableCurve;
 using static UnityEngine.UI.GridLayoutGroup;
 
 public class BasicSeach : ISeach
@@ -23,7 +24,7 @@ public class BasicSeach : ISeach
         CheckVigilance();
 
         // 特殊処理
-        Ability();
+        //Ability();
 
         // 更新
         StatusUpdate(info);
@@ -51,17 +52,12 @@ public class BasicSeach : ISeach
 
         for (int i = 0; i < 100; i++)
         {
-            float myAngle1 = Template(enemyInfo.status.dir) ;
-
-            Debug.DrawLine(ray.origin,
-                ray.origin + (
-                Quaternion.Euler(
-                    new Vector3(0,Mathf.Repeat(myAngle1, 360) - (enemyInfo.fieldOfView / 2) + ((enemyInfo.fieldOfView / 100) * i), 0)) * enemyInfo.status.dir * enemyInfo.viewLength),
-                Color.gray, 
-                0.01f);
+            float angleOffset = (-enemyInfo.fieldOfView / 2) + (enemyInfo.fieldOfView / 100) * i; // 左から右まで均等に線を引く
+            Vector3 rotatedDirection = Quaternion.Euler(0, angleOffset, 0) * enemyInfo.status.dir; // 回転して新しい方向ベクトルを計算
+            Debug.DrawLine(ray.origin, ray.origin + rotatedDirection * enemyInfo.viewLength, Color.gray, 0.01f); // 線を描画
         }
 
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1 , 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
             Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red,0.01f);
             // Debug.DrawLine(ray.origin, ray.origin + (enemyInfo.status.dir * enemyInfo.viewLength), Color.blue, 0.01f);
@@ -71,7 +67,7 @@ public class BasicSeach : ISeach
             if(tag != "Player") return;                                                          // プレイヤー以外なら終わる
 
             float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
-            float myAngle = Template(enemyInfo.status.dir) ;                                     // 向いてる角度
+            float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
 
             // 0 ~ 360にクランプ
             toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
@@ -140,18 +136,20 @@ public class BasicSeach : ISeach
 
             // カメラに写っているか判定
             if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
-             {
-                // カメラ位置からコーナーへのレイキャスト
-                Vector3 direction = targetPoint - enemyInfo.playerStatus.cam.transform.position;
-                Ray ray = new Ray(enemyInfo.playerStatus.cam.transform.position, direction.normalized);
+            {
+                // コーナーからカメラ位置へのレイキャスト
+                Vector3 direction = -(targetPoint - enemyInfo.playerStatus.cam.transform.position);
+                Ray ray = new Ray(targetPoint, direction.normalized);
                 RaycastHit hit;
-                // レイキャストがコーナーに直接当たるか確認
-                if (Physics.Raycast(ray, out hit, targetPoint.magnitude + 1))
+                // レイキャストがプレイヤーに直接当たるか確認
+                if (Physics.SphereCast(ray, 0.1f, out hit, direction.magnitude + 1))
                 {
-                    Debug.DrawLine(ray.origin, targetPoint, Color.yellow, 0.01f);
+                    // レイを描画する
+                    // Debug.DrawLine(ray.origin, ray.origin + ray.direction * (direction.magnitude + 1), Color.green, 0.01f);
+                   // Debug.DrawLine(ray.origin,hit.point, Color.green, 0.01f);
 
                     // 障害物がなく直接当たった場合に true を返す
-                    if (hit.collider.tag == "Enemy")
+                    if (hit.collider.CompareTag("Player"))
                     {
                         isInsideCamera = true;
                     }
@@ -171,7 +169,7 @@ public class BasicSeach : ISeach
         {
             enemyInfo.status.nowSpeed = enemyInfo.speed;
             enemyInfo.status.nowAccelerate = enemyInfo.accelerate;
-            enemyInfo.animator.speed = 1.0f;   // 通常再生
+            enemyInfo.animator.speed = enemyInfo.animSpeed;   // 通常再生
             enemyInfo.status.isAblity = false;
         }
     }
