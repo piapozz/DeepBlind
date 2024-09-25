@@ -50,11 +50,14 @@ public class MiniMap : MonoBehaviour
 
     void Update()
     {
+        // プレイヤーの座標を取得
+        Vector2Int sectionPos = generateStage.GetNowSection(player.GetPosition());
+
         // 通過した区画を表示
-        DisplaySection(player.GetNowSection());
+        DisplaySection(sectionPos);
 
         // 今いる区画を色付け
-        ColorMiniMap(player.GetNowSection());
+        ColorMiniMap(sectionPos);
     }
 
     // ミニマップを生成する関数
