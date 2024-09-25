@@ -15,8 +15,9 @@ public class BasicEnemy : EnemyBase
     {
         // 参照ステータスの初期化
         myInfo.id = 0;
-        myInfo.speed = 1.0f;
+        myInfo.speed = 0.5f;
         myInfo.accelerate = 8.0f;
+        myInfo.animSpeed = 1.0f;
         myInfo.threatRange = 1.0f;
         myInfo.fieldOfView = 120.0f;
         myInfo.viewLength = 10.0f;

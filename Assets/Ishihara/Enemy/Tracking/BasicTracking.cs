@@ -21,7 +21,7 @@ public class BasicTracking : ITracking
         CheckTargetLost();
 
         // 特殊処理
-        Ability();
+        //Ability();
 
         // 移動
         Move();
@@ -75,6 +75,9 @@ public class BasicTracking : ITracking
                 enemyInfo.status.lostPos = enemyInfo.playerStatus.playerPos;
                 enemyInfo.status.isTargetLost = true;
 
+                // プレイヤーの移動量を保存
+                enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
+
                 Debug.Log("見失った");
             }
             // 最後の見失った地点に到達してなお見つけられなかったら
@@ -82,7 +85,10 @@ public class BasicTracking : ITracking
             {
                 vigilance = true;
 
-                Debug.Log("探索に戻る");
+                // 推測する
+                enemyInfo.status.prediction = true;
+
+                Debug.Log("警戒");
             }
 
             if (enemyInfo.status.isTargetLost)
@@ -145,17 +151,18 @@ public class BasicTracking : ITracking
             // カメラに写っているか判定
             if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
             {
-                // カメラ位置からコーナーへのレイキャスト
-                Vector3 direction = targetPoint - enemyInfo.playerStatus.cam.transform.position;
-                Ray ray = new Ray(enemyInfo.playerStatus.cam.transform.position, direction.normalized);
+                // コーナーからカメラ位置へのレイキャスト
+                Vector3 direction = -(targetPoint - enemyInfo.playerStatus.cam.transform.position);
+                Ray ray = new Ray(targetPoint, direction.normalized);
                 RaycastHit hit;
-                // レイキャストがコーナーに直接当たるか確認
-                if (Physics.Raycast(ray, out hit, targetPoint.magnitude + 1))
+                // レイキャストがプレイヤーに直接当たるか確認
+                if (Physics.SphereCast(ray, 0.1f, out hit, direction.magnitude + 1))
                 {
-                    Debug.DrawLine(ray.origin, targetPoint, Color.yellow, 0.01f);
+                    // レイを描画する
+                   // Debug.DrawLine(ray.origin, ray.origin + ray.direction * (direction.magnitude + 1), Color.green, 0.01f);
 
                     // 障害物がなく直接当たった場合に true を返す
-                    if (hit.collider.tag == "Enemy")
+                    if (hit.collider.CompareTag("Player"))
                     {
                         isInsideCamera = true;
                     }
@@ -175,7 +182,7 @@ public class BasicTracking : ITracking
         {
             enemyInfo.status.nowSpeed = enemyInfo.speed;
             enemyInfo.status.nowAccelerate = enemyInfo.accelerate;
-            enemyInfo.animator.speed = 1.0f;   // 通常再生
+            enemyInfo.animator.speed = enemyInfo.animSpeed; // 通常再生
             enemyInfo.status.isAblity = false;
         }
     }
