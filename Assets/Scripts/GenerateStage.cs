@@ -124,6 +124,8 @@ public class GenerateStage : MonoBehaviour
 
         // NavMeshのベイク
         GetComponent<NavMeshSurface>().BuildNavMesh();
+
+        //GetPredictionPlayerPos(GetStartPos() + new Vector3(0, 0, 0) * SECTION_SIZE, new Vector3(0, 0, 1));
     }
 
     // 初期化
@@ -1015,6 +1017,8 @@ public class GenerateStage : MonoBehaviour
         // 座標から区画の座標を取得
         Vector2Int sectionPos = GetNowSection(pos);
 
+        Debug.Log("見失った地点:" + sectionPos);
+
         // 移動量から進む方向を確定
         float angle = Mathf.Atan2(dir.z, dir.x) / Mathf.PI * 180;
         Direction direction;
@@ -1026,6 +1030,8 @@ public class GenerateStage : MonoBehaviour
             direction = Direction.South;
         else
             direction = Direction.West;
+
+        Debug.Log("逃げた方向" + direction);
 
         // 分かれ道につくまでループ
         while (true)
@@ -1080,6 +1086,7 @@ public class GenerateStage : MonoBehaviour
                 // ループから抜ける
                 break;
         }
+        Debug.Log("分かれ道" + sectionPos);
 
         // 通行可能な方向のリスト
         List<Direction> passableDir = new List<Direction>();
@@ -1198,6 +1205,8 @@ public class GenerateStage : MonoBehaviour
                 routeDir.RemoveAt(routeDir.Count - 1);
             }
         }
+
+        Debug.Log("予測地点" + nearRoomPos);
 
         return GetPos(nearRoomPos.x, nearRoomPos.y);
     }
