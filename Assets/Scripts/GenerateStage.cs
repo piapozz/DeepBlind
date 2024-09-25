@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.AI;
 
 public class GenerateStage : MonoBehaviour
 {
@@ -120,12 +121,9 @@ public class GenerateStage : MonoBehaviour
 
         // 区画の生成
         GenerateSection();
-    }
 
-    void Start()
-    {
-        Vector3 pos = GetPredictionPlayerPos(GetStartPos(), new Vector3(0, 0, 1));
-        Debug.Log(pos);
+        // NavMeshのベイク
+        GetComponent<NavMeshSurface>().BuildNavMesh();
     }
 
     // 初期化
@@ -1032,9 +1030,6 @@ public class GenerateStage : MonoBehaviour
         // 分かれ道につくまでループ
         while (true)
         {
-            Debug.Log(sectionPos);
-            Debug.Log(direction);
-
             // 今の区画を通ったことにする
             route[sectionPos.x, sectionPos.y].throuth = true;
 
@@ -1076,23 +1071,14 @@ public class GenerateStage : MonoBehaviour
 
             // 行き止まりなら
             if (connectDir.Count == 0)
-            {
-                Debug.Log("行き止まり");
                 break;
-            }
             // 一本道なら
             else if (connectDir.Count == 1)
-            {
-                Debug.Log("一本道");
                 direction = connectDir[0];
-            }
             // 分かれ道なら
             else
-            {
-                Debug.Log("分かれ道");
                 // ループから抜ける
                 break;
-            }
         }
 
         // 通行可能な方向のリスト
@@ -1165,14 +1151,11 @@ public class GenerateStage : MonoBehaviour
                     default: break;
                 }
 
-                Debug.Log(sectionPos);
-
                 // 今の座標が部屋なら候補にする
                 if (stageLayout[sectionPos.x, sectionPos.y].type == SectionType.Room)
                 {
                     distanceNearRoom = routeDir.Count;
                     nearRoomPos = sectionPos;
-                    Debug.Log("部屋発見 距離" + distanceNearRoom);
                 }
             }
             // それ以外なら戻る
