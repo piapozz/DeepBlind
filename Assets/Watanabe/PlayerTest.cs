@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.EventSystems.StandaloneInputModule;
 
-public class Player : MonoBehaviour
+public class PlayerTest : MonoBehaviour
 {
     [SerializeField] GenerateStage generateStage;
     [SerializeField] CharacterController characterController;
@@ -68,6 +68,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(status.stamina);
+
         Move();
     }
 
@@ -171,6 +173,9 @@ public class Player : MonoBehaviour
         Vector3 angle = temp.eulerAngles;
 
         float angleK = Mathf.Repeat(angle.x + 180, 360) - 180;
+
+        Debug.Log(inputCursor.x);
+        Debug.Log(angleK);
 
         if (!(angleK > -75.0f && angleK < 75.0f)) temp = transform.rotation;
 
