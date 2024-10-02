@@ -11,9 +11,6 @@ public interface IVigilance : IEnemyState
     // Š®‘S‚ÉŒ©¸‚Á‚½‚©‚Ç‚¤‚©
     public void CheckLookAround();
 
-    // “Áêˆ—
-    public void Ability();
-
     // ˆÚ“®
     public void Move();
 

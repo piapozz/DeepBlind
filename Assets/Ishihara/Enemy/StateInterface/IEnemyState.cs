@@ -6,7 +6,7 @@ using static EnemyBase;
 public interface IEnemyState
 {
     // s“®
-    public EnemyInfo Activity(EnemyInfo info);
+    public EnemyInfo Activity(EnemyInfo info , ISkill skill);
 
     // ‰Šú‰»
     public void Init();

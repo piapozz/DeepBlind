@@ -14,9 +14,6 @@ public interface ISeach : IEnemyState
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance();
 
-    // “Áêˆ—
-    public void Ability();
-
     // î•ñ‚ÌXV
     public void StatusUpdate(EnemyInfo info);
 }

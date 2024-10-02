@@ -12,7 +12,7 @@ public class BasicTracking : ITracking
     bool vigilance = false;
 
     // 行動
-    public EnemyInfo Activity(EnemyInfo info)
+    public EnemyInfo Activity(EnemyInfo info, ISkill skill)
     {
         // 取得
         GetTarget(info);
@@ -21,7 +21,7 @@ public class BasicTracking : ITracking
         CheckTargetLost();
 
         // 特殊処理
-        //Ability();
+        enemyInfo = skill.Ability(info);
 
         // 移動
         Move();
@@ -77,8 +77,6 @@ public class BasicTracking : ITracking
 
                 // プレイヤーの移動量を保存
                 enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
-
-                Debug.Log("見失った");
             }
             // 最後の見失った地点に到達してなお見つけられなかったら
             else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)
@@ -87,8 +85,6 @@ public class BasicTracking : ITracking
 
                 // 推測する
                 enemyInfo.status.prediction = true;
-
-                Debug.Log("警戒");
             }
 
             if (enemyInfo.status.isTargetLost)
@@ -121,72 +117,6 @@ public class BasicTracking : ITracking
         // ターゲットの情報取得
         enemyInfo = info;
     }
-
-    // 特殊処理(見られていたら止まる)
-    public void Ability()
-    {
-        Vector3[] targetPoints = new Vector3[8];
-
-        targetPoints[0] = enemyInfo.bounds.min;
-        targetPoints[1] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.min.z);
-        targetPoints[2] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
-        targetPoints[3] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
-        targetPoints[4] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
-        targetPoints[5] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
-        targetPoints[6] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.max.z);
-        targetPoints[7] = enemyInfo.bounds.max;
-
-        // 各コーナーがカメラのビューポートに収まっているかをチェック
-
-        //　カメラ内にオブジェクトがあるかどうか
-        bool isInsideCamera = false;
-        //　ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
-        foreach (var targetPoint in targetPoints)
-        {
-            Plane[] planes;
-
-            // カメラの視錐台を求める
-            planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
-
-            // カメラに写っているか判定
-            if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
-            {
-                // コーナーからカメラ位置へのレイキャスト
-                Vector3 direction = -(targetPoint - enemyInfo.playerStatus.cam.transform.position);
-                Ray ray = new Ray(targetPoint, direction.normalized);
-                RaycastHit hit;
-                // レイキャストがプレイヤーに直接当たるか確認
-                if (Physics.SphereCast(ray, 0.1f, out hit, direction.magnitude + 1))
-                {
-                    // レイを描画する
-                   // Debug.DrawLine(ray.origin, ray.origin + ray.direction * (direction.magnitude + 1), Color.green, 0.01f);
-
-                    // 障害物がなく直接当たった場合に true を返す
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        isInsideCamera = true;
-                    }
-                }
-            }
-        }
-
-        if (isInsideCamera)
-        {
-            //映っていたら制止する
-            enemyInfo.status.nowSpeed = 0.0f; // 目標位置を現在位置に
-            enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
-            enemyInfo.status.nowAccelerate = 0.0f;
-            enemyInfo.status.isAblity = true;
-        }
-        else
-        {
-            enemyInfo.status.nowSpeed = enemyInfo.speed;
-            enemyInfo.status.nowAccelerate = enemyInfo.accelerate;
-            enemyInfo.animator.speed = enemyInfo.animSpeed; // 通常再生
-            enemyInfo.status.isAblity = false;
-        }
-    }
-
 
     // 情報の更新
     public void StatusUpdate()
