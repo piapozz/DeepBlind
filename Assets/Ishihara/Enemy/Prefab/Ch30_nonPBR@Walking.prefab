@@ -2049,6 +2049,19 @@ MonoBehaviour:
     rid: 7194854543576268801
   _tracking:
     rid: 7194854543576268802
+  _seachSkill:
+    rid: 7194855044197646336
+  _vigilanceSkill:
+    rid: 7194855044197646337
+  _trackingSkill:
+    rid: 7194855044197646338
+  _id: 0
+  _speed: 1
+  _speedDiameter: 5
+  _animSpeed: 1
+  _threatRange: 1
+  _fieldOfView: 120
+  _viewLength: 10
   references:
     version: 2
     RefIds:
@@ -2058,6 +2071,18 @@ MonoBehaviour:
       type: {class: BasicVigilance, ns: , asm: Assembly-CSharp}
     - rid: 7194854543576268802
       type: {class: BasicTracking, ns: , asm: Assembly-CSharp}
+    - rid: 7194855044197646336
+      type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
+      data:
+        mesh: {fileID: 3779772768010866474}
+    - rid: 7194855044197646337
+      type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
+      data:
+        mesh: {fileID: 3779772768010866474}
+    - rid: 7194855044197646338
+      type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
+      data:
+        mesh: {fileID: 3779772768010866474}
 --- !u!195 &8240649937055098006
 NavMeshAgent:
   m_ObjectHideFlags: 0

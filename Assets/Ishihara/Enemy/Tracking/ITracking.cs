@@ -10,9 +10,6 @@ public interface ITracking : IEnemyState
     // Œ©¸‚Á‚½‚©‚Ç‚¤‚©
     public void CheckTargetLost();
 
-    // “Áêˆ—
-    public void Ability();
-
     // ˆÚ“®
     public void Move();
 

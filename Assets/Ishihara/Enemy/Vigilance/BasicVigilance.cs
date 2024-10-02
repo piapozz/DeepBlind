@@ -9,12 +9,18 @@ public class BasicVigilance : IVigilance
     // 更新する情報
     EnemyInfo enemyInfo;
 
+    // 追跡中から警戒に移ったかで処理を変えるフラグ
+    bool isViaSearch = false;
+
     // 状態管理フラグ
     bool search = false;
     bool tracking = false;
 
+    // 時間計測
+    float time = 0;
+
     // 行動
-    public EnemyInfo Activity(EnemyInfo info)
+    public EnemyInfo Activity(EnemyInfo info, ISkill skill)
     {
         // 取得
         GetTarget(info);
@@ -23,7 +29,7 @@ public class BasicVigilance : IVigilance
         CheckLookAround();
 
         // 特殊処理
-        //Ability();
+        enemyInfo = skill.Ability(info);
 
         // 更新
         StatusUpdate();
@@ -86,7 +92,6 @@ public class BasicVigilance : IVigilance
                 if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
                     myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle)
                 {
-                    Debug.Log("発見");
                     // 見つけた
                     tracking = true;
                 }
@@ -110,7 +115,6 @@ public class BasicVigilance : IVigilance
             if (tag == "Player")
             {
                 // 追跡継続
-                Debug.Log("見つけた");
 
                 // プレイヤーがいたらTRACKING状態に切り替える
                 tracking = true;
@@ -118,19 +122,30 @@ public class BasicVigilance : IVigilance
             // 初めて見失っていたら
             else if (tag != "Player")
             {
-                Debug.Log("見つからない");
-
                 // プレイヤーがいなかったらSEARCH状態に切り替え
                 search = true;
             }
         }
         else
         {
-            Debug.Log("見つからない");
 
             // プレイヤーがいなかったらSEARCH状態に切り替え
             search = true;
         }
+
+    }
+
+    private void LookAround()
+    {
+        // 時間を計測
+        time += Time.deltaTime;
+
+        // 時間に従って部屋を探索
+
+        // 回転する
+
+        // 一周したら次の探索場所へ
+        
 
     }
 
@@ -154,73 +169,6 @@ public class BasicVigilance : IVigilance
         return temp;
     }
 
-    // 特殊処理(見られていたら止まる)
-    public void Ability()
-    {
-        Vector3[] targetPoints = new Vector3[8];
-
-        targetPoints[0] = enemyInfo.bounds.min;
-        targetPoints[1] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.min.z);
-        targetPoints[2] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
-        targetPoints[3] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
-        targetPoints[4] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.max.y, enemyInfo.bounds.min.z);
-        targetPoints[5] = new Vector3(enemyInfo.bounds.max.x, enemyInfo.bounds.min.y, enemyInfo.bounds.max.z);
-        targetPoints[6] = new Vector3(enemyInfo.bounds.min.x, enemyInfo.bounds.max.y, enemyInfo.bounds.max.z);
-        targetPoints[7] = enemyInfo.bounds.max;
-
-        // 各コーナーがカメラのビューポートに収まっているかをチェック
-
-        //　カメラ内にオブジェクトがあるかどうか
-        bool isInsideCamera = false;
-        //　ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
-        foreach (var targetPoint in targetPoints)
-        {
-
-            Plane[] planes;
-
-            // カメラの視錐台を求める
-            planes = GeometryUtility.CalculateFrustumPlanes(enemyInfo.playerStatus.cam);
-
-            // カメラに写っているか判定
-            if (GeometryUtility.TestPlanesAABB(planes, enemyInfo.bounds))
-            {
-                // コーナーからカメラ位置へのレイキャスト
-                Vector3 direction = -(targetPoint - enemyInfo.playerStatus.cam.transform.position);
-                Ray ray = new Ray(targetPoint, direction.normalized);
-                RaycastHit hit;
-                // レイキャストがプレイヤーに直接当たるか確認
-                if (Physics.SphereCast(ray, 0.1f, out hit, direction.magnitude + 1))
-                {
-                    // レイを描画する
-                   // Debug.DrawLine(ray.origin, ray.origin + ray.direction * (direction.magnitude + 1), Color.green, 0.01f);
-
-                    // 障害物がなく直接当たった場合に true を返す
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        isInsideCamera = true;
-                    }
-                }
-            }
-        }
-
-        if (isInsideCamera)
-        {
-            //映っていたら制止する
-            enemyInfo.status.nowSpeed = 0.0f; // 目標位置を現在位置に
-            enemyInfo.animator.speed = 0.0f;                        // アニメーションの再生を停止
-            enemyInfo.status.nowAccelerate = 0.0f;
-            enemyInfo.status.isAblity = true;
-        }
-        else
-        {
-            enemyInfo.status.nowSpeed = enemyInfo.speed;
-            enemyInfo.status.nowAccelerate = enemyInfo.accelerate;
-            enemyInfo.animator.speed = enemyInfo.animSpeed; ;   // 通常再生
-            enemyInfo.status.isAblity = false;
-        }
-    }
-
-
     // 目標位置の取得
     public void GetTarget(EnemyInfo info)
     {
@@ -233,7 +181,7 @@ public class BasicVigilance : IVigilance
     {
         // ステートの切り替え
         if (search) enemyInfo.status.state = State.SEARCH;
-        if (tracking) enemyInfo.status.state = State.VIGILANCE;
+        if (tracking) enemyInfo.status.state = State.TRACKING;
     }
 
     // 移動

@@ -8,6 +8,11 @@ using System;
 using System.Windows.Input;
 using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
+
+// スモーク
+// ドア固め
+// ロッカーワープ
+
 // エネミーの元となる親クラス
 
 public abstract class EnemyBase : MonoBehaviour
@@ -17,13 +22,12 @@ public abstract class EnemyBase : MonoBehaviour
     {
         public int id;                      // エネミーの識別番号
         public float speed;                 // エネミーの速さ
-        public float accelerate;            // エネミーの加速度
+        public float speedDiameter;         // 見つけた時の速さの倍率
         public float animSpeed;             // アニメーションの速さ
         public float threatRange;           // 脅威範囲
         public float viewLength;            // 視界の長さ
         public float fieldOfView;           // 視野角
         public Animator animator;           // アニメーター
-        public Bounds bounds;               // 自分の形
         public EnemyStatus status;          // ステータス
         public PlayerStatus playerStatus;   // プレイヤーのステータス
     }
@@ -31,23 +35,24 @@ public abstract class EnemyBase : MonoBehaviour
     // ステータス構造体 (操作用)
     public struct EnemyStatus
     {
-        public float nowSpeed;      // エネミーの速さ
-        public float nowAccelerate; // エネミーの加速度
-        public Vector3 position;    // 現在位置
-        public Vector3 targetPos;   // 目標位置
-        public Vector3 lostPos;     // 見失った位置
-        public bool isTargetLost;   // 見失っているかどうか
-        public Vector3 dir;         // 進行方向
-        public State state;         // 現在のステート
-        public bool isAblity;       // アビリティ中
-        public Vector3 lostMoveVec; // 見失った時のプレイヤーの移動量
-        public bool prediction;     // 推測
+        public float nowSpeed;              // エネミーの速さ
+        public Vector3 position;            // 現在位置
+        public Vector3 targetPos;           // 目標位置
+        public Vector3 lostPos;             // 見失った位置
+        public bool isTargetLost;           // 見失っているかどうか
+        public Vector3 dir;                 // 進行方向
+        public State state;                 // 現在のステート
+        public bool isAblity;               // アビリティ中
+        public Vector3 lostMoveVec;         // 見失った時のプレイヤーの移動量
+        public bool prediction ;            // 推測
+        public List<ViaSeachData> viaData;  // 経由探索用データ
     }
 
-    // アビリティステータス
-    public struct AbilityStatus
+    // 部屋の経由探索用の情報構造体
+    public struct ViaSeachData
     {
-
+        public Vector3 viaPosition;        // 経由地点の座標
+        public bool room;                  // 経由地点が部屋かどうか
     }
 
     // プレイヤーからもらう情報
@@ -61,7 +66,7 @@ public abstract class EnemyBase : MonoBehaviour
     // ステート
     public enum State
     {
-        SEARCH,         // 探索
+        SEARCH,        // 探索
         VIGILANCE,     // 警戒
         TRACKING,      // 追跡
 
@@ -73,6 +78,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected EnemyInfo myInfo;   // ステータス
     private State oldState;               // 一つ前のステート
     protected IEnemyState enemyState;       // ステートクラス
+    protected ISkill skill;                 // スキル
     private NavMeshAgent enemyAgent;       // ナビメッシュ
 
     // それぞれのステートクラス
@@ -80,13 +86,18 @@ public abstract class EnemyBase : MonoBehaviour
     protected IVigilance vigilance;
     protected ITracking tracking;
 
+    // それぞれのスキルクラス
+    protected ISkill seachSkill;
+    protected ISkill vigilanceSkill;
+    protected ISkill trackingSkill;
+
     void Start()
     {
         // 初期化
-        BaseInit();
+        Init();
 
         // 初期化
-        Init();
+        BaseInit();
     }
 
     void Update()
@@ -113,47 +124,10 @@ public abstract class EnemyBase : MonoBehaviour
         // アニメーター取得
         myInfo.animator = GetComponent<Animator>();
 
-        
-    }
 
-    // 自身の形を取得
-    private Bounds GetBounds(GameObject obj, Bounds bounds) 
-    {
-        
-        // メッシュフィルターの存在確認
-        SkinnedMeshRenderer filter = obj.GetComponent<SkinnedMeshRenderer>();
-
-        //if (filter != null)
-        //{
-        //    // オブジェクトのワールド座標とサイズを取得する
-        //    Vector3 ObjWorldPosition = obj.transform.position;
-        //    Vector3 ObjWorldScale = obj.transform.lossyScale;
-
-        //    // フィルターのメッシュ情報からバウンドボックスを取得する
-        //    Bounds meshBounds = filter.bounds;
-
-        //    // バウンドのワールド座標とサイズを取得する
-        //    Vector3 meshBoundsWorldCenter = meshBounds.center + ObjWorldPosition;
-        //    Vector3 meshBoundsWorldSize = Vector3.Scale(meshBounds.size, ObjWorldScale);
-
-        //    // バウンドの最小座標と最大座標を取得する
-        //    Vector3 meshBoundsWorldMin = meshBoundsWorldCenter - (meshBoundsWorldSize / 2);
-        //    Vector3 meshBoundsWorldMax = meshBoundsWorldCenter + (meshBoundsWorldSize / 2);
-
-        //    // 取得した最小座標と最大座標を含むように拡大/縮小を行う
-        //    if (bounds.size == Vector3.zero)
-        //    {
-        //        // 元バウンドのサイズがゼロの場合はバウンドを作り直す
-        //        bounds = new Bounds(meshBoundsWorldCenter, Vector3.zero);
-        //    }
-        //    bounds.Encapsulate(meshBoundsWorldMin);
-        //    bounds.Encapsulate(meshBoundsWorldMax);
-        //}
-
-        // フィルターのメッシュ情報からバウンドボックスを取得する
-        bounds = filter.bounds;
-
-        return bounds;
+        myInfo.status.position = this.transform.position;
+        myInfo.status.nowSpeed = myInfo.speed;
+        myInfo.status.prediction = false;
     }
 
     // ステートの切り替え処理
@@ -173,14 +147,12 @@ public abstract class EnemyBase : MonoBehaviour
     public void Active()
     {
         // 行動(情報を渡して更新)
-        myInfo = enemyState.Activity(myInfo);
+        myInfo = enemyState.Activity(myInfo , skill);
     }
 
     // ナビメッシュで移動する
     private void MoveNavAgent()
     {
-        // 自身の形を取得
-        myInfo.bounds = GetBounds(meshObject, myInfo.bounds);
 
         if (myInfo.status.isAblity)
         {
@@ -194,11 +166,11 @@ public abstract class EnemyBase : MonoBehaviour
         // 以下を追加
         if (Vector3.Distance(enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
         {
-            enemyAgent.speed = myInfo.speed/ 2;
+            enemyAgent.speed = myInfo.status.nowSpeed / 2;
         }
         else
         {
-            enemyAgent.speed = myInfo.speed;
+            enemyAgent.speed = myInfo.status.nowSpeed;
         }
 
         enemyAgent.velocity = (enemyAgent.steeringTarget - myInfo.status.position).normalized * enemyAgent.speed;
@@ -208,41 +180,52 @@ public abstract class EnemyBase : MonoBehaviour
         enemyAgent.SetDestination(myInfo.status.targetPos);
 
         // 速度の変更
-        enemyAgent.speed = myInfo.status.nowSpeed;
-        enemyAgent.acceleration = myInfo.status.nowAccelerate;
+        // enemyAgent.speed = myInfo.status.nowSpeed;
+        enemyAgent.acceleration = enemyAgent.speed * 8;
 
         // 向いている方向を取得
         myInfo.status.dir = Vector3.Normalize(enemyAgent.nextPosition - myInfo.status.position);
 
         // 現在の座標を取得
         myInfo.status.position = this.transform.position;
-
     }
 
     // 初期化
     public abstract void Init();
 
-    // ステートの切り替え処理
+    // ステートとスキルの切り替え処理
     public void StateChange(State state)
     {
-        // ステートを切り替える
+        // ステート、スキルを切り替える
         switch (myInfo.status.state)
         {
             case State.SEARCH:
 
                 enemyState = seach;
+                skill = seachSkill;
+
+                myInfo.status.nowSpeed = myInfo.speed;
 
                 break;
 
             case State.VIGILANCE:
 
                 enemyState = vigilance;
+                skill = vigilanceSkill;
+
+                myInfo.status.nowSpeed = myInfo.speed * myInfo.speedDiameter / 2;
 
                 break;
 
             case State.TRACKING:
 
                 enemyState = tracking;
+                skill = trackingSkill;
+
+                // 発見アニメーションを流す
+
+
+                myInfo.status.nowSpeed = myInfo.speed * myInfo.speedDiameter;
 
                 break;
         }
@@ -285,4 +268,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     // 見失った時の移動量を取得
     public Vector3 GetLostMoveVec() {  return myInfo.status.lostMoveVec;}
+
+    // 経由探索用の情報を設定
+    public void SetViaSeachData(List<ViaSeachData> vias) { myInfo.status.viaData = vias; }
 }
