@@ -60,7 +60,7 @@ public class EnemyManager : MonoBehaviour
             if (!enemyList[i].CheckPrediction()) return;
 
             // –Ú•WˆÊ’u‚ğÄİ’è
-            enemyList[i].SetTargetPos(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));
+            enemyList[i].SetViaSeachData(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));
         }
     }
 

@@ -46,6 +46,18 @@ public class BasicEnemy : EnemyBase
 
         enemyState = _seach;
         skill = _seachSkill;
+
+        boolAnimation = new string[]{
+            "walk",
+            "run",
+            "skill",
+        };
+
+        triggerAnimation = new string[]{
+            "scream",
+            "look",
+
+        };
     }
 
 }

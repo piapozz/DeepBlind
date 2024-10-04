@@ -73,6 +73,25 @@ public abstract class EnemyBase : MonoBehaviour
         MAX
     }
 
+    // アニメーション
+    public enum BoolAnimation
+    {
+        WALKING,        // 歩行
+        RUNNING,        // 走行
+        SKILL,          // スキル使用時
+
+        MAX
+    }
+
+    // アニメーション
+    public enum TriggerAnimation
+    {
+        SCREAM,         // 発見
+        LOOKING,        // 見渡し
+
+        MAX
+    }
+
     [SerializeField] GameObject meshObject;     // メッシュ
 
     protected EnemyInfo myInfo;   // ステータス
@@ -90,6 +109,9 @@ public abstract class EnemyBase : MonoBehaviour
     protected ISkill seachSkill;
     protected ISkill vigilanceSkill;
     protected ISkill trackingSkill;
+
+    protected string[] boolAnimation;       // boolパラメーター
+    protected string[] triggerAnimation;    // triggerパラメーター
 
     void Start()
     {
@@ -110,6 +132,9 @@ public abstract class EnemyBase : MonoBehaviour
 
         // ステートの切り替え処理
         StateSwitching();
+
+        // アニメーションの更新
+
     }
 
     // 初期化
@@ -128,6 +153,9 @@ public abstract class EnemyBase : MonoBehaviour
         myInfo.status.position = this.transform.position;
         myInfo.status.nowSpeed = myInfo.speed;
         myInfo.status.prediction = false;
+        myInfo.status.viaData = new List<ViaSeachData>();
+
+
     }
 
     // ステートの切り替え処理
@@ -174,7 +202,6 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         enemyAgent.velocity = (enemyAgent.steeringTarget - myInfo.status.position).normalized * enemyAgent.speed;
-        // transform.forward = enemyAgent.steeringTarget - myInfo.status.position;
 
         // 目標位置を設定
         enemyAgent.SetDestination(myInfo.status.targetPos);
