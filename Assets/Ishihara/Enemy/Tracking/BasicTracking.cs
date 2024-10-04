@@ -64,14 +64,14 @@ public class BasicTracking : ITracking
                 tag == "Player")
             {
                 // 直前まで見失っていたなら
-                if (enemyInfo.status.isTargetLost) enemyInfo.status.isTargetLost = false; // 再発見
+                //if (enemyInfo.status.isTargetLost) enemyInfo.status.isTargetLost = false; // 再発見
             }
             // 初めて見失っていたら
             else if (enemyInfo.status.isTargetLost == false && tag != "Player")
             {
                 // ロストポジションを設定
                 enemyInfo.status.lostPos = enemyInfo.playerStatus.playerPos;
-                enemyInfo.status.isTargetLost = true;
+               // enemyInfo.status.isTargetLost = true;
 
                 // プレイヤーの移動量を保存
                 enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
@@ -80,20 +80,19 @@ public class BasicTracking : ITracking
 
                 // 推測する
                 enemyInfo.status.prediction = true;
+                enemyInfo.status.isTargetLost = false;
             }
-            // 最後の見失った地点に到達してなお見つけられなかったら
-            else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)
-            {
-                vigilance = true;
+            //// 最後の見失った地点に到達してなお見つけられなかったら
+            //else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)
+            //{
+            //    vigilance = true;
 
-                // 推測する
-                enemyInfo.status.prediction = true;
-            }
+            //    // 推測する
+            //    enemyInfo.status.prediction = true;
+            //    enemyInfo.status.isTargetLost = false;
+            //}
 
-            if (enemyInfo.status.isTargetLost)
-            {
-                Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.lostPos, Color.magenta);
-            }
+          
         }
     }
     private float Template(Vector3 point1)

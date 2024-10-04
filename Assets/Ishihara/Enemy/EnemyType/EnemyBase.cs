@@ -44,7 +44,7 @@ public abstract class EnemyBase : MonoBehaviour
         public State state;                 // 現在のステート
         public bool isAblity;               // アビリティ中
         public Vector3 lostMoveVec;         // 見失った時のプレイヤーの移動量
-        public bool prediction;            // 推測
+        public bool prediction;             // 推測
         public List<ViaSeachData> viaData;  // 経由探索用データ
     }
 

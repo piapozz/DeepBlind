@@ -13,7 +13,6 @@ public class StopLookAt : ISkill
     // プレイヤーが敵を見つけた時、敵もプレイヤーを見つける
     public EnemyBase.EnemyInfo Ability(EnemyBase.EnemyInfo info)
     {
-        if (info.status.prediction) Debug.Log("sss");
         // メッシュフィルターの存在確認
         SkinnedMeshRenderer filter = mesh.GetComponent<SkinnedMeshRenderer>();
 

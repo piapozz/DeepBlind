@@ -45,6 +45,7 @@ public class BasicVigilance : IVigilance
     public void Init()
     {
         enemyInfo = new EnemyInfo();
+        isViaSearch = false;
     }
 
 
@@ -83,14 +84,11 @@ public class BasicVigilance : IVigilance
 
         if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
-            Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red, 0.01f);
-
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
             // プレイヤーなら
             if (tag == "Player")
             {
-
                 float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
                 float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
 
@@ -112,10 +110,12 @@ public class BasicVigilance : IVigilance
         if (Vector3.Distance(enemyInfo.status.position , enemyInfo.status.targetPos) > 3.0f) return;
 
         // 見渡す
-        if(!LookAround() || !enemyInfo.status.viaData[viaNum].room) return;
+        if(!LookAround()) return;
 
         // 次の巡回地点を設定
         viaNum++;
+
+        Debug.Log("経由地点" + viaNum + "/" + enemyInfo.status.viaData.Count + "通過");
 
         // 警戒終了
         if(viaNum == enemyInfo.status.viaData.Count) search = true;
@@ -123,6 +123,8 @@ public class BasicVigilance : IVigilance
 
     private bool LookAround()
     {
+        if(!enemyInfo.status.viaData[viaNum].room) return true;
+
         // 時間を計測
         time += Time.deltaTime;
 
@@ -144,8 +146,6 @@ public class BasicVigilance : IVigilance
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
-            Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red, 0.01f);
-
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
             // プレイヤーなら

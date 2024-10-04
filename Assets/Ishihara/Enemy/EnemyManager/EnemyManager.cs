@@ -59,8 +59,6 @@ public class EnemyManager : MonoBehaviour
             // „‘ª‚·‚é‚©‚Ç‚¤‚©
             if (!enemyList[i].CheckPrediction()) continue;
 
-            Debug.Log("sss");
-
             // –Ú•WˆÊ’u‚ğÄİ’è
             enemyList[i].SetViaSeachData(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));
         }
