@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        // Playerクラスの GetStamina() で「現在のスタミナ / スタミナの最大値」を受け取って代入
+        // それに応じてゲージを増減させる
         staminaBar.GetComponent<Image>().fillAmount = player.GetStamina();
     }
 
