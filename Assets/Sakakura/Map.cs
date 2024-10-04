@@ -34,15 +34,14 @@ public class Map : MonoBehaviour
         {
             miniMapSize = transform.localScale.x;
             edgeMargin = miniMapSize * edgeMarginRate;
-            sectionSize = (miniMapSize - edgeMargin) / stageLayout.GetLength(1);
+            sectionSize = (1 - edgeMargin) / stageLayout.GetLength(1);
         }
         else
         {
             miniMapSize = transform.localScale.y;
             edgeMargin = miniMapSize * edgeMarginRate;
-            sectionSize = (miniMapSize - edgeMargin) / stageLayout.GetLength(0);
+            sectionSize = (1 - edgeMargin) / stageLayout.GetLength(0);
         }
-        Debug.Log(sectionSize + "=" + (miniMapSize - edgeMargin) + "/" + stageLayout.GetLength(0));
 
         miniMap = new GameObject[stageLayout.GetLength(0), stageLayout.GetLength(1)];
 
@@ -68,8 +67,10 @@ public class Map : MonoBehaviour
     void GenerateMap()
     {
         // 赤点を生成
+        /*
         pointObj = Instantiate(point, ChangeLocalPosition(player.GetNowSection()), Quaternion.identity, gameObject.transform);
         pointObj.transform.localScale = new Vector3(pointSizeRate, pointSizeRate, 1);
+        */
 
         // 順番に生成
         for (int w = 0; w < stageLayout.GetLength(0); w++)
@@ -118,15 +119,15 @@ public class Map : MonoBehaviour
                 Vector3 genPos = ChangeLocalPosition(new Vector2Int(w, h));
 
                 // 回転指定
-                Quaternion genRot = Quaternion.Euler(0, 0, -90 * (int)stageLayout[w, h].rotate);
-
+                //Quaternion genRot = Quaternion.Euler(0, 0, -90 * (int)stageLayout[w, h].rotate);
+                Quaternion genRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -90 * (int)stageLayout[w, h].rotate);
                 // 生成
                 GameObject genObj = Instantiate(genImage, genPos, genRot, gameObject.transform);
 
                 miniMap[w, h] = genObj;
 
                 // 大きさ
-                genObj.transform.localScale = new Vector3(sectionSize, sectionSize, 1) / miniMapSize;
+                genObj.transform.localScale = new Vector3(sectionSize, sectionSize, 1);
 
                 // 非表示にする
                 genObj.SetActive(false);
@@ -139,14 +140,11 @@ public class Map : MonoBehaviour
     {
         // 座標指定
         Vector3 adjust =
-            new Vector3(sectionSize / 2 + edgeMargin / 2, sectionSize / 2 + edgeMargin / 2, 0)
-            - new Vector3(transform.localScale.x, transform.localScale.y, 0) / 2;
-        Vector3 genPos =
-            new Vector3(pos.x * sectionSize, pos.y * sectionSize, -0.001f) + adjust + transform.position;
-
+              new Vector3(sectionSize / 2 + edgeMargin / 2, sectionSize / 2 + edgeMargin / 2, -0.01f)
+            - new Vector3(1, 1, 0) / 2;
+        Vector3 genPos = transform.TransformPoint(new Vector3(pos.x, pos.y, 0) * sectionSize + adjust);
         return genPos;
     }
-
 
     // 区画に入ったときに表示する関数
     void DisplaySection(Vector2Int pos)
