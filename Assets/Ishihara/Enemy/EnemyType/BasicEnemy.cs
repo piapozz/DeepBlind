@@ -16,7 +16,7 @@ public class BasicEnemy : EnemyBase
 
     [SerializeField] int _id = 0;     // 識別番号
     [SerializeField] float _speed = 1f;     // 速さ
-    [SerializeField] float _speedDiameter = 5f;     // 速さの倍率
+    [SerializeField] float _speedDiameter = 1f;     // 速さの倍率
     [SerializeField] float _animSpeed = 1f;     // アニメーションの速さ
     [SerializeField] float _threatRange = 1f;     // 音の感知範囲
     [SerializeField] float _fieldOfView = 120f;     // 視野角
@@ -56,7 +56,6 @@ public class BasicEnemy : EnemyBase
         triggerAnimation = new string[]{
             "scream",
             "look",
-
         };
     }
 

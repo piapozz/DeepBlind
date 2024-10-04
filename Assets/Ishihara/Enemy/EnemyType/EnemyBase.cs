@@ -44,7 +44,7 @@ public abstract class EnemyBase : MonoBehaviour
         public State state;                 // 現在のステート
         public bool isAblity;               // アビリティ中
         public Vector3 lostMoveVec;         // 見失った時のプレイヤーの移動量
-        public bool prediction ;            // 推測
+        public bool prediction;            // 推測
         public List<ViaSeachData> viaData;  // 経由探索用データ
     }
 
@@ -130,6 +130,8 @@ public abstract class EnemyBase : MonoBehaviour
         // 行動
         Active();
 
+
+
         // ステートの切り替え処理
         StateSwitching();
 
@@ -175,13 +177,12 @@ public abstract class EnemyBase : MonoBehaviour
     public void Active()
     {
         // 行動(情報を渡して更新)
-        myInfo = enemyState.Activity(myInfo , skill);
+        myInfo = enemyState.Activity(myInfo, skill);
     }
 
     // ナビメッシュで移動する
     private void MoveNavAgent()
     {
-
         if (myInfo.status.isAblity)
         {
             enemyAgent.velocity = Vector3.zero;
@@ -262,15 +263,7 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
     // プレイヤーが逃げた場所を推測するかどうか
-    public bool CheckPrediction()
-    {
-        if (myInfo.status.prediction)
-        {
-            myInfo.status.prediction = false;
-            return true;
-        }
-        return false;
-    }
+    public bool CheckPrediction() {return myInfo.status.prediction;}
 
     // 情報の更新
     public void SetEnemyInfo(EnemyInfo info) { myInfo = info; }

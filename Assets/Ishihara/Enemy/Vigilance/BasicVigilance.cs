@@ -30,7 +30,7 @@ public class BasicVigilance : IVigilance
         CheckLookAround();
 
         // 特殊処理
-        enemyInfo = skill.Ability(info);
+        enemyInfo = skill.Ability(enemyInfo);
 
         // 更新
         StatusUpdate();
@@ -45,14 +45,15 @@ public class BasicVigilance : IVigilance
     public void Init()
     {
         enemyInfo = new EnemyInfo();
-
-        isViaSearch = enemyInfo.status.prediction;
     }
 
 
     public void CheckLookAround()
     {
-        if(enemyInfo.status.viaData[viaNum] == null) return;
+        if(!isViaSearch && !enemyInfo.status.prediction) return;
+
+        enemyInfo.status.prediction = false;
+        isViaSearch = true;
 
         // 目標地点をリスト順に格納
         enemyInfo.status.targetPos = enemyInfo.status.viaData[viaNum].viaPosition;
@@ -161,11 +162,9 @@ public class BasicVigilance : IVigilance
             // プレイヤーなら
             if (tag == "Player")
             {
-
                 // 見つけた
                 tracking = true;
                 return false;
-                
             }
         }
 
