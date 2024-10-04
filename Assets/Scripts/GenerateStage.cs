@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.AI;
+using Unity.VisualScripting;
 
 public class GenerateStage : MonoBehaviour
 {
@@ -125,7 +126,7 @@ public class GenerateStage : MonoBehaviour
         // NavMeshのベイク
         GetComponent<NavMeshSurface>().BuildNavMesh();
 
-        //GetPredictionPlayerPos(GetStartPos() + new Vector3(0, 0, 0) * SECTION_SIZE, new Vector3(0, 0, 1));
+        GetPredictionPlayerPos(GetStartPos() + new Vector3(0, 0, 0) * SECTION_SIZE, new Vector3(0, 0, 1));
     }
 
     // 初期化
@@ -990,9 +991,23 @@ public class GenerateStage : MonoBehaviour
         return GetPos(corridorPos[rand][0], corridorPos[rand][1]);
     }
 
-    // プレイヤーが居そうな座標を返す関数
-    public Vector3 GetPredictionPlayerPos(Vector3 pos, Vector3 dir)
+    // 渡された区画が部屋かどうか判定する関数
+    private bool JudgeSectionRoom(Vector2Int pos)
     {
+        bool result = false;
+
+        if (stageLayout[pos.x, pos.y].type == SectionType.Room)
+            result = true;
+
+        return result;
+    }
+
+    // プレイヤーが居そうな座標を返す関数
+    public List<EnemyBase.ViaSeachData> GetPredictionPlayerPos(Vector3 pos, Vector3 dir)
+    {
+        // 構造体に道中の部屋と分岐地点をlistで追加していく
+        List<EnemyBase.ViaSeachData> viaSeach = new List<EnemyBase.ViaSeachData>();
+
         // ステージの二次元配列の初期化
         Route[,] route = new Route[stageLayout.GetLength(0), stageLayout.GetLength(1)];
         for (int w = 0; w < route.GetLength(0); w++)
@@ -1014,12 +1029,10 @@ public class GenerateStage : MonoBehaviour
             }
         }
 
-        // 座標から区画の座標を取得
-        Vector2Int sectionPos = GetNowSection(pos);
+        // 見失った地点が区画の手前側か奥側かで判定
 
-        Debug.Log("見失った地点:" + sectionPos);
 
-        // 移動量から進む方向を確定
+        // 移動量から進む方向を予測
         float angle = Mathf.Atan2(dir.z, dir.x) / Mathf.PI * 180;
         Direction direction;
         if (angle >= 45 && angle < 135)
@@ -1030,6 +1043,10 @@ public class GenerateStage : MonoBehaviour
             direction = Direction.South;
         else
             direction = Direction.West;
+
+        // 座標から区画の座標を取得
+        Vector2Int sectionPos = GetNowSection(pos);
+        Debug.Log("見失った地点:" + sectionPos);
 
         Debug.Log("逃げた方向" + direction);
 
@@ -1061,6 +1078,14 @@ public class GenerateStage : MonoBehaviour
                     break;
                 default: break;
             }
+
+            // ルートを記録
+            EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
+
+            temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
+            temp.room = JudgeSectionRoom(sectionPos);
+
+            viaSeach.Add(temp);
 
             // 今の区画に分かれ道があるか判定
             List<Direction> connectDir = new List<Direction>();
@@ -1159,11 +1184,19 @@ public class GenerateStage : MonoBehaviour
                 }
 
                 // 今の座標が部屋なら候補にする
-                if (stageLayout[sectionPos.x, sectionPos.y].type == SectionType.Room)
+                if (JudgeSectionRoom(sectionPos) == true)
                 {
                     distanceNearRoom = routeDir.Count;
                     nearRoomPos = sectionPos;
                 }
+
+                // ルートを記録
+                EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
+
+                temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
+                temp.room = JudgeSectionRoom(sectionPos);
+
+                viaSeach.Add(temp);
             }
             // それ以外なら戻る
             else
@@ -1203,11 +1236,12 @@ public class GenerateStage : MonoBehaviour
 
                 // 戻る
                 routeDir.RemoveAt(routeDir.Count - 1);
+                viaSeach.RemoveAt(viaSeach.Count - 1);
             }
         }
 
         Debug.Log("予測地点" + nearRoomPos);
 
-        return GetPos(nearRoomPos.x, nearRoomPos.y);
+        return viaSeach;
     }
 }
