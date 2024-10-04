@@ -15,6 +15,8 @@ public class PlayerTest : MonoBehaviour
     CinemachineVirtualCamera virtualCamera;                         // 制御対象のカメラ
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
 
+    [SerializeField] bool isDebug = false;                          // 疲れないようにする
+
     const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
     const float WALK_SPEED = 1.0f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
@@ -85,8 +87,8 @@ public class PlayerTest : MonoBehaviour
         // フレームごとの移動量を計算し動かす
         characterController.Move(moveVec * Time.deltaTime * status.speed);
 
-        // スタミナを見て疲れている状態に変える
-        if (status.stamina <= STAMINA_MAX * 0.1f) isTired = true;
+        // スタミナを見て疲れていたら＆デバッグ状態ではなかったら、疲れてる状態に変える
+        if (status.stamina <= STAMINA_MAX * 0.1f && isDebug != true) isTired = true;
 
         // 動いていたら実行
         if (inputMove.x != 0 || inputMove.y != 0)

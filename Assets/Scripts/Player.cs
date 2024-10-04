@@ -12,16 +12,15 @@ public class Player : MonoBehaviour
     [SerializeField] GenerateStage generateStage;
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
-    // 制御対象のカメラ
-
-    const float STAMINA_MAX = 50.0f;                    // スタミナの最大値
-    const float WALK_SPEED = 1.0f;                      // 歩く速度
-    const float DASH_SPEED = 5.0f;                      // 走る速度
-    const float TIRED_SPEED = 0.2f;                     // 疲弊しているときの速度
-
-    CinemachineVirtualCamera virtualCamera;
-
+    CinemachineVirtualCamera virtualCamera;                         // 制御対象のカメラ
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
+
+    [SerializeField] bool isDebug = false;                          // 疲れないようにする
+
+    const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
+    const float WALK_SPEED = 1.0f;                                  // 歩く速度
+    const float DASH_SPEED = 5.0f;                                  // 走る速度
+    const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
 
     // プレイヤーのステータス値
     public struct PlayerStatus
@@ -68,6 +67,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(status.stamina);
+
         Move();
     }
 
@@ -86,9 +87,8 @@ public class Player : MonoBehaviour
         // フレームごとの移動量を計算し動かす
         characterController.Move(moveVec * Time.deltaTime * status.speed);
 
-
-        // スタミナを見て疲れている状態に変える
-        if (status.stamina <= STAMINA_MAX * 0.1f) isTired = true;
+        // スタミナを見て疲れていたら＆デバッグ状態ではなかったら、疲れてる状態に変える
+        if (status.stamina <= STAMINA_MAX * 0.1f && isDebug != true) isTired = true;
 
         // 動いていたら実行
         if (inputMove.x != 0 || inputMove.y != 0)
@@ -114,6 +114,9 @@ public class Player : MonoBehaviour
             {
                 // 歩く速さを変更
                 status.speed = WALK_SPEED;
+
+                // 徐々にスタミナ回復
+                status.stamina += Time.deltaTime * 1.0f;
             }
 
             // ダッシュのキーが押されたとき移動する速さを変更する
@@ -126,7 +129,7 @@ public class Player : MonoBehaviour
                 status.stamina -= Time.deltaTime * 2.0f;
 
                 // Noiseをダッシュ仕様に変更
-                NoiseValue(2.0f, 1.5f);
+                NoiseValue(1.5f, 1.5f);
             }
         }
 
@@ -171,6 +174,9 @@ public class Player : MonoBehaviour
         Vector3 angle = temp.eulerAngles;
 
         float angleK = Mathf.Repeat(angle.x + 180, 360) - 180;
+
+        Debug.Log(inputCursor.x);
+        Debug.Log(angleK);
 
         if (!(angleK > -75.0f && angleK < 75.0f)) temp = transform.rotation;
 
