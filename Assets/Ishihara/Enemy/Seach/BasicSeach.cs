@@ -24,7 +24,7 @@ public class BasicSeach : ISeach
         CheckVigilance();
 
         // “Áêˆ—
-        enemyInfo = skill.Ability(info);
+        enemyInfo = skill.Ability(enemyInfo);
 
         // XV
         StatusUpdate(info);

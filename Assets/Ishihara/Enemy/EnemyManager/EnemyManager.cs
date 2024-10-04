@@ -57,7 +57,9 @@ public class EnemyManager : MonoBehaviour
             if (enemyList[i].GetNowState() != EnemyBase.State.VIGILANCE) continue;
 
             // „‘ª‚·‚é‚©‚Ç‚¤‚©
-            if (!enemyList[i].CheckPrediction()) return;
+            if (!enemyList[i].CheckPrediction()) continue;
+
+            Debug.Log("sss");
 
             // –Ú•WˆÊ’u‚ğÄİ’è
             enemyList[i].SetViaSeachData(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));

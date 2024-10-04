@@ -21,7 +21,7 @@ public class BasicTracking : ITracking
         CheckTargetLost();
 
         // “Áêˆ—
-        enemyInfo = skill.Ability(info);
+        enemyInfo = skill.Ability(enemyInfo);
 
         // ˆÚ“®
         Move();
@@ -36,8 +36,6 @@ public class BasicTracking : ITracking
     public void Init()
     {
         enemyInfo = new EnemyInfo();
-
-        vigilance = false;              // Œ©‚Â‚¯‚½
     }
 
     // Œ©¸‚Á‚½‚©‚Ç‚¤‚©
