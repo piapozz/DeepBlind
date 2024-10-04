@@ -125,8 +125,6 @@ public class GenerateStage : MonoBehaviour
 
         // NavMeshのベイク
         GetComponent<NavMeshSurface>().BuildNavMesh();
-
-        GetPredictionPlayerPos(GetStartPos() + new Vector3(0, 0, 0) * SECTION_SIZE, new Vector3(0, 0, 1));
     }
 
     // 初期化
@@ -169,16 +167,16 @@ public class GenerateStage : MonoBehaviour
     void StageLayout()
     {
         // ゴールまでのルートを担保
-        DicisionRoute();
+        DecisionRoute();
 
         // 各マスがどこにつながっているかを決める
-        DicisionSectionConnect();
+        DecisionSectionConnect();
 
         // つながっていない部屋を消す
         DeleteDisconnectedSection();
 
         // 部屋を決定する
-        DicisionRoom();
+        DecisionRoom();
 
         // 廊下を決定する
         JudgeCorridorForm();
@@ -189,7 +187,7 @@ public class GenerateStage : MonoBehaviour
 
     // スタートとゴールを決めて経路を決める関数
     // スタートから進める区画がゴールに到達できるかを判定して決めていく
-    void DicisionRoute()
+    void DecisionRoute()
     {
         // スタートとゴールの位置を決める
         int startRand = UnityEngine.Random.Range(0, WIDTH_ROOM_MAX);
@@ -408,7 +406,7 @@ public class GenerateStage : MonoBehaviour
     }
 
     // 区画がどこにつながっているか決める関数
-    void DicisionSectionConnect()
+    void DecisionSectionConnect()
     {
         // 区画を網羅
         for (int w = 0; w < creatLayout.GetLength(0); w++)
@@ -649,7 +647,7 @@ public class GenerateStage : MonoBehaviour
     }
 
     // 部屋を決定する関数
-    void DicisionRoom()
+    void DecisionRoom()
     {
         for (int w = 0; w < creatLayout.GetLength(0); w++)
         {
@@ -833,7 +831,7 @@ public class GenerateStage : MonoBehaviour
         // 部屋の配列を作る
         for (int w = 0; w < stageLayout.GetLength(0); w++)
         {
-            for (int h = 0; h < stageLayout.GetLength(1); h++)
+            for (int h = 2; h < stageLayout.GetLength(1) - 2; h++)
             {
                 if (stageLayout[w, h].type == SectionType.CrossCorridor ||
                     stageLayout[w, h].type == SectionType.OverCorridor)
@@ -983,7 +981,7 @@ public class GenerateStage : MonoBehaviour
         return GetPos(roomPos[rand][0], roomPos[rand][1]);
     }
 
-    // ランダムな部屋の座標を返す関数
+    // ランダムな廊下の座標を返す関数
     public Vector3 GetRandCorridorPos()
     {
         int rand = UnityEngine.Random.Range(0, corridorPos.Count);
@@ -1192,10 +1190,8 @@ public class GenerateStage : MonoBehaviour
 
                 // ルートを記録
                 EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
-
                 temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
                 temp.room = JudgeSectionRoom(sectionPos);
-
                 viaSeach.Add(temp);
             }
             // それ以外なら戻る
@@ -1236,7 +1232,6 @@ public class GenerateStage : MonoBehaviour
 
                 // 戻る
                 routeDir.RemoveAt(routeDir.Count - 1);
-                viaSeach.RemoveAt(viaSeach.Count - 1);
             }
         }
 
