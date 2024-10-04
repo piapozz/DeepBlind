@@ -486,6 +486,7 @@ MonoBehaviour:
   characterController: {fileID: 255332079}
   camera: {fileID: 963194225}
   hold: {fileID: 0}
+  isDebug: 0
 --- !u!143 &255332079
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2124,9 +2125,24 @@ MonoBehaviour:
     rid: 5759521710375960577
   _tracking:
     rid: 5759521710375960578
+  _seachSkill:
+    rid: -2
+  _vigilanceSkill:
+    rid: -2
+  _trackingSkill:
+    rid: -2
+  _id: 0
+  _speed: 1
+  _speedDiameter: 5
+  _animSpeed: 1
+  _threatRange: 1
+  _fieldOfView: 120
+  _viewLength: 10
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 5759521710375960576
       type: {class: BasicSeach, ns: , asm: Assembly-CSharp}
     - rid: 5759521710375960577
