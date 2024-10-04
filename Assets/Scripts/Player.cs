@@ -17,8 +17,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
 
-    const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
-    const float WALK_SPEED = 1.0f;                                  // 歩く速度
+    const float STAMINA_MAX = 50.0f;               // スタミナの最大値
+    const float WALK_SPEED = 2.5f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
 
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         public float soundRange;                                    // プレイヤーが出してしまう音の範囲
     }
 
-    PlayerStatus status;
+    public PlayerStatus status;
 
     bool isTired = false;                                           // 疲れているかを管理
 
@@ -67,8 +67,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(status.stamina);
-
         Move();
     }
 
@@ -88,7 +86,7 @@ public class Player : MonoBehaviour
         characterController.Move(moveVec * Time.deltaTime * status.speed);
 
         // スタミナを見て疲れていたら＆デバッグ状態ではなかったら、疲れてる状態に変える
-        if (status.stamina <= STAMINA_MAX * 0.1f && isDebug != true) isTired = true;
+        if (status.stamina <= 0.0f && isDebug != true) isTired = true;
 
         // 動いていたら実行
         if (inputMove.x != 0 || inputMove.y != 0)
@@ -103,10 +101,10 @@ public class Player : MonoBehaviour
                 status.speed = TIRED_SPEED;
 
                 // 徐々にスタミナ回復
-                status.stamina += Time.deltaTime * 1.0f;
+                status.stamina += Time.deltaTime * 10.0f;
 
                 // 四分の位置回復したら疲れている状態を解除
-                if (status.stamina >= STAMINA_MAX * 0.25f) isTired = false;
+                if (status.stamina >= STAMINA_MAX) isTired = false;
             }
 
             // スタミナが足りていたらただの歩き
@@ -116,7 +114,7 @@ public class Player : MonoBehaviour
                 status.speed = WALK_SPEED;
 
                 // 徐々にスタミナ回復
-                status.stamina += Time.deltaTime * 1.0f;
+                if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 1.0f;
             }
 
             // ダッシュのキーが押されたとき移動する速さを変更する
@@ -126,7 +124,7 @@ public class Player : MonoBehaviour
                 status.speed = DASH_SPEED;
 
                 // スタミナを消費
-                status.stamina -= Time.deltaTime * 2.0f;
+                status.stamina -= Time.deltaTime * 3.0f;
 
                 // Noiseをダッシュ仕様に変更
                 NoiseValue(1.5f, 1.5f);
@@ -189,6 +187,11 @@ public class Player : MonoBehaviour
         float height = transform.position.z / generateStage.GetSectionSize() + 0.5f;
 
         return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
+    }
+
+    public float GetStamina()
+    {
+        return status.stamina / STAMINA_MAX;
     }
 
     // 現在自身が出している音の範囲を返す

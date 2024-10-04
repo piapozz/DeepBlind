@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] GameObject intractUI;
     [SerializeField] GameObject miniMapUI;
     [SerializeField] GameObject compassUI;
+    [SerializeField] Image staminaBar;
+
+    [SerializeField] Player player;
 
     TextMeshProUGUI textMesh;
 
@@ -17,6 +19,11 @@ public class UIManager : MonoBehaviour
     {
         textMesh = intractUI.GetComponentInChildren<TextMeshProUGUI>();
         DisableIntractUI();
+    }
+
+    private void Update()
+    {
+        staminaBar.GetComponent<Image>().fillAmount = player.GetStamina();
     }
 
     public void DisplayIntractUI(string text)
