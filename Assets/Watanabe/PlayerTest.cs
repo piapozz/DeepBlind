@@ -17,7 +17,7 @@ public class PlayerTest : MonoBehaviour
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
 
-    const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
+    [SerializeField] const float STAMINA_MAX = 50.0f;                                // スタミナの最大値
     const float WALK_SPEED = 1.0f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = 0.2f;                                 // 疲弊しているときの速度
@@ -31,7 +31,7 @@ public class PlayerTest : MonoBehaviour
         public float soundRange;                                    // プレイヤーが出してしまう音の範囲
     }
 
-    PlayerStatus status;
+    public PlayerStatus status;
 
     bool isTired = false;                                           // 疲れているかを管理
 
