@@ -36,7 +36,17 @@ public abstract class EnemyAnimationBase : MonoBehaviour
         // アニメーター取得
         animator = animatorObj.GetComponent<Animator>();
 
+        boolAnimation = new string[]{
+            "walk",
+            "run",
+            "skill",
+        };
 
+        triggerAnimation = new string[]{
+            "scream",
+            "look",
+
+        };
     }
 
     // Update is called once per frame

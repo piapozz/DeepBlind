@@ -77,6 +77,11 @@ public class BasicTracking : ITracking
 
                 // プレイヤーの移動量を保存
                 enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
+
+                vigilance = true;
+
+                // 推測する
+                enemyInfo.status.prediction = true;
             }
             // 最後の見失った地点に到達してなお見つけられなかったら
             else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using static EnemyBase;
 
 public class BasicVigilance : IVigilance
@@ -11,6 +10,8 @@ public class BasicVigilance : IVigilance
 
     // 追跡中から警戒に移ったかで処理を変えるフラグ
     bool isViaSearch = false;
+
+    int viaNum = 0;
 
     // 状態管理フラグ
     bool search = false;
@@ -44,11 +45,18 @@ public class BasicVigilance : IVigilance
     public void Init()
     {
         enemyInfo = new EnemyInfo();
+
+        isViaSearch = enemyInfo.status.prediction;
     }
 
-    // 周りを見渡す
+
     public void CheckLookAround()
     {
+        if(enemyInfo.status.viaData[viaNum] == null) return;
+
+        // 目標地点をリスト順に格納
+        enemyInfo.status.targetPos = enemyInfo.status.viaData[viaNum].viaPosition;
+
         Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.targetPos, Color.blue, 0.01f);
 
         // プレイヤーとの間に障害物があるかどうか
@@ -73,7 +81,6 @@ public class BasicVigilance : IVigilance
         if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
             Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red, 0.01f);
-            // Debug.DrawLine(ray.origin, ray.origin + (enemyInfo.status.dir * enemyInfo.viewLength), Color.blue, 0.01f);
 
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
@@ -98,55 +105,71 @@ public class BasicVigilance : IVigilance
             }
         }
 
-        // 部屋に到着した
+        // 部屋に到着したら見渡す
         if (Vector3.Distance(enemyInfo.status.position , enemyInfo.status.targetPos) > 3.0f) return;
 
-        //// プレイヤーとの間に障害物があるかどうか
-        //Vector3 origin = enemyInfo.status.position;                                                              // 原点
-        //Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
-        //Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
+        // 見渡す
+        if(!LookAround() || !enemyInfo.status.viaData[viaNum].room) return;
 
-        //RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength))                                                 // もしRayを投射して何らかのコライダーに衝突したら
-        {
-            string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
+        // 次の巡回地点を設定
+        viaNum++;
 
-            // 視野範囲内なら
-            if (tag == "Player")
-            {
-                // 追跡継続
-
-                // プレイヤーがいたらTRACKING状態に切り替える
-                tracking = true;
-            }
-            // 初めて見失っていたら
-            else if (tag != "Player")
-            {
-                // プレイヤーがいなかったらSEARCH状態に切り替え
-                search = true;
-            }
-        }
-        else
-        {
-
-            // プレイヤーがいなかったらSEARCH状態に切り替え
-            search = true;
-        }
-
+        // 警戒終了
+        if(viaNum == enemyInfo.status.viaData.Count) search = true;
     }
 
-    private void LookAround()
+    private bool LookAround()
     {
         // 時間を計測
         time += Time.deltaTime;
 
         // 時間に従って部屋を探索
 
+
         // 回転する
 
-        // 一周したら次の探索場所へ
-        
 
+        // 一周したら次の探索場所へ
+
+        Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.targetPos, Color.blue, 0.01f);
+
+        // プレイヤーとの間に障害物があるかどうか
+        Vector3 origin = enemyInfo.status.position;                                                   // 原点
+        Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
+        Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
+
+        RaycastHit hit;
+
+        for (int i = 0; i < 100; i++)
+        {
+            float myAngle1 = Template(enemyInfo.status.dir);
+
+            Debug.DrawLine(ray.origin,
+                ray.origin + (
+                Quaternion.Euler(
+                    new Vector3(0, Mathf.Repeat(myAngle1, 360) - (enemyInfo.fieldOfView / 2) + ((enemyInfo.fieldOfView / 100) * i), 0)) * enemyInfo.status.dir * enemyInfo.viewLength),
+                Color.gray,
+                0.01f);
+        }
+
+        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        {
+            Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red, 0.01f);
+
+            string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
+
+            // プレイヤーなら
+            if (tag == "Player")
+            {
+
+                // 見つけた
+                tracking = true;
+                return false;
+                
+            }
+        }
+
+        return true;
     }
 
     // 角度計算
