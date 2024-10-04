@@ -50,6 +50,8 @@ public class BasicVigilance : IVigilance
 
     public void CheckLookAround()
     {
+        Debug.DrawLine(enemyInfo.status.position, Vector3.up * 100 , Color.yellow);
+
         if(!isViaSearch && !enemyInfo.status.prediction) return;
 
         enemyInfo.status.prediction = false;
@@ -140,20 +142,7 @@ public class BasicVigilance : IVigilance
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
         RaycastHit hit;
-
-        for (int i = 0; i < 100; i++)
-        {
-            float myAngle1 = Template(enemyInfo.status.dir);
-
-            Debug.DrawLine(ray.origin,
-                ray.origin + (
-                Quaternion.Euler(
-                    new Vector3(0, Mathf.Repeat(myAngle1, 360) - (enemyInfo.fieldOfView / 2) + ((enemyInfo.fieldOfView / 100) * i), 0)) * enemyInfo.status.dir * enemyInfo.viewLength),
-                Color.gray,
-                0.01f);
-        }
-
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        if (Physics.Raycast(ray, out hit))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
             Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red, 0.01f);
 
