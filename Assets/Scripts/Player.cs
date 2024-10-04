@@ -67,8 +67,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(status.stamina);
-
         Move();
     }
 
