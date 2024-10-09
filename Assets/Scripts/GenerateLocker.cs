@@ -8,7 +8,7 @@ public class GenerateLocker : MonoBehaviour
 
     GameObject[] lockerPlace;
 
-    float lockerProbability = 0.3f;       // ロッカー生成確率
+    [SerializeField] float lockerProbability = 0.3f;       // ロッカー生成確率
 
     void Start()
     {
