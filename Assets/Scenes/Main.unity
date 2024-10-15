@@ -498,7 +498,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1.5
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_SlopeLimit: 0
   m_StepOffset: 0
   m_SkinWidth: 0.0001
@@ -1458,6 +1458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   locker: {fileID: 4195336494632926888, guid: 9cb874383a5089b4ebeaa98da1ed44a1, type: 3}
+  lockerProbability: 1
 --- !u!1 &1186580596
 GameObject:
   m_ObjectHideFlags: 0
