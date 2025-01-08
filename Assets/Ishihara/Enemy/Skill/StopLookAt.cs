@@ -13,7 +13,6 @@ public class StopLookAt : ISkill
     // プレイヤーが敵を見つけた時、敵もプレイヤーを見つける
     public EnemyBase.EnemyInfo Ability(EnemyBase.EnemyInfo info)
     {
-        // メッシュフィルターの存在確認
         SkinnedMeshRenderer filter = mesh.GetComponent<SkinnedMeshRenderer>();
 
         // フィルターのメッシュ情報からバウンドボックスを取得する
@@ -30,10 +29,9 @@ public class StopLookAt : ISkill
         targetPoints[6] = new Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
         targetPoints[7] = bounds.max;
 
-        // 各コーナーがカメラのビューポートに収まっているかをチェック
-
         //　カメラ内にオブジェクトがあるかどうか
         bool isInsideCamera = false;
+
         //　ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
         foreach (var targetPoint in targetPoints)
         {
@@ -52,11 +50,6 @@ public class StopLookAt : ISkill
                 // レイキャストがプレイヤーに直接当たるか確認
                 if (Physics.Raycast(ray, out hit, direction.magnitude + 1))
                 {
-                    // レイを描画する
-                    // Debug.DrawLine(ray.origin, ray.origin + ray.direction * (direction.magnitude + 1), Color.green, 0.01f);
-                    Debug.DrawLine(ray.origin,hit.point, Color.green, 0.01f);
-                    
-
                     // 障害物がなく直接当たった場合に true を返す
                     if (hit.collider.CompareTag("Player"))
                     {
@@ -69,13 +62,12 @@ public class StopLookAt : ISkill
         if (isInsideCamera)
         {
             //映っていたら制止する
-            info.animator.speed = 0.0f;                        // アニメーションの再生を停止^
+           // info.animator.speed = 0.0f;                  // アニメーションの再生を停止
             info.status.isAblity = true;
-            //info.status.state = EnemyBase.State.TRACKING;
         }
         else
         {
-            info.animator.speed = info.animSpeed;   // 通常再生
+           // info.animator.speed = info.pram.animSpeed;   // 通常再生
             info.status.isAblity = false;
         }
 

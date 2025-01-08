@@ -11,7 +11,6 @@ public class HitBoxSync : MonoBehaviour
 
     private Quaternion initialLocalRotation;
 
-    // Start is called before the first frame update
     void Start()
     {
         boxCollider = GetComponent<BoxCollider>();
@@ -19,7 +18,6 @@ public class HitBoxSync : MonoBehaviour
         initialLocalRotation = transform.localRotation;
     }
 
-    // Update is called once per frame
     void Update()
     {
         // 親オブジェクトの回転を取得

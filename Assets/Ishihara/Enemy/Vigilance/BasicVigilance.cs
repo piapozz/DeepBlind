@@ -17,9 +17,6 @@ public class BasicVigilance : IVigilance
     bool search = false;
     bool tracking = false;
 
-    // 時間計測
-    float time = 0;
-
     // 行動
     public EnemyInfo Activity(EnemyInfo info, ISkill skill)
     {
@@ -48,11 +45,8 @@ public class BasicVigilance : IVigilance
         isViaSearch = false;
     }
 
-
     public void CheckLookAround()
     {
-        Debug.DrawLine(enemyInfo.status.position, Vector3.up * 100 , Color.yellow);
-
         if(!isViaSearch && !enemyInfo.status.prediction) return;
 
         enemyInfo.status.prediction = false;
@@ -61,8 +55,6 @@ public class BasicVigilance : IVigilance
         // 目標地点をリスト順に格納
         enemyInfo.status.targetPos = enemyInfo.status.viaData[viaNum].viaPosition;
 
-        Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.targetPos, Color.blue, 0.01f);
-
         // プレイヤーとの間に障害物があるかどうか
         Vector3 origin = enemyInfo.status.position;                                                   // 原点
         Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
@@ -70,35 +62,24 @@ public class BasicVigilance : IVigilance
 
         RaycastHit hit;
 
-        for (int i = 0; i < 100; i++)
-        {
-            float myAngle1 = Template(enemyInfo.status.dir);
-
-            Debug.DrawLine(ray.origin,
-                ray.origin + (
-                Quaternion.Euler(
-                    new Vector3(0, Mathf.Repeat(myAngle1, 360) - (enemyInfo.fieldOfView / 2) + ((enemyInfo.fieldOfView / 100) * i), 0)) * enemyInfo.status.dir * enemyInfo.viewLength),
-                Color.gray,
-                0.01f);
-        }
-
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        if (Physics.Raycast(ray, out hit, enemyInfo.pram.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
             // プレイヤーなら
             if (tag == "Player")
             {
-                float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
-                float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
+                float toPlayerAngle = Mathf.Atan2(enemyInfo.playerStatus.playerPos.z - enemyInfo.status.position.z,
+                                   enemyInfo.playerStatus.playerPos.x - enemyInfo.status.position.x) * Mathf.Rad2Deg;
+                float myAngle = Mathf.Atan2(enemyInfo.status.dir.z, enemyInfo.status.dir.x) * Mathf.Rad2Deg;
 
                 // 0 ~ 360にクランプ
                 toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
                 myAngle = Mathf.Repeat(myAngle, 360);
 
                 // 視野範囲内なら
-                if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
-                    myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle)
+                if (myAngle + (enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
+                    myAngle - (enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
                 {
                     // 見つけた
                     tracking = true;
@@ -125,19 +106,6 @@ public class BasicVigilance : IVigilance
     {
         if(!enemyInfo.status.viaData[viaNum].room) return true;
 
-        // 時間を計測
-        time += Time.deltaTime;
-
-        // 時間に従って部屋を探索
-
-
-        // 回転する
-
-
-        // 一周したら次の探索場所へ
-
-        Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.targetPos, Color.blue, 0.01f);
-
         // プレイヤーとの間に障害物があるかどうか
         Vector3 origin = enemyInfo.status.position;                                                   // 原点
         Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
@@ -158,26 +126,6 @@ public class BasicVigilance : IVigilance
         }
 
         return true;
-    }
-
-    // 角度計算
-    private float Template(Vector3 point1)
-    {
-        float temp;
-
-        temp = Mathf.Atan2(point1.z, point1.x);
-
-        return temp;
-    }
-
-    // 角度計算
-    private float Template(Vector3 point1, Vector3 point2)
-    {
-        float temp;
-
-        temp = Mathf.Atan2(point1.z - point2.z, point1.x - point2.x);
-
-        return temp;
     }
 
     // 目標位置の取得

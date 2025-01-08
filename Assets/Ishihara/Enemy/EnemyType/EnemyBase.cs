@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Scripting.APIUpdating;
-using System;
-using System.Windows.Input;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
-
 
 // スモーク
 // ドア固め
@@ -20,14 +15,7 @@ public abstract class EnemyBase : MonoBehaviour
     // 情報構造体 (参照用)
     public struct EnemyInfo
     {
-        public int id;                      // エネミーの識別番号
-        public float speed;                 // エネミーの速さ
-        public float speedDiameter;         // 見つけた時の速さの倍率
-        public float animSpeed;             // アニメーションの速さ
-        public float threatRange;           // 脅威範囲
-        public float viewLength;            // 視界の長さ
-        public float fieldOfView;           // 視野角
-        public Animator animator;           // アニメーター
+        public EnemyPram pram;              // 基本データ
         public EnemyStatus status;          // ステータス
         public PlayerStatus playerStatus;   // プレイヤーのステータス
     }
@@ -35,7 +23,7 @@ public abstract class EnemyBase : MonoBehaviour
     // ステータス構造体 (操作用)
     public struct EnemyStatus
     {
-        public float nowSpeed;              // エネミーの速さ
+        public float nowSpeed;              // エネミーの現在の速さ
         public Vector3 position;            // 現在位置
         public Vector3 targetPos;           // 目標位置
         public Vector3 lostPos;             // 見失った位置
@@ -94,11 +82,11 @@ public abstract class EnemyBase : MonoBehaviour
 
     [SerializeField] GameObject meshObject;     // メッシュ
 
-    protected EnemyInfo myInfo;   // ステータス
-    private State oldState;               // 一つ前のステート
+    protected EnemyInfo myInfo;             // ステータス
+    private State oldState;                 // 一つ前のステート
     protected IEnemyState enemyState;       // ステートクラス
     protected ISkill skill;                 // スキル
-    private NavMeshAgent enemyAgent;       // ナビメッシュ
+    private NavMeshAgent enemyAgent;        // ナビメッシュ
 
     // それぞれのステートクラス
     protected ISeach seach;
@@ -112,6 +100,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected string[] boolAnimation;       // boolパラメーター
     protected string[] triggerAnimation;    // triggerパラメーター
+
+    bool caught = false;
 
     void Start()
     {
@@ -130,8 +120,6 @@ public abstract class EnemyBase : MonoBehaviour
         // 行動
         Active();
 
-
-
         // ステートの切り替え処理
         StateSwitching();
 
@@ -148,16 +136,11 @@ public abstract class EnemyBase : MonoBehaviour
         // ナビメッシュ取得
         enemyAgent = GetComponent<NavMeshAgent>();
 
-        // アニメーター取得
-        myInfo.animator = GetComponent<Animator>();
-
-
+        // 参照データの初期化
         myInfo.status.position = this.transform.position;
-        myInfo.status.nowSpeed = myInfo.speed;
+        myInfo.status.nowSpeed = myInfo.pram.speed;
         myInfo.status.prediction = false;
         myInfo.status.viaData = new List<ViaSeachData>();
-
-
     }
 
     // ステートの切り替え処理
@@ -183,16 +166,14 @@ public abstract class EnemyBase : MonoBehaviour
     // ナビメッシュで移動する
     private void MoveNavAgent()
     {
+        // スキル使用中なら移動を停止
         if (myInfo.status.isAblity)
         {
             enemyAgent.velocity = Vector3.zero;
-            enemyAgent.angularSpeed = 0;
             return;
         }
-
-        enemyAgent.angularSpeed = 360;
-
-        // 以下を追加
+        
+        // エネミーが目標に対して接近すると少し減速するようにする
         if (Vector3.Distance(enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
         {
             enemyAgent.speed = myInfo.status.nowSpeed / 2;
@@ -208,7 +189,6 @@ public abstract class EnemyBase : MonoBehaviour
         enemyAgent.SetDestination(myInfo.status.targetPos);
 
         // 速度の変更
-        // enemyAgent.speed = myInfo.status.nowSpeed;
         enemyAgent.acceleration = enemyAgent.speed * 8;
 
         // 向いている方向を取得
@@ -232,7 +212,7 @@ public abstract class EnemyBase : MonoBehaviour
                 enemyState = seach;
                 skill = seachSkill;
 
-                myInfo.status.nowSpeed = myInfo.speed;
+                myInfo.status.nowSpeed = myInfo.pram.speed;
 
                 break;
 
@@ -241,7 +221,7 @@ public abstract class EnemyBase : MonoBehaviour
                 enemyState = vigilance;
                 skill = vigilanceSkill;
 
-                myInfo.status.nowSpeed = myInfo.speed * myInfo.speedDiameter / 2;
+                myInfo.status.nowSpeed = myInfo.pram.speed * myInfo.pram.speedDiameter / 2;
 
                 break;
 
@@ -250,10 +230,7 @@ public abstract class EnemyBase : MonoBehaviour
                 enemyState = tracking;
                 skill = trackingSkill;
 
-                // 発見アニメーションを流す
-
-
-                myInfo.status.nowSpeed = myInfo.speed * myInfo.speedDiameter;
+                myInfo.status.nowSpeed = myInfo.pram.speed * myInfo.pram.speedDiameter;
 
                 break;
         }
@@ -262,20 +239,23 @@ public abstract class EnemyBase : MonoBehaviour
         enemyState.Init();
     }
 
-    // プレイヤーが逃げた場所を推測するかどうか
-    public bool CheckPrediction() {return myInfo.status.prediction;}
+    // コリジョンがプレイヤーに接触していたら接触フラグを倒す
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            caught = true;
+        }
+    }
 
-    // 情報の更新
-    public void SetEnemyInfo(EnemyInfo info) { myInfo = info; }
+    // プレイヤーが逃げた場所を推測するかどうか
+    public bool CheckPrediction() { return myInfo.status.prediction; }
 
     // プレイヤー情報の更新
     public void SetPlayerStatus(PlayerStatus status) { myInfo.playerStatus = status; }
 
     // 目標位置の設定
     public void SetTargetPos(Vector3 pos) { myInfo.status.targetPos = pos; }
-
-    // 目標位置の取得
-    public Vector3 GetTargetPos() { return myInfo.status.targetPos; }
 
     // 現在のステート
     public State GetNowState() { return myInfo.status.state; }
@@ -287,8 +267,11 @@ public abstract class EnemyBase : MonoBehaviour
     public Vector3 GetLostPos() { return myInfo.status.lostPos; }
 
     // 見失った時の移動量を取得
-    public Vector3 GetLostMoveVec() {  return myInfo.status.lostMoveVec;}
+    public Vector3 GetLostMoveVec() { return myInfo.status.lostMoveVec; }
 
     // 経由探索用の情報を設定
     public void SetViaSeachData(List<ViaSeachData> vias) { myInfo.status.viaData = vias; }
+
+    // プレイヤーを捕まえたかどうか
+    public bool CheckCaught() { return caught; }
 }
