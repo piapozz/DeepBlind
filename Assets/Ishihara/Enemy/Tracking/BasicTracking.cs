@@ -36,6 +36,9 @@ public class BasicTracking : ITracking
     public void Init()
     {
         enemyInfo = new EnemyInfo();
+
+        // 警戒フラグ
+        vigilance = false;
     }
 
     // 見失ったかどうか
@@ -47,31 +50,15 @@ public class BasicTracking : ITracking
         Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
 
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength))                                                 // もしRayを投射して何らかのコライダーに衝突したら
+        if (Physics.Raycast(ray, out hit))                                                 // もしRayを投射して何らかのコライダーに衝突したら
         {
             string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
 
-            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
-            float myAngle = Template(enemyInfo.status.dir);                                                // 向いてる角度
-
-            // 0 ~ 360にクランプ
-            toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
-            myAngle = Mathf.Repeat(myAngle, 360);
-
-            // 視野範囲内なら
-            if ((myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
-                myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle) &&
-                tag == "Player")
-            {
-                // 直前まで見失っていたなら
-                if (enemyInfo.status.isTargetLost) enemyInfo.status.isTargetLost = false; // 再発見
-            }
             // 初めて見失っていたら
-            else if (enemyInfo.status.isTargetLost == false && tag != "Player")
+            if (tag != "Player")
             {
                 // ロストポジションを設定
                 enemyInfo.status.lostPos = enemyInfo.playerStatus.playerPos;
-                enemyInfo.status.isTargetLost = true;
 
                 // プレイヤーの移動量を保存
                 enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
@@ -80,38 +67,9 @@ public class BasicTracking : ITracking
 
                 // 推測する
                 enemyInfo.status.prediction = true;
-            }
-            // 最後の見失った地点に到達してなお見つけられなかったら
-            else if (Vector3.Distance(enemyInfo.status.lostPos, enemyInfo.status.position) < 2.0f && tag != "Player" && enemyInfo.status.isTargetLost)
-            {
-                vigilance = true;
-
-                // 推測する
-                enemyInfo.status.prediction = true;
-            }
-
-            if (enemyInfo.status.isTargetLost)
-            {
-                Debug.DrawLine(enemyInfo.status.position, enemyInfo.status.lostPos, Color.magenta);
+                enemyInfo.status.isTargetLost = false;
             }
         }
-    }
-    private float Template(Vector3 point1)
-    {
-        float temp;
-
-        temp = Mathf.Atan2(point1.z, point1.x);
-
-        return temp;
-    }
-
-    private float Template(Vector3 point1, Vector3 point2)
-    {
-        float temp;
-
-        temp = Mathf.Atan2(point1.z - point2.z, point1.x - point2.x);
-
-        return temp;
     }
 
     // 目標位置の取得

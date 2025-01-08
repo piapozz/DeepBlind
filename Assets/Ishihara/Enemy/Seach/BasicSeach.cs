@@ -43,66 +43,35 @@ public class BasicSeach : ISeach
     // 見つけたかどうか
     public void CheckTracking()
     {
+        RaycastHit hit;
+
         // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = enemyInfo.status.position;                                                   // 原点
+        Vector3 origin = enemyInfo.status.position;                                              // 原点
         Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
-        RaycastHit hit;
-
-        for (int i = 0; i < 100; i++)
+        if (Physics.Raycast(ray, out hit, enemyInfo.pram.viewLength + 1 , 1)) 
         {
-            float angleOffset = (-enemyInfo.fieldOfView / 2) + (enemyInfo.fieldOfView / 100) * i; // 左から右まで均等に線を引く
-            Vector3 rotatedDirection = Quaternion.Euler(0, angleOffset, 0) * enemyInfo.status.dir; // 回転して新しい方向ベクトルを計算
-            Debug.DrawLine(ray.origin, ray.origin + rotatedDirection * enemyInfo.viewLength, Color.gray, 0.01f); // 線を描画
-        }
-
-        if (Physics.Raycast(ray, out hit, enemyInfo.viewLength + 1 , 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
-        {
-            Debug.DrawLine(ray.origin, enemyInfo.status.targetPos, Color.red,0.01f);
-            // Debug.DrawLine(ray.origin, ray.origin + (enemyInfo.status.dir * enemyInfo.viewLength), Color.blue, 0.01f);
-
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
             
             if(tag != "Player") return;                                                          // プレイヤー以外なら終わる
 
-            float toPlayerAngle = Template(enemyInfo.status.position, enemyInfo.playerStatus.playerPos);   // プレイヤーへの角度
-            float myAngle = Template(enemyInfo.status.dir);                                     // 向いてる角度
+            float toPlayerAngle = Mathf.Atan2(enemyInfo.playerStatus.playerPos.z - enemyInfo.status.position.z,
+                                   enemyInfo.playerStatus.playerPos.x - enemyInfo.status.position.x) * Mathf.Rad2Deg;
+            float myAngle = Mathf.Atan2(enemyInfo.status.dir.z, enemyInfo.status.dir.x) * Mathf.Rad2Deg;
 
             // 0 ~ 360にクランプ
             toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
             myAngle = Mathf.Repeat(myAngle, 360);
 
             // 視野範囲内なら
-            if (myAngle + (enemyInfo.fieldOfView / 2) > toPlayerAngle &&
-                myAngle - (enemyInfo.fieldOfView / 2) < toPlayerAngle)
+            if (myAngle + (enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
+                myAngle - (enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
             {
                 // 見つけた
                 tracking = true;
             }
         }
-    }
-    private float Template(Vector3 point1)
-    {
-        float temp;
-
-        // point1.Normalize();
-
-        temp = Mathf.Atan2(point1.z , point1.x);
-
-        return temp;
-    }
-
-    private float Template(Vector3 point2 , Vector3 point1)
-    {
-        float temp;
-
-        // point1.Normalize();
-        // point2.Normalize();
-
-        temp = Mathf.Atan2(point1.z - point2.z , point1.x - point2.x);
-
-        return temp; 
     }
 
     // 警戒条件を満たしたかどうか
@@ -121,12 +90,6 @@ public class BasicSeach : ISeach
     // 情報の更新
     public void StatusUpdate(EnemyInfo info)
     {
-        //// 同期
-        //enemyInfo = info;
-
-        //// ステータス更新
-        //enemyInfo.status = enemyStatus;
-
         // ステートの切り替え
         if (tracking) enemyInfo.status.state = State.TRACKING;
     }

@@ -5,21 +5,15 @@ using static UnityEditor.PlayerSettings;
 
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] int managementEnemy;   // 一度に管理するエネミーの数
+    [SerializeField] int managementEnemy;               // 一度に管理するエネミーの数
+    [SerializeField] GameObject[] enemies;              // プレハブ一覧
+    [SerializeField] int[] createEnemies;               // 生成するエネミーの数と種類
+    [SerializeField] Player player;                     // プレイヤー
+    [SerializeField] GenerateStage generateStage;       // ステージの情報
 
-    [SerializeField] GameObject[] enemies;  // プレハブ一覧
+    EnemyBase.PlayerStatus playerStatus;                // 渡すプレイヤーのデータ構造体
 
-    [SerializeField] int[] createEnemies;   // 生成するエネミーの数と種類
-
-    [SerializeField] Player player;     // プレイヤー
-
-    [SerializeField] GenerateStage generateStage;
-    
-    // マップの情報
-
-    EnemyBase.PlayerStatus playerStatus;     // 渡すプレイヤーのデータ
-
-    List<EnemyBase> enemyList = new List<EnemyBase>();
+    List<EnemyBase> enemyList = new List<EnemyBase>();  // 管理する敵リスト
 
     void Start()
     {
@@ -44,7 +38,7 @@ public class EnemyManager : MonoBehaviour
         // 音の管理
 
         // 接触判定管理
-
+        HittingDecision();
     }
 
     // 警戒状態のエネミーに探索部屋を割り当てる
@@ -58,8 +52,6 @@ public class EnemyManager : MonoBehaviour
 
             // 推測するかどうか
             if (!enemyList[i].CheckPrediction()) continue;
-
-            Debug.Log("sss");
 
             // 目標位置を再設定
             enemyList[i].SetViaSeachData(generateStage.GetPredictionPlayerPos(enemyList[i].GetLostPos(), enemyList[i].GetLostMoveVec()));
@@ -76,9 +68,6 @@ public class EnemyManager : MonoBehaviour
             // 探索状態かどうか
             if (enemyList[i].GetNowState() != EnemyBase.State.SEARCH) continue;
 
-            // 警戒状態かどうか
-            // if (enemyList[i].GetNowState() != EnemyBase.State.VIGILANCE) continue;
-
             // 到達しているかどうか
             if (!enemyList[i].CheckReachingPosition()) continue;
 
@@ -91,7 +80,6 @@ public class EnemyManager : MonoBehaviour
     // エネミーの情報を更新
     private void UpdateEnemyData()
     {
-
         // プレイヤーから情報をもらう
         playerStatus.cam = player.GetCamera();
         playerStatus.playerPos = player.GetPosition();
@@ -138,5 +126,21 @@ public class EnemyManager : MonoBehaviour
 
             enemyList[i].SetTargetPos(generateStage.GetRandRoomPos());
         }
+    }
+
+    // エネミーとプレイヤーが接触しているか調べる
+    private void HittingDecision()
+    {
+        bool gameEnd = false;
+
+        // エネミーの数だけ繰り返す
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            // エネミーの接触判定を確認
+            gameEnd = enemyList[i].CheckCaught();
+        }
+
+        // ゲーム終了処理
+        if(gameEnd) { Debug.Log("終了"); }
     }
 }
