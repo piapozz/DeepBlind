@@ -5,6 +5,8 @@ using static UnityEditor.PlayerSettings;
 
 public class EnemyManager : MonoBehaviour
 {
+
+
     [SerializeField] int managementEnemy;               // 一度に管理するエネミーの数
     [SerializeField] GameObject[] enemies;              // プレハブ一覧
     [SerializeField] int[] createEnemies;               // 生成するエネミーの数と種類
@@ -36,6 +38,7 @@ public class EnemyManager : MonoBehaviour
         UpdateEnemyData();
 
         // 音の管理
+
 
         // 接触判定管理
         HittingDecision();
