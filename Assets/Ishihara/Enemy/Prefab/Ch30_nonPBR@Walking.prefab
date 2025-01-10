@@ -2055,13 +2055,7 @@ MonoBehaviour:
     rid: 7194855044197646337
   _trackingSkill:
     rid: 7194855044197646338
-  _id: 0
-  _speed: 1
-  _speedDiameter: 5
-  _animSpeed: 1
-  _threatRange: 1
-  _fieldOfView: 120
-  _viewLength: 10
+  _pram: {fileID: 11400000, guid: 5b502ee2eefbc8c418c93c8d2606654a, type: 2}
   references:
     version: 2
     RefIds:
