@@ -37,16 +37,5 @@ public class BasicEnemy : EnemyBase
         // 現在のステート、スキル初期化
         enemyState = _seach;
         skill = _seachSkill;
-
-        boolAnimation = new string[]{
-            "walk",
-            "run",
-            "skill",
-        };
-
-        triggerAnimation = new string[]{
-            "scream",
-            "look",
-        };
     }
 }

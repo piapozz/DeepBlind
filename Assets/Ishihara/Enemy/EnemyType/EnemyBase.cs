@@ -98,9 +98,6 @@ public abstract class EnemyBase : MonoBehaviour
     protected ISkill vigilanceSkill;
     protected ISkill trackingSkill;
 
-    protected string[] boolAnimation;       // boolパラメーター
-    protected string[] triggerAnimation;    // triggerパラメーター
-
     bool caught = false;
 
     void Start()
