@@ -1515,14 +1515,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186580596}
-  m_LocalRotation: {x: 0.3455709, y: -0, z: -0, w: 0.9383927}
+  m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
   m_LocalPosition: {x: 0.341, y: 1.034, z: 0.419}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 255332077}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 40.433, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!114 &1186580598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1543,6 +1543,7 @@ MonoBehaviour:
   point: {fileID: 4818000797057031904, guid: 9e1e64ae42935c043ae058d90d3b3d63, type: 3}
   player: {fileID: 255332078}
   generateStage: {fileID: 1115948082}
+  _cameraTransform: {fileID: 0}
 --- !u!64 &1186580599
 MeshCollider:
   m_ObjectHideFlags: 0

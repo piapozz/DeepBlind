@@ -26,8 +26,16 @@ public class Map : MonoBehaviour
 
     GameObject[,] miniMap;              // ミニマップの配列
 
+    [SerializeField]
+    private Transform _cameraTransform;
+
+    private readonly float _ITEM_DISTANCE = 0.5f;
+    private readonly float _ITEM_HEIGHT = 0.5f;
+
     void Start()
     {
+        _cameraTransform = Camera.main.transform;
+
         stageLayout = generateStage.GetStage();
         // 短いほうのサイズに合わせる
         if (stageLayout.GetLength(0) < stageLayout.GetLength(1))
@@ -61,6 +69,21 @@ public class Map : MonoBehaviour
 
         // 今いる区画を色付け
         //ColorMiniMap(sectionPos);
+
+        FollowCamera();
+    }
+
+    private void FollowCamera()
+    {
+        float angle = _cameraTransform.localEulerAngles.y;
+        Vector3 offset = Vector3.zero;
+        offset.x = Mathf.Sin(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
+        offset.y = -_ITEM_HEIGHT;
+        offset.z = Mathf.Cos(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
+        Debug.Log(offset);
+        Debug.Log(angle);
+        transform.position = _cameraTransform.position + offset;
+        transform.localEulerAngles = new Vector3(0, angle, 0);
     }
 
     // ミニマップを生成する関数
