@@ -443,6 +443,7 @@ GameObject:
   - component: {fileID: 255332078}
   - component: {fileID: 255332080}
   - component: {fileID: 255332081}
+  - component: {fileID: 255332082}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -638,6 +639,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: ff6def61-505e-4c21-86bd-a8de72331deb
     m_ActionName: Player/NoBreath[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255332082}
+        m_TargetAssemblyTypeName: LightManager, Assembly-CSharp
+        m_MethodName: OnSwitchLight
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4b0a4526-a35c-49fd-9f19-9cbc35a500a5
+    m_ActionName: Player/Light[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -657,6 +674,18 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.78, z: 0}
+--- !u!114 &255332082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255332076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d37b1cfa63bc4be41877c3566e540724, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &346562573
 GameObject:
   m_ObjectHideFlags: 0
@@ -2251,13 +2280,7 @@ MonoBehaviour:
     rid: -2
   _trackingSkill:
     rid: -2
-  _id: 0
-  _speed: 1
-  _speedDiameter: 5
-  _animSpeed: 1
-  _threatRange: 1
-  _fieldOfView: 120
-  _viewLength: 10
+  _pram: {fileID: 0}
   references:
     version: 2
     RefIds:
