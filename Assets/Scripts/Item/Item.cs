@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    [SerializeField] UIManager uiManager;
     [SerializeField] int itemNum;
 
     enum ItemCategory
@@ -37,11 +36,9 @@ public class Item : MonoBehaviour
                 break;
             // 地図
             case ItemCategory.Map:
-                uiManager.DisplayMap();
                 break;
             // コンパス
             case ItemCategory.Compass:
-                uiManager.DisplayCompass();
                 break;
             default: break;
         }
