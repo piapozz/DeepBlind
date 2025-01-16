@@ -80,8 +80,6 @@ public class Map : MonoBehaviour
         offset.x = Mathf.Sin(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
         offset.y = -_ITEM_HEIGHT;
         offset.z = Mathf.Cos(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
-        Debug.Log(offset);
-        Debug.Log(angle);
         transform.position = _cameraTransform.position + offset;
         transform.localEulerAngles = new Vector3(0, angle, 0);
     }
