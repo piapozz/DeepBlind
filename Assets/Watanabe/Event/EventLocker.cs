@@ -1,3 +1,10 @@
+/*
+ * @file EventLocker.cs
+ * @brief プレイヤーがロッカーに入る機能を実装する
+ * @author sein
+ * @date 2025/1/17
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,14 +23,18 @@ public class EventLocker : MonoBehaviour, IEvent
         animator = GetComponent<Animator>();
     }
 
-    // ドアの開け閉めを実行
+    /// <summary>
+    /// 実行されるイベント処理
+    /// </summary>
     public void Event()
     {
         EnableInteractUI();
         OpenDoor();
     }
 
-    // ドアの状態を見て適切なUIを表示する
+    /// <summary>
+    /// ドアの状態を見て適切なUIを描画
+    /// </summary>
     public void EnableInteractUI()
     {
         if (GetOpen() == true)
@@ -33,13 +44,17 @@ public class EventLocker : MonoBehaviour, IEvent
 
     }
 
-    // UIを非表示
+    /// <summary>
+    /// 離れたときに表示されているUIを消す
+    /// </summary>
     public void DisableInteractUI()
     {
         uiManager.DisableIntractUI();
     }
 
-    // ドアの開閉処理
+    /// <summary>
+    /// ドアの開閉処理
+    /// </summary>
     public void OpenDoor()
     {
         if (animator.GetBool("open") == true)
@@ -48,7 +63,9 @@ public class EventLocker : MonoBehaviour, IEvent
             animator.SetBool("open", true);
     }
 
-    // openのアニメーションの状態を見てBoolを返す
+    /// <summary>
+    /// Animatorの状態を返す
+    /// </summary>
     public bool GetOpen()
     {
         return animator.GetBool("open");
