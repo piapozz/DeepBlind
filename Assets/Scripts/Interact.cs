@@ -1,3 +1,10 @@
+/*
+ * @file Interact.cs
+ * @brief インタラクトが押されたときに適切な処理を実行する機能を実装
+ * @author sein
+ * @date 2025/1/17
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +17,6 @@ public class Interact : MonoBehaviour
     bool inputStay = false;                 // 入力を受け付けるかを管理する
 
     public bool interact = false;
-
-    private void Update()
-    {
-
-    }
 
     // ActionsのFireに登録されているキーが押されたときに入力値を取得
     public void OnFire(InputValue inputValue)
