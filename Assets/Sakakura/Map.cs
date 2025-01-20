@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Map : MonoBehaviour
+public class Map : Item
 {
     [SerializeField] GameObject room;
     [SerializeField] GameObject ICorridor;
@@ -26,16 +26,8 @@ public class Map : MonoBehaviour
 
     GameObject[,] miniMap;              // ミニマップの配列
 
-    [SerializeField]
-    private Transform _cameraTransform;
-
-    private readonly float _ITEM_DISTANCE = 0.5f;
-    private readonly float _ITEM_HEIGHT = 0.5f;
-
-    void Start()
+    protected override void Init()
     {
-        _cameraTransform = Camera.main.transform;
-
         stageLayout = generateStage.GetStage();
         // 短いほうのサイズに合わせる
         if (stageLayout.GetLength(0) < stageLayout.GetLength(1))
@@ -56,7 +48,7 @@ public class Map : MonoBehaviour
         GenerateMap();
     }
 
-    void Update()
+    protected override void Proc()
     {
         // プレイヤーの座標を取得
         Vector2Int sectionPos = generateStage.GetNowSection(player.GetPosition());
@@ -66,26 +58,10 @@ public class Map : MonoBehaviour
 
         // 赤点の更新
         PointMiniMap(sectionPos);
-
-        // 今いる区画を色付け
-        //ColorMiniMap(sectionPos);
-
-        FollowCamera();
-    }
-
-    private void FollowCamera()
-    {
-        float angle = _cameraTransform.localEulerAngles.y;
-        Vector3 offset = Vector3.zero;
-        offset.x = Mathf.Sin(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
-        offset.y = -_ITEM_HEIGHT;
-        offset.z = Mathf.Cos(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
-        transform.position = _cameraTransform.position + offset;
-        transform.localEulerAngles = new Vector3(0, angle, 0);
     }
 
     // ミニマップを生成する関数
-    void GenerateMap()
+    private void GenerateMap()
     {
         // 赤点を生成
         /*
@@ -157,7 +133,7 @@ public class Map : MonoBehaviour
     }
 
     // 区画の座標からローカルの座標に変換する関数
-    Vector3 ChangeLocalPosition(Vector2Int pos)
+    private Vector3 ChangeLocalPosition(Vector2Int pos)
     {
         // 座標指定
         Vector3 adjust =
@@ -168,48 +144,21 @@ public class Map : MonoBehaviour
     }
 
     // 区画に入ったときに表示する関数
-    void DisplaySection(Vector2Int pos)
+    private void DisplaySection(Vector2Int pos)
     {
         // 配列外なら参照しない
         if (pos.x < 0 || pos.x > miniMap.GetLength(0) - 1 ||
             pos.y < 0 || pos.y > miniMap.GetLength(1) - 1)
             return;
+
+        if (miniMap[pos.x, pos.y] == null) return;
 
         if (miniMap[pos.x, pos.y].activeSelf == false)
             miniMap[pos.x, pos.y].SetActive(true);
     }
 
-    // 今いる場所に色を付ける関数
-    void ColorMiniMap(Vector2Int pos)
-    {
-        // 配列外なら参照しない
-        if (pos.x < 0 || pos.x > miniMap.GetLength(0) - 1 ||
-            pos.y < 0 || pos.y > miniMap.GetLength(1) - 1)
-            return;
-
-        // すべての区画を見る
-        for (int w = 0; w < miniMap.GetLength(0); w++)
-        {
-            for (int h = 0; h < miniMap.GetLength(1); h++)
-            {
-                Color color;
-
-                // 今いる区画なら
-                if (w == pos.x && h == pos.y)
-                    color = Color.green;
-                else
-                    color = Color.white;
-
-                // ミニマップがあるなら
-                if (miniMap[w, h] != null)
-                    // 色を変える
-                    miniMap[w, h].GetComponent<Image>().color = color;
-            }
-        }
-    }
-
     // 今いる場所を赤点で表示する関数
-    void PointMiniMap(Vector2Int pos)
+    private void PointMiniMap(Vector2Int pos)
     {
         // プレイヤーの座標をマップ上の座標に変換
         Vector3 pointPos = ChangeLocalPosition(pos);

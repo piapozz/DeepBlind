@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public abstract class Item : MonoBehaviour
 {
-    [SerializeField] int itemNum;
+    private readonly float _ITEM_DISTANCE = 0.5f;
+    private readonly float _ITEM_HEIGHT = 0.5f;
+
+    private Transform _cameraTransform = null;
+
 
     enum ItemCategory
     {
@@ -16,31 +20,31 @@ public class Item : MonoBehaviour
         Max
     }
 
-    // アイテムを入手する関数
-    void GetItem()
+    protected abstract void Init();
+    protected abstract void Proc();
+
+    private void Start()
     {
-        // アタッチされているアイテムの番号で分岐
-        switch ((ItemCategory)itemNum)
-        {
-            // バッテリーS
-            case ItemCategory.BatteryS:
+        Init();
 
-                break;
-            // バッテリーL
-            case ItemCategory.BatteryL:
+        _cameraTransform = Camera.main.transform;
+    }
 
-                break;
-            // 薬
-            case ItemCategory.Medicine:
+    private void Update()
+    {
+        Proc();
 
-                break;
-            // 地図
-            case ItemCategory.Map:
-                break;
-            // コンパス
-            case ItemCategory.Compass:
-                break;
-            default: break;
-        }
+        FollowCamera();
+    }
+
+    private void FollowCamera()
+    {
+        float angle = _cameraTransform.localEulerAngles.y;
+        Vector3 offset = Vector3.zero;
+        offset.x = Mathf.Sin(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
+        offset.y = -_ITEM_HEIGHT;
+        offset.z = Mathf.Cos(angle * Mathf.Deg2Rad) * _ITEM_DISTANCE;
+        transform.position = _cameraTransform.position + offset;
+        transform.localEulerAngles = new Vector3(0, angle, 0);
     }
 }
