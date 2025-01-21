@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Item : MonoBehaviour
+public abstract class ItemBase : MonoBehaviour
 {
     private readonly float _ITEM_DISTANCE = 0.5f;
     private readonly float _ITEM_HEIGHT = 0.5f;
 
     private Transform _cameraTransform = null;
-
 
     enum ItemCategory
     {
