@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Compass : Item
+public class Compass : ItemBase
 {
     [SerializeField] Transform player;
     [SerializeField] GenerateStage generateStage;
