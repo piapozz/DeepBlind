@@ -3,44 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Map : Item
+public class Map : ItemBase
 {
+    [SerializeField]
+    private Transform _sectionRoot;
+    [SerializeField]
+    private Transform _pointRoot;
+
     [SerializeField] GameObject room;
     [SerializeField] GameObject ICorridor;
     [SerializeField] GameObject LCorridor;
     [SerializeField] GameObject TCorridor;
     [SerializeField] GameObject XCorridor;
     [SerializeField] GameObject point;
-    [SerializeField] Player player;
 
-    [SerializeField] GenerateStage generateStage;
+    private readonly float EDGE_MARGIN_RATE = 0.1f;        // 余白の比率
+    private readonly float POINT_SIZE_RATE = 0.05f;        // 赤点の大きさの比率
 
-    float miniMapSize;                  // ミニマップの大きさ
-    float edgeMargin;                   // 余白の大きさ
-    float sectionSize;                  // 区画の大きさ
-    float edgeMarginRate = 0.1f;        // 余白の比率
-    float pointSizeRate = 0.05f;        // 赤点の大きさの比率
+    private float _miniMapSize;     // ミニマップの大きさ
+    private float _edgeMargin;      // 余白の大きさ
+    private float _sectionSize;     // 区画の大きさ
 
     GenerateStage.Section[,] stageLayout;
     GameObject pointObj;
 
-    GameObject[,] miniMap;              // ミニマップの配列
+    GameObject[,] miniMap;          // ミニマップの配列
 
     protected override void Init()
     {
-        stageLayout = generateStage.GetStage();
+        stageLayout = GenerateStage.instance.GetStage();
         // 短いほうのサイズに合わせる
         if (stageLayout.GetLength(0) < stageLayout.GetLength(1))
         {
-            miniMapSize = transform.localScale.x;
-            edgeMargin = miniMapSize * edgeMarginRate;
-            sectionSize = (1 - edgeMargin) / stageLayout.GetLength(1);
+            _miniMapSize = transform.localScale.x;
+            _edgeMargin = _miniMapSize * EDGE_MARGIN_RATE;
+            _sectionSize = (1 - _edgeMargin) / stageLayout.GetLength(1);
         }
         else
         {
-            miniMapSize = transform.localScale.y;
-            edgeMargin = miniMapSize * edgeMarginRate;
-            sectionSize = (1 - edgeMargin) / stageLayout.GetLength(0);
+            _miniMapSize = transform.localScale.y;
+            _edgeMargin = _miniMapSize * EDGE_MARGIN_RATE;
+            _sectionSize = (1 - _edgeMargin) / stageLayout.GetLength(0);
         }
 
         miniMap = new GameObject[stageLayout.GetLength(0), stageLayout.GetLength(1)];
@@ -51,23 +54,23 @@ public class Map : Item
     protected override void Proc()
     {
         // プレイヤーの座標を取得
-        Vector2Int sectionPos = generateStage.GetNowSection(player.GetPosition());
+        Vector3 playerPos = Player.instance.GetPosition();
+        Vector2Int sectionPos = GenerateStage.instance.GetNowSection(playerPos);
 
         // 通過した区画を表示
         DisplaySection(sectionPos);
 
         // 赤点の更新
-        PointMiniMap(sectionPos);
+        PointMiniMap(playerPos);
     }
 
     // ミニマップを生成する関数
     private void GenerateMap()
     {
         // 赤点を生成
-        /*
-        pointObj = Instantiate(point, ChangeLocalPosition(player.GetNowSection()), Quaternion.identity, gameObject.transform);
-        pointObj.transform.localScale = new Vector3(pointSizeRate, pointSizeRate, 1);
-        */
+        Quaternion genPointRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        pointObj = Instantiate(point, ChangeSectionToLocalPosition(Player.instance.GetNowSection(), _pointRoot), genPointRot, _pointRoot);
+        pointObj.transform.localScale = new Vector3(POINT_SIZE_RATE, POINT_SIZE_RATE, 1);
 
         // 順番に生成
         for (int w = 0; w < stageLayout.GetLength(0); w++)
@@ -113,18 +116,17 @@ public class Map : Item
                 }
 
                 // 座標指定
-                Vector3 genPos = ChangeLocalPosition(new Vector2Int(w, h));
+                Vector3 genPos = ChangeSectionToLocalPosition(new Vector2Int(w, h), _sectionRoot);
 
                 // 回転指定
-                //Quaternion genRot = Quaternion.Euler(0, 0, -90 * (int)stageLayout[w, h].rotate);
                 Quaternion genRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -90 * (int)stageLayout[w, h].rotate);
                 // 生成
-                GameObject genObj = Instantiate(genImage, genPos, genRot, gameObject.transform);
+                GameObject genObj = Instantiate(genImage, genPos, genRot, _sectionRoot);
 
                 miniMap[w, h] = genObj;
 
                 // 大きさ
-                genObj.transform.localScale = new Vector3(sectionSize, sectionSize, 1);
+                genObj.transform.localScale = new Vector3(_sectionSize, _sectionSize, 1);
 
                 // 非表示にする
                 genObj.SetActive(false);
@@ -133,13 +135,24 @@ public class Map : Item
     }
 
     // 区画の座標からローカルの座標に変換する関数
-    private Vector3 ChangeLocalPosition(Vector2Int pos)
+    private Vector3 ChangeSectionToLocalPosition(Vector2Int pos, Transform parent)
     {
         // 座標指定
         Vector3 adjust =
-              new Vector3(sectionSize / 2 + edgeMargin / 2, sectionSize / 2 + edgeMargin / 2, -0.01f)
+              new Vector3(_sectionSize / 2 + _edgeMargin / 2, _sectionSize / 2 + _edgeMargin / 2, 0)
             - new Vector3(1, 1, 0) / 2;
-        Vector3 genPos = transform.TransformPoint(new Vector3(pos.x, pos.y, 0) * sectionSize + adjust);
+        Vector3 genPos = parent.TransformPoint(new Vector3(pos.x, pos.y, 0) * _sectionSize + adjust);
+        return genPos;
+    }
+
+    // ワールド座標からローカルの座標に変換する関数
+    private Vector3 ChangeWorldToLocalPosition(Vector3 pos, Transform parent)
+    {
+        // 座標指定
+        Vector3 adjust =
+              new Vector3(_sectionSize / 2 + _edgeMargin / 2, _sectionSize / 2 + _edgeMargin / 2, 0)
+            - new Vector3(1, 1, 0) / 2;
+        Vector3 genPos = parent.TransformPoint(new Vector3(pos.x, pos.z, 0) * _sectionSize / 10 + adjust);
         return genPos;
     }
 
@@ -158,11 +171,11 @@ public class Map : Item
     }
 
     // 今いる場所を赤点で表示する関数
-    private void PointMiniMap(Vector2Int pos)
+    private void PointMiniMap(Vector3 pos)
     {
         // プレイヤーの座標をマップ上の座標に変換
-        Vector3 pointPos = ChangeLocalPosition(pos);
+        Vector3 pointPos = ChangeWorldToLocalPosition(pos, _pointRoot);
 
-        //pointObj.transform.position = pointPos;
+        pointObj.transform.position = pointPos;
     }
 }

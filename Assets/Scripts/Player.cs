@@ -9,7 +9,8 @@ using static UnityEngine.EventSystems.StandaloneInputModule;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] GenerateStage generateStage;
+    public static Player instance { get; private set; } = null;
+
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
     CinemachineVirtualCamera virtualCamera;                         // êßå‰ëŒè€ÇÃÉJÉÅÉâ
@@ -45,6 +46,8 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
+
         // Virtual Camera éÊìæ
         virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
@@ -61,7 +64,7 @@ public class Player : MonoBehaviour
     {
         status.stamina = STAMINA_MAX;
 
-        transform.position = generateStage.GetStartPos() + offsetGenPos;
+        transform.position = GenerateStage.instance.GetStartPos() + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -183,8 +186,8 @@ public class Player : MonoBehaviour
     // Ç«ÇÃãÊâÊÇ…Ç¢ÇÈÇ©Çï‘Ç∑ä÷êî
     public Vector2Int GetNowSection()
     {
-        float width = transform.position.x / generateStage.GetSectionSize() + 0.5f;
-        float height = transform.position.z / generateStage.GetSectionSize() + 0.5f;
+        float width = transform.position.x / GenerateStage.instance.GetSectionSize() + 0.5f;
+        float height = transform.position.z / GenerateStage.instance.GetSectionSize() + 0.5f;
 
         return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
     }

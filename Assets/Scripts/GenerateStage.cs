@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 
 public class GenerateStage : MonoBehaviour
 {
+    public static GenerateStage instance { get; private set; } = null;
+
     // ステージを格納する空オブジェクト
     [SerializeField] Transform stage;
     // ステージの部品のプレハブ
@@ -114,6 +116,8 @@ public class GenerateStage : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
+
         // 初期化
         Init();
 
