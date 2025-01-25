@@ -5,19 +5,22 @@ using static EnemyBase;
 
 public class BasicVigilance : IVigilance
 {
-    // 更新する情報
-    EnemyInfo enemyInfo;
+    /// 更新する情報
+    private EnemyInfo _enemyInfo;
 
     // 追跡中から警戒に移ったかで処理を変えるフラグ
-    bool isViaSearch = false;
-
-    int viaNum = 0;
+    private bool _isViaSearch = false;
 
     // 状態管理フラグ
-    bool search = false;
-    bool tracking = false;
+    private bool _search = false;
+    private bool _tracking = false;
 
-    // 行動
+    /// <summary>
+    /// 行動
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="skill"></param>
+    /// <returns></returns>
     public EnemyInfo Activity(EnemyInfo info, ISkill skill)
     {
         // 取得
@@ -27,7 +30,7 @@ public class BasicVigilance : IVigilance
         CheckLookAround();
 
         // 特殊処理
-        enemyInfo = skill.Ability(enemyInfo);
+        _enemyInfo = skill.Ability(_enemyInfo);
 
         // 更新
         StatusUpdate();
@@ -35,60 +38,62 @@ public class BasicVigilance : IVigilance
         // 移動
         Move();
 
-        return enemyInfo;
+        return _enemyInfo;
     }
 
-    // 初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Init()
     {
-        enemyInfo = new EnemyInfo();
-        isViaSearch = false;
+        _enemyInfo = new EnemyInfo();
+        _isViaSearch = false;
     }
 
     public void CheckLookAround()
     {
-        if(!isViaSearch && !enemyInfo.status.prediction) return;
+        if(!_isViaSearch && !_enemyInfo.status.prediction) return;
 
-        enemyInfo.status.prediction = false;
-        isViaSearch = true;
+        _enemyInfo.status.prediction = false;
+        _isViaSearch = true;
 
         // 目標地点をリスト順に格納
-        enemyInfo.status.targetPos = enemyInfo.status.viaData[viaNum].viaPosition;
+        _enemyInfo.status.targetPos = _enemyInfo.status.viaData[viaNum].viaPosition;
 
         // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = enemyInfo.status.position;                                                   // 原点
-        Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
+        Vector3 origin = _enemyInfo.status.position;                                                   // 原点
+        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, enemyInfo.pram.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        if (Physics.Raycast(ray, out hit, _enemyInfo.pram.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
         {
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
             // プレイヤーなら
             if (tag == "Player")
             {
-                float toPlayerAngle = Mathf.Atan2(enemyInfo.playerStatus.playerPos.z - enemyInfo.status.position.z,
-                                   enemyInfo.playerStatus.playerPos.x - enemyInfo.status.position.x) * Mathf.Rad2Deg;
-                float myAngle = Mathf.Atan2(enemyInfo.status.dir.z, enemyInfo.status.dir.x) * Mathf.Rad2Deg;
+                float toPlayerAngle = Mathf.Atan2(_enemyInfo.playerStatus.playerPos.z - _enemyInfo.status.position.z,
+                                   _enemyInfo.playerStatus.playerPos.x - _enemyInfo.status.position.x) * Mathf.Rad2Deg;
+                float myAngle = Mathf.Atan2(_enemyInfo.status.dir.z, _enemyInfo.status.dir.x) * Mathf.Rad2Deg;
 
                 // 0 ~ 360にクランプ
                 toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
                 myAngle = Mathf.Repeat(myAngle, 360);
 
                 // 視野範囲内なら
-                if (myAngle + (enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
-                    myAngle - (enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
+                if (myAngle + (_enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
+                    myAngle - (_enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
                 {
                     // 見つけた
-                    tracking = true;
+                    _tracking = true;
                 }
             }
         }
 
         // 部屋に到着したら見渡す
-        if (Vector3.Distance(enemyInfo.status.position , enemyInfo.status.targetPos) > 3.0f) return;
+        if (Vector3.Distance(_enemyInfo.status.position , _enemyInfo.status.targetPos) > 3.0f) return;
 
         // 見渡す
         if(!LookAround()) return;
@@ -96,19 +101,19 @@ public class BasicVigilance : IVigilance
         // 次の巡回地点を設定
         viaNum++;
 
-        Debug.Log("経由地点" + viaNum + "/" + enemyInfo.status.viaData.Count + "通過");
+        Debug.Log("経由地点" + viaNum + "/" + _enemyInfo.status.viaData.Count + "通過");
 
         // 警戒終了
-        if(viaNum == enemyInfo.status.viaData.Count) search = true;
+        if(viaNum == _enemyInfo.status.viaData.Count) _search = true;
     }
 
     private bool LookAround()
     {
-        if(!enemyInfo.status.viaData[viaNum].room) return true;
+        if(!_enemyInfo.status.viaData[viaNum].room) return true;
 
         // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = enemyInfo.status.position;                                                   // 原点
-        Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
+        Vector3 origin = _enemyInfo.status.position;                                                   // 原点
+        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
         RaycastHit hit;
@@ -120,7 +125,7 @@ public class BasicVigilance : IVigilance
             if (tag == "Player")
             {
                 // 見つけた
-                tracking = true;
+                _tracking = true;
                 return false;
             }
         }
@@ -132,15 +137,15 @@ public class BasicVigilance : IVigilance
     public void GetTarget(EnemyInfo info)
     {
         // ターゲットの情報取得
-        enemyInfo = info;
+        _enemyInfo = info;
     }
 
     // 情報の更新
     public void StatusUpdate()
     {
         // ステートの切り替え
-        if (search) enemyInfo.status.state = State.SEARCH;
-        if (tracking) enemyInfo.status.state = State.TRACKING;
+        if (_search) _enemyInfo.status.state = State.SEARCH;
+        if (_tracking) _enemyInfo.status.state = State.TRACKING;
     }
 
     // 移動

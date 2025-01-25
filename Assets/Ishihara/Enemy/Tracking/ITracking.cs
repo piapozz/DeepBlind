@@ -4,15 +4,24 @@ using UnityEngine;
 
 public interface ITracking : IEnemyState
 {
-    // 目標位置の取得
+    /// <summary>
+    /// 目標位置の取得
+    /// </summary>
+    /// <param name="info"></param>
     public void GetTarget(EnemyBase.EnemyInfo info);
 
-    // 見失ったかどうか
+    /// <summary>
+    /// 見失ったかどうか
+    /// </summary>
     public void CheckTargetLost();
 
-    // 移動
+    /// <summary>
+    /// 移動
+    /// </summary>
     public void Move();
 
-    // 情報の更新
+    /// <summary>
+    /// 情報の更新
+    /// </summary>
     public void StatusUpdate();
 }

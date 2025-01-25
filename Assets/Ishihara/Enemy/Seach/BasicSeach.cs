@@ -7,11 +7,16 @@ using static UnityEngine.UI.GridLayoutGroup;
 
 public class BasicSeach : ISeach
 {
-    EnemyInfo enemyInfo = new EnemyInfo();
+    private EnemyInfo _enemyInfo = new EnemyInfo();
     
-    bool tracking;              // 見つけた
+    private bool _tracking;              // 見つけた
 
-    // 行動
+    /// <summary>
+    /// 行動
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="skill"></param>
+    /// <returns></returns>
     public EnemyInfo Activity(EnemyInfo info , ISkill skill)
     {
         // 取得
@@ -24,53 +29,73 @@ public class BasicSeach : ISeach
         CheckVigilance();
 
         // 特殊処理
-        enemyInfo = skill.Ability(enemyInfo);
+        _enemyInfo = skill.Ability(_enemyInfo);
+
+        // 仮目標地点にたどり着いたかどうか
+        CheckReaching();
 
         // 更新
         StatusUpdate(info);
 
-        return enemyInfo;
+        return _enemyInfo;
     }
 
-    // 初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Init()
     {
-        enemyInfo = new EnemyInfo();
+        _enemyInfo = new EnemyInfo();
 
-        tracking = false;              // 見つけた
+        _tracking = false;              // 見つけた
+
+        // 探索箇所をランダムに設定する
+        _enemyInfo.status.targetPos = EnemyManager.Instance.DispatchTargetPosition();
     }
 
-    // 見つけたかどうか
-    public void CheckTracking()
+    /// <summary>
+    /// 見つけたかどうか
+    /// </summary>
+    private void CheckTracking()
     {
         RaycastHit hit;
 
         // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = enemyInfo.status.position;                                              // 原点
-        Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
+        Vector3 origin = _enemyInfo.status.position;                                              // 原点
+        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
-        if (Physics.Raycast(ray, out hit, enemyInfo.pram.viewLength + 1 , 1)) 
+        if (Physics.Raycast(ray, out hit, _enemyInfo.pram.viewLength + 1 , 1)) 
         {
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
             
             if(tag != "Player") return;                                                          // プレイヤー以外なら終わる
 
-            float toPlayerAngle = Mathf.Atan2(enemyInfo.playerStatus.playerPos.z - enemyInfo.status.position.z,
-                                   enemyInfo.playerStatus.playerPos.x - enemyInfo.status.position.x) * Mathf.Rad2Deg;
-            float myAngle = Mathf.Atan2(enemyInfo.status.dir.z, enemyInfo.status.dir.x) * Mathf.Rad2Deg;
+            float toPlayerAngle = Mathf.Atan2(_enemyInfo.playerStatus.playerPos.z - _enemyInfo.status.position.z,
+                                   _enemyInfo.playerStatus.playerPos.x - _enemyInfo.status.position.x) * Mathf.Rad2Deg;
+            float myAngle = Mathf.Atan2(_enemyInfo.status.dir.z, _enemyInfo.status.dir.x) * Mathf.Rad2Deg;
 
             // 0 ~ 360にクランプ
             toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
             myAngle = Mathf.Repeat(myAngle, 360);
 
             // 視野範囲内なら
-            if (myAngle + (enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
-                myAngle - (enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
+            if (myAngle + (_enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
+                myAngle - (_enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
             {
                 // 見つけた
-                tracking = true;
+                _tracking = true;
             }
+        }
+    }
+
+    // 仮目標地点にたどり着いたかどうか
+    private void CheckReaching()
+    { 
+        if((Vector3.Distance(_enemyInfo.status.targetPos, _enemyInfo.status.position) < 2.0f) && (!_enemyInfo.status.isAblity))
+        {
+            // 探索箇所をランダムに設定する
+            _enemyInfo.status.targetPos = EnemyManager.Instance.DispatchTargetPosition();
         }
     }
 
@@ -80,18 +105,24 @@ public class BasicSeach : ISeach
 
     }
 
-    // 目標位置の取得
+    /// <summary>
+    /// 目標位置の取得
+    /// </summary>
+    /// <param name="info"></param>
     public void GetTarget(EnemyInfo info)
     {
         // ターゲットの情報取得
-        enemyInfo = info; 
+        _enemyInfo = info; 
     }
 
-    // 情報の更新
+    /// <summary>
+    /// 情報の更新
+    /// </summary>
+    /// <param name="info"></param>
     public void StatusUpdate(EnemyInfo info)
     {
         // ステートの切り替え
-        if (tracking) enemyInfo.status.state = State.TRACKING;
+        if (_tracking) _enemyInfo.status.state = State.TRACKING;
     }
 
 }

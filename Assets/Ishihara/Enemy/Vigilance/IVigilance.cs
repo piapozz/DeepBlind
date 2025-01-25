@@ -5,15 +5,24 @@ using static EnemyBase;
 
 public interface IVigilance : IEnemyState
 {
-    // 目標位置の取得
+    /// <summary>
+    /// 目標位置の取得
+    /// </summary>
+    /// <param name="info"></param>
     public void GetTarget(EnemyInfo info);
 
-    // 完全に見失ったかどうか
+    /// <summary>
+    /// 完全に見失ったかどうか
+    /// </summary>
     public void CheckLookAround();
 
-    // 移動
+    /// <summary>
+    /// 移動
+    /// </summary>
     public void Move();
 
-    // 情報の更新
+    /// <summary>
+    /// 情報の更新
+    /// </summary>
     public void StatusUpdate();
 }

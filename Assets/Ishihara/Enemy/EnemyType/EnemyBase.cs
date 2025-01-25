@@ -26,17 +26,12 @@ public abstract class EnemyBase : MonoBehaviour
         public float nowSpeed;              // エネミーの現在の速さ
         public Vector3 position;            // 現在位置
         public Vector3 targetPos;           // 目標位置
-        public Vector3 lostPos;             // 見失った位置
-        public bool isTargetLost;           // 見失っているかどうか
         public Vector3 dir;                 // 進行方向
         public State state;                 // 現在のステート
         public bool isAblity;               // アビリティ中
-        public Vector3 lostMoveVec;         // 見失った時のプレイヤーの移動量
-        public bool prediction;             // 推測
-        public List<ViaSeachData> viaData;  // 経由探索用データ
     }
 
-    // 部屋の経由探索用の情報構造体
+    /// 部屋の経由探索用の情報構造体
     public struct ViaSeachData
     {
         public Vector3 viaPosition;        // 経由地点の座標
@@ -48,7 +43,6 @@ public abstract class EnemyBase : MonoBehaviour
     {
         public Camera cam;          // カメラ
         public Vector3 playerPos;   // プレイヤーの位置
-        public Vector3 moveValue;   // プレイヤーの移動量
     }
 
     // ステート
@@ -61,32 +55,12 @@ public abstract class EnemyBase : MonoBehaviour
         MAX
     }
 
-    // アニメーション
-    public enum BoolAnimation
-    {
-        WALKING,        // 歩行
-        RUNNING,        // 走行
-        SKILL,          // スキル使用時
-
-        MAX
-    }
-
-    // アニメーション
-    public enum TriggerAnimation
-    {
-        SCREAM,         // 発見
-        LOOKING,        // 見渡し
-
-        MAX
-    }
-
-    [SerializeField] GameObject meshObject;     // メッシュ
-
     protected EnemyInfo myInfo;             // ステータス
-    private State oldState;                 // 一つ前のステート
     protected IEnemyState enemyState;       // ステートクラス
     protected ISkill skill;                 // スキル
-    private NavMeshAgent enemyAgent;        // ナビメッシュ
+    private State _oldState;                 // 一つ前のステート
+    private NavMeshAgent _enemyAgent;        // ナビメッシュ
+    private Animator _animator;             // アニメーター
 
     // それぞれのステートクラス
     protected ISeach seach;
@@ -124,81 +98,95 @@ public abstract class EnemyBase : MonoBehaviour
 
     }
 
-    // 初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     private void BaseInit()
     {
         // ステート初期化
-        oldState = myInfo.status.state = State.SEARCH;
+        _oldState = myInfo.status.state = State.SEARCH;
 
         // ナビメッシュ取得
-        enemyAgent = GetComponent<NavMeshAgent>();
+        _enemyAgent = GetComponent<NavMeshAgent>();
+
+        // アニメーターの取得
+        _animator = GetComponent<Animator>();
 
         // 参照データの初期化
         myInfo.status.position = this.transform.position;
         myInfo.status.nowSpeed = myInfo.pram.speed;
-        myInfo.status.prediction = false;
-        myInfo.status.viaData = new List<ViaSeachData>();
     }
 
-    // ステートの切り替え処理
+    /// <summary>
+    /// ステートの切り替え処理
+    /// </summary>
     private void StateSwitching()
     {
         // 切り替わっていたら
-        if (oldState == myInfo.status.state) return;
+        if (_oldState == myInfo.status.state) return;
 
         // 更新
-        oldState = myInfo.status.state;
+        _oldState = myInfo.status.state;
 
         // 切り替え処理
         StateChange(myInfo.status.state);
     }
 
-    // 行動
+    /// <summary>
+    /// 行動
+    /// </summary>
     public void Active()
     {
         // 行動(情報を渡して更新)
         myInfo = enemyState.Activity(myInfo, skill);
     }
 
-    // ナビメッシュで移動する
+    /// <summary>
+    /// ナビメッシュで移動する
+    /// </summary>
     private void MoveNavAgent()
     {
         // スキル使用中なら移動を停止
         if (myInfo.status.isAblity)
         {
-            enemyAgent.velocity = Vector3.zero;
+            _enemyAgent.velocity = Vector3.zero;
             return;
         }
         
         // エネミーが目標に対して接近すると少し減速するようにする
-        if (Vector3.Distance(enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
+        if (Vector3.Distance(_enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
         {
-            enemyAgent.speed = myInfo.status.nowSpeed / 2;
+            _enemyAgent.speed = myInfo.status.nowSpeed / 2;
         }
         else
         {
-            enemyAgent.speed = myInfo.status.nowSpeed;
+            _enemyAgent.speed = myInfo.status.nowSpeed;
         }
 
-        enemyAgent.velocity = (enemyAgent.steeringTarget - myInfo.status.position).normalized * enemyAgent.speed;
+        _enemyAgent.velocity = (_enemyAgent.steeringTarget - myInfo.status.position).normalized * _enemyAgent.speed;
 
         // 目標位置を設定
-        enemyAgent.SetDestination(myInfo.status.targetPos);
+        _enemyAgent.SetDestination(myInfo.status.targetPos);
 
         // 速度の変更
-        enemyAgent.acceleration = enemyAgent.speed * 8;
+        _enemyAgent.acceleration = _enemyAgent.speed * 8;
 
         // 向いている方向を取得
-        myInfo.status.dir = Vector3.Normalize(enemyAgent.nextPosition - myInfo.status.position);
+        myInfo.status.dir = Vector3.Normalize(_enemyAgent.nextPosition - myInfo.status.position);
 
         // 現在の座標を取得
         myInfo.status.position = this.transform.position;
     }
 
-    // 初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public abstract void Init();
 
-    // ステートとスキルの切り替え処理
+    /// <summary>
+    /// ステートとスキルの切り替え処理
+    /// </summary>
+    /// <param name="state"></param>
     public void StateChange(State state)
     {
         // ステート、スキルを切り替える
@@ -232,11 +220,15 @@ public abstract class EnemyBase : MonoBehaviour
                 break;
         }
 
-        // ステートの初期化
+        // ステート、スキルの初期化
+        skill.Init(_animator);
         enemyState.Init();
     }
 
-    // コリジョンがプレイヤーに接触していたら接触フラグを倒す
+    /// <summary>
+    /// コリジョンがプレイヤーに接触していたら接触フラグを倒す
+    /// </summary>
+    /// <param name="other"></param>
     public void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
@@ -245,30 +237,15 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
-    // プレイヤーが逃げた場所を推測するかどうか
-    public bool CheckPrediction() { return myInfo.status.prediction; }
-
-    // プレイヤー情報の更新
+    /// <summary>
+    /// プレイヤー情報の更新
+    /// </summary>
+    /// <param name="status"></param>
     public void SetPlayerStatus(PlayerStatus status) { myInfo.playerStatus = status; }
 
-    // 目標位置の設定
-    public void SetTargetPos(Vector3 pos) { myInfo.status.targetPos = pos; }
-
-    // 現在のステート
-    public State GetNowState() { return myInfo.status.state; }
-
-    // 目標位置にたどり着いたかどうか
-    public bool CheckReachingPosition() { return (Vector3.Distance(myInfo.status.targetPos, myInfo.status.position) < 2.0f) && (!myInfo.status.isAblity); }
-
-    // 見失った地点の取得
-    public Vector3 GetLostPos() { return myInfo.status.lostPos; }
-
-    // 見失った時の移動量を取得
-    public Vector3 GetLostMoveVec() { return myInfo.status.lostMoveVec; }
-
-    // 経由探索用の情報を設定
-    public void SetViaSeachData(List<ViaSeachData> vias) { myInfo.status.viaData = vias; }
-
-    // プレイヤーを捕まえたかどうか
+    /// <summary>
+    /// プレイヤーを捕まえたかどうか
+    /// </summary>
+    /// <returns></returns>
     public bool CheckCaught() { return caught; }
 }

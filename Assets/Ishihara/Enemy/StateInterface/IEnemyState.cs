@@ -5,9 +5,16 @@ using static EnemyBase;
 
 public interface IEnemyState
 {
-    // s“®
+    /// <summary>
+    /// s“®
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="skill"></param>
+    /// <returns></returns>
     public EnemyInfo Activity(EnemyInfo info , ISkill skill);
 
-    // ‰Šú‰»
+    /// <summary>
+    /// ‰Šú‰»
+    /// </summary>
     public void Init();
 }

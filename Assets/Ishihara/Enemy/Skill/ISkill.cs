@@ -4,6 +4,16 @@ using UnityEngine;
 
 public interface ISkill
 {
-    // “Áêˆ—
+    /// <summary>
+    /// ‰Šú‰»
+    /// </summary>
+    /// <param name="animator"></param>
+    void Init(Animator animator);
+
+    /// <summary>
+    /// “Áêˆ—
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     EnemyBase.EnemyInfo Ability(EnemyBase.EnemyInfo info);
 }

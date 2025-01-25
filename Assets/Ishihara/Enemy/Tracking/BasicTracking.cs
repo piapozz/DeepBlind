@@ -6,12 +6,17 @@ using static EnemyBase;
 public class BasicTracking : ITracking
 {
     // 情報
-    EnemyInfo enemyInfo;
+    private EnemyInfo _enemyInfo;
 
     // 警戒フラグ
-    bool vigilance = false;
+    private bool _vigilance = false;
 
-    // 行動
+    /// <summary>
+    /// 行動
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="skill"></param>
+    /// <returns></returns>
     public EnemyInfo Activity(EnemyInfo info, ISkill skill)
     {
         // 取得
@@ -21,7 +26,7 @@ public class BasicTracking : ITracking
         CheckTargetLost();
 
         // 特殊処理
-        enemyInfo = skill.Ability(enemyInfo);
+        _enemyInfo = skill.Ability(_enemyInfo);
 
         // 移動
         Move();
@@ -29,24 +34,28 @@ public class BasicTracking : ITracking
         // 更新
         StatusUpdate();
 
-        return enemyInfo;
+        return _enemyInfo;
     }
 
-    // 初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Init()
     {
-        enemyInfo = new EnemyInfo();
+        _enemyInfo = new EnemyInfo();
 
         // 警戒フラグ
-        vigilance = false;
+        _vigilance = false;
     }
 
-    // 見失ったかどうか
+    /// <summary>
+    /// 見失ったかどうか
+    /// </summary>
     public void CheckTargetLost()
     {
         // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = enemyInfo.status.position;                                                              // 原点
-        Vector3 direction = Vector3.Normalize(enemyInfo.playerStatus.playerPos - enemyInfo.status.position);     // X軸方向を表すベクトル
+        Vector3 origin = _enemyInfo.status.position;                                                              // 原点
+        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
 
         RaycastHit hit;
@@ -57,41 +66,37 @@ public class BasicTracking : ITracking
             // 初めて見失っていたら
             if (tag != "Player")
             {
-                // ロストポジションを設定
-                enemyInfo.status.lostPos = enemyInfo.playerStatus.playerPos;
-
-                // プレイヤーの移動量を保存
-                enemyInfo.status.lostMoveVec = enemyInfo.playerStatus.moveValue;
-
-                vigilance = true;
-
-                // 推測する
-                enemyInfo.status.prediction = true;
-                enemyInfo.status.isTargetLost = false;
+                _vigilance = true;
             }
         }
     }
 
-    // 目標位置の取得
+    /// <summary>
+    /// 目標位置の取得
+    /// </summary>
+    /// <param name="info"></param>
     public void GetTarget(EnemyInfo info)
     {
         // ターゲットの情報取得
-        enemyInfo = info;
+        _enemyInfo = info;
     }
 
-    // 情報の更新
+    /// <summary>
+    /// 情報の更新
+    /// </summary>
     public void StatusUpdate()
     {
         // ステートの切り替え
-        if (vigilance) enemyInfo.status.state = State.VIGILANCE;
+        if (_vigilance) _enemyInfo.status.state = State.VIGILANCE;
     }
 
-    // 移動
+    /// <summary>
+    /// 移動
+    /// </summary>
     public void Move()
     {
         // 目標位置を設定
-        if(enemyInfo.status.isTargetLost)　enemyInfo.status.targetPos = enemyInfo.status.lostPos; // 見失っていたら
-        else enemyInfo.status.targetPos = enemyInfo.playerStatus.playerPos;                       // 追跡中
+        _enemyInfo.status.targetPos = _enemyInfo.playerStatus.playerPos;                       // 追跡中
 
     }
 }
