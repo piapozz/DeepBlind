@@ -7,13 +7,28 @@ using static EnemyBase;
 public class StopLookAt : ISkill
 {
 
-    [SerializeField] GameObject mesh;
+    [SerializeField]
+    private GameObject _mesh;
 
-    // 見てると止まる
-    // プレイヤーが敵を見つけた時、敵もプレイヤーを見つける
+    private Animator _animator;
+
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    /// <param name="animator"></param>
+    public void Init(Animator animator)
+    {
+        _animator = animator;
+    }
+    
+    /// <summary>
+    /// 見てると止まる
+    /// </summary>
+    /// <param name="info"></param>
+    /// <returns></returns>
     public EnemyBase.EnemyInfo Ability(EnemyBase.EnemyInfo info)
     {
-        SkinnedMeshRenderer filter = mesh.GetComponent<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer filter = _mesh.GetComponent<SkinnedMeshRenderer>();
 
         // フィルターのメッシュ情報からバウンドボックスを取得する
         Bounds bounds = filter.bounds;
@@ -62,12 +77,12 @@ public class StopLookAt : ISkill
         if (isInsideCamera)
         {
             //映っていたら制止する
-           // info.animator.speed = 0.0f;                  // アニメーションの再生を停止
+            _animator.speed = 0.0f;                  // アニメーションの再生を停止
             info.status.isAblity = true;
         }
         else
         {
-           // info.animator.speed = info.pram.animSpeed;   // 通常再生
+            _animator.speed = info.pram.animSpeed;   // 通常再生
             info.status.isAblity = false;
         }
 

@@ -17,12 +17,13 @@ public class BasicEnemy : EnemyBase
     // 基礎データ
     [SerializeField] EnemyPram _pram;
 
-    //初期化
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public override void Init()
     {
         // 参照ステータスの初期化
         myInfo.pram = _pram;
-        myInfo.status.prediction = false;
 
         //ステート初期化
         seach = _seach;
