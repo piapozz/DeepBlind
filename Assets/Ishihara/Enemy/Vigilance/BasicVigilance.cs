@@ -52,13 +52,9 @@ public class BasicVigilance : IVigilance
 
     public void CheckLookAround()
     {
-        if(!_isViaSearch && !_enemyInfo.status.prediction) return;
-
-        _enemyInfo.status.prediction = false;
         _isViaSearch = true;
 
         // 目標地点をリスト順に格納
-        _enemyInfo.status.targetPos = _enemyInfo.status.viaData[viaNum].viaPosition;
 
         // プレイヤーとの間に障害物があるかどうか
         Vector3 origin = _enemyInfo.status.position;                                                   // 原点
@@ -99,17 +95,12 @@ public class BasicVigilance : IVigilance
         if(!LookAround()) return;
 
         // 次の巡回地点を設定
-        viaNum++;
-
-        Debug.Log("経由地点" + viaNum + "/" + _enemyInfo.status.viaData.Count + "通過");
 
         // 警戒終了
-        if(viaNum == _enemyInfo.status.viaData.Count) _search = true;
     }
 
     private bool LookAround()
     {
-        if(!_enemyInfo.status.viaData[viaNum].room) return true;
 
         // プレイヤーとの間に障害物があるかどうか
         Vector3 origin = _enemyInfo.status.position;                                                   // 原点

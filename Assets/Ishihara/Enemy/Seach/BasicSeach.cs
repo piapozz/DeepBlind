@@ -56,7 +56,7 @@ public class BasicSeach : ISeach
     /// <summary>
     /// Œ©‚Â‚¯‚½‚©‚Ç‚¤‚©
     /// </summary>
-    private void CheckTracking()
+    public void CheckTracking()
     {
         RaycastHit hit;
 
