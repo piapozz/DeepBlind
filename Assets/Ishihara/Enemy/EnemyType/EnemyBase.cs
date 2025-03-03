@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -12,37 +13,113 @@ using UnityEngine.AI;
 
 public abstract class EnemyBase : MonoBehaviour
 {
-    // 情報構造体 (参照用)
-    public struct EnemyInfo
+    protected static System.Func<int, GameObject> _GetObject = null;
+
+    public static void SetGetObjectCallback(System.Func<int, GameObject> setCallback)
     {
-        public EnemyPram pram;              // 基本データ
-        public EnemyStatus status;          // ステータス
-        public PlayerStatus playerStatus;   // プレイヤーのステータス
+        _GetObject = setCallback;
     }
 
-    // ステータス構造体 (操作用)
-    public struct EnemyStatus
+    public int ID               { get; protected set; } = -1;
+    private int _masterID = -1;
+    public Vector3 Position     { get; protected set; } = Vector3.zero;
+
+    public float speed          { get; protected set; } = -1;       // エネミーの速さ
+    public float speedDiameter  { get; protected set; } = -1;       // 見つけた時の速さの倍率
+    public float threatRange    { get; protected set; } = -1;       // 脅威範囲
+    public float viewLength     { get; protected set; } = -1;       // 視界の長さ
+    public float fieldOfView    { get; protected set; } = -1;       // 視野角
+
+    // それぞれのステートクラス
+    protected ISeach seach;
+    protected IVigilance vigilance;
+    protected ITracking tracking;
+
+    // それぞれのスキルクラス
+    protected ISkill skill;
+
+    protected static System.Action<State> _ChangeState = null;
+
+    private IEnemyState _state;
+
+    public virtual void Setup(int setID, Vector3 position, int masterID)
     {
-        public float nowSpeed;              // エネミーの現在の速さ
-        public Vector3 position;            // 現在位置
-        public Vector3 targetPos;           // 目標位置
-        public Vector3 dir;                 // 進行方向
-        public State state;                 // 現在のステート
-        public bool isAblity;               // アビリティ中
+        ID = setID;
+        _masterID = masterID;
+        _GetObject(ID).transform.position = position;
+        _GetObject(ID).SetActive(true);
+        ResetStatus();
+        _ChangeState = StateChange;
     }
 
-    /// 部屋の経由探索用の情報構造体
-    public struct ViaSeachData
+    /// <summary>
+    /// ステータス初期化
+    /// </summary>
+    public virtual void ResetStatus()
     {
-        public Vector3 viaPosition;        // 経由地点の座標
-        public bool room;                  // 経由地点が部屋かどうか
+        var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
+        if (characterMaster == null) return;
+
+        SetSpeed(characterMaster.Speed);
+        SetSpeedDiameter(characterMaster.SpeedDiameter);
+        SetThreatRange(characterMaster.ThreatRange);
+        SetViewLength(characterMaster.ViewLength);
+        SetFieldOfView(characterMaster.FieldOfView);
+        SetSeach(characterMaster.Seach);
+        SetVigilance(characterMaster.Vigilance);
+        SetTracking(characterMaster.Tracking);
+        SetSkill(characterMaster.Skill);
     }
 
-    // プレイヤーからもらう情報
-    public struct PlayerStatus
+    public void Teardown()
     {
-        public Camera cam;          // カメラ
-        public Vector3 playerPos;   // プレイヤーの位置
+        _GetObject(ID).SetActive(false);
+        ID = -1;
+    }
+
+    public void SetSpeed(float setSpeed)
+    {
+        speed = setSpeed;
+    }
+
+    public void SetSpeedDiameter(float setSpeedDiameter)
+    {
+        speedDiameter = setSpeedDiameter;
+    }
+
+    public void SetThreatRange(float setThreatRange)
+    {
+        threatRange = setThreatRange;
+    }
+
+    public void SetViewLength(float setViewLength)
+    {
+        viewLength = setViewLength;
+    }
+
+    public void SetFieldOfView(float setFieldOfView)
+    {
+        fieldOfView = setFieldOfView;
+    }
+
+    public void SetSeach(ISeach setSeach)
+    {
+        seach = setSeach;
+    }
+
+    public void SetVigilance(IVigilance setVigilance)
+    {
+        vigilance = setVigilance;
+    }
+
+    public void SetTracking(ITracking setTracking)
+    {
+        tracking = setTracking;
+    }
+
+    public void SetSkill(ISkill setSkill)
+    {
+        skill = setSkill;
     }
 
     // ステート
@@ -55,133 +132,21 @@ public abstract class EnemyBase : MonoBehaviour
         MAX
     }
 
-    protected EnemyInfo myInfo;             // ステータス
-    protected IEnemyState enemyState;       // ステートクラス
-    protected ISkill skill;                 // スキル
-    private State _oldState;                 // 一つ前のステート
-    private NavMeshAgent _enemyAgent;        // ナビメッシュ
-    private Animator _animator;             // アニメーター
-
-    // それぞれのステートクラス
-    protected ISeach seach;
-    protected IVigilance vigilance;
-    protected ITracking tracking;
-
-    // それぞれのスキルクラス
-    protected ISkill seachSkill;
-    protected ISkill vigilanceSkill;
-    protected ISkill trackingSkill;
-
-    bool caught = false;
-
-    void Start()
-    {
-        // 初期化
-        Init();
-
-        // 初期化
-        BaseInit();
-    }
-
-    void Update()
-    {
-        // ナビメッシュの移動
-        MoveNavAgent();
-
-        // 行動
-        Active();
-
-        // ステートの切り替え処理
-        StateSwitching();
-
-        // アニメーションの更新
-
-    }
-
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    private void BaseInit()
-    {
-        // ステート初期化
-        _oldState = myInfo.status.state = State.SEARCH;
-
-        // ナビメッシュ取得
-        _enemyAgent = GetComponent<NavMeshAgent>();
-
-        // アニメーターの取得
-        _animator = GetComponent<Animator>();
-
-        // 参照データの初期化
-        myInfo.status.position = this.transform.position;
-        myInfo.status.nowSpeed = myInfo.pram.speed;
-    }
-
-    /// <summary>
-    /// ステートの切り替え処理
-    /// </summary>
-    private void StateSwitching()
-    {
-        // 切り替わっていたら
-        if (_oldState == myInfo.status.state) return;
-
-        // 更新
-        _oldState = myInfo.status.state;
-
-        // 切り替え処理
-        StateChange(myInfo.status.state);
-    }
-
-    /// <summary>
-    /// 行動
-    /// </summary>
-    public void Active()
-    {
-        // 行動(情報を渡して更新)
-        myInfo = enemyState.Activity(myInfo, skill);
-    }
-
     /// <summary>
     /// ナビメッシュで移動する
     /// </summary>
-    private void MoveNavAgent()
+    public void MoveNavAgent()
     {
-        // スキル使用中なら移動を停止
-        if (myInfo.status.isAblity)
-        {
-            _enemyAgent.velocity = Vector3.zero;
-            return;
-        }
-        
-        // エネミーが目標に対して接近すると少し減速するようにする
-        if (Vector3.Distance(_enemyAgent.steeringTarget, myInfo.status.position) < 1.0f)
-        {
-            _enemyAgent.speed = myInfo.status.nowSpeed / 2;
-        }
-        else
-        {
-            _enemyAgent.speed = myInfo.status.nowSpeed;
-        }
-
-        _enemyAgent.velocity = (_enemyAgent.steeringTarget - myInfo.status.position).normalized * _enemyAgent.speed;
-
         // 目標位置を設定
-        _enemyAgent.SetDestination(myInfo.status.targetPos);
-
-        // 速度の変更
-        _enemyAgent.acceleration = _enemyAgent.speed * 8;
-
-        // 向いている方向を取得
-        myInfo.status.dir = Vector3.Normalize(_enemyAgent.nextPosition - myInfo.status.position);
-
-        // 現在の座標を取得
-        myInfo.status.position = this.transform.position;
+        //_enemyAgent.SetDestination(myInfo.status.targetPos);
     }
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    public abstract void Init();
+    public void Active()
+    {
+        _state.Activity();
+
+        skill.Ability();
+    }
 
     /// <summary>
     /// ステートとスキルの切り替え処理
@@ -190,62 +155,26 @@ public abstract class EnemyBase : MonoBehaviour
     public void StateChange(State state)
     {
         // ステート、スキルを切り替える
-        switch (myInfo.status.state)
+        switch (state)
         {
             case State.SEARCH:
 
-                enemyState = seach;
-                skill = seachSkill;
-
-                myInfo.status.nowSpeed = myInfo.pram.speed;
-
+                _state = seach;
                 break;
 
             case State.VIGILANCE:
 
-                enemyState = vigilance;
-                skill = vigilanceSkill;
-
-                myInfo.status.nowSpeed = myInfo.pram.speed * myInfo.pram.speedDiameter / 2;
-
+                _state = vigilance;
                 break;
 
             case State.TRACKING:
 
-                enemyState = tracking;
-                skill = trackingSkill;
-
-                myInfo.status.nowSpeed = myInfo.pram.speed * myInfo.pram.speedDiameter;
-
+                _state = tracking;
                 break;
         }
 
         // ステート、スキルの初期化
-        skill.Init(_animator);
-        enemyState.Init();
+        skill.Init();
+        _state.Init();
     }
-
-    /// <summary>
-    /// コリジョンがプレイヤーに接触していたら接触フラグを倒す
-    /// </summary>
-    /// <param name="other"></param>
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            caught = true;
-        }
-    }
-
-    /// <summary>
-    /// プレイヤー情報の更新
-    /// </summary>
-    /// <param name="status"></param>
-    public void SetPlayerStatus(PlayerStatus status) { myInfo.playerStatus = status; }
-
-    /// <summary>
-    /// プレイヤーを捕まえたかどうか
-    /// </summary>
-    /// <returns></returns>
-    public bool CheckCaught() { return caught; }
 }
