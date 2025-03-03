@@ -5,9 +5,14 @@
  * @date 2025/1/17
  */
 
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EventGoal : MonoBehaviour, IEvent 
 {
@@ -25,7 +30,9 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void Event()
     {
+        FadeScreen.instance.FadeOutRun();
 
+        _ = SceneChange();
     }
 
     /// <summary>
@@ -42,5 +49,13 @@ public class EventGoal : MonoBehaviour, IEvent
     public void DisableInteractUI()
     {
         uiManager.DisableIntractUI();
+    }
+
+    public async UniTask SceneChange()
+    {
+        // 3•bŠÔ‘Ò‚Â
+        await Task.Delay(TimeSpan.FromSeconds(2));
+
+        SceneManager.LoadScene("Result");
     }
 }

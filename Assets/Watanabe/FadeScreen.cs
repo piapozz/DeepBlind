@@ -19,19 +19,24 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] private float fadeInSpeed = 0.05f;       // フェードインしていくスピード       
     [SerializeField] private float fadeOutSpeed = 0.05f;      // フェードアウトしていくスピード
 
-    [SerializeField] public bool fadeIn = false;             // 現在フェードインしているかを管理
-    [SerializeField] public bool fadeOut = false;            // 現在フェードアウトしているかを管理
+    [SerializeField] public float alphaValue = 0.0f;               // Fadeイメージのアルファ値を管理
 
-    private float alphaValue = 0.0f;               // Fadeイメージのアルファ値を管理
+    public bool fadeIn = false;             // 現在フェードインしているかを管理
+    public bool fadeOut = false;            // 現在フェードアウトしているかを管理
 
     const float ALPHA_VALUE_MAX = 1.0f;     // アルファ値の最大値
     const float ALPHA_VALUE_MIN = 0.0f;     // アルファ値の最小値
 
+    public static FadeScreen instance { get; private set; } = null;
+
+    private void Start()
+    {
+        instance = this;
+    }
 
     private void Update()
     {
         if (fadeOut) _ = FadeOut();
-
         if (fadeIn) _ = FadeIn();
     }
 
@@ -39,7 +44,7 @@ public class FadeScreen : MonoBehaviour
     /// 黒画面を解除する処理
     /// </summary>
     /// <returns></returns>
-    public async UniTask FadeIn()
+    private async UniTask FadeIn()
     {
         while (alphaValue >= ALPHA_VALUE_MIN)
         {
@@ -49,6 +54,7 @@ public class FadeScreen : MonoBehaviour
 
             fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
         }
+        
 
         fadeIn = false;
     }
@@ -57,7 +63,7 @@ public class FadeScreen : MonoBehaviour
     /// 黒画面にする処理
     /// </summary>
     /// <returns></returns>
-    public async UniTask FadeOut()
+    private async UniTask FadeOut()
     {
         while (alphaValue <= ALPHA_VALUE_MAX)
         {
@@ -70,4 +76,7 @@ public class FadeScreen : MonoBehaviour
 
         fadeOut = false;
     }
+
+    public void FadeInRun() { fadeIn = true; }
+    public void FadeOutRun() { fadeOut = true; }
 }
