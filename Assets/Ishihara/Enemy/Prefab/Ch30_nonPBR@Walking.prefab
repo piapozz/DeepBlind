@@ -2042,7 +2042,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddf3da011ee8fd54a9ed23434dec7ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshObject: {fileID: 3779772768010866474}
   _seach:
     rid: 7194854543576268800
   _vigilance:
@@ -2068,15 +2067,15 @@ MonoBehaviour:
     - rid: 7194855044197646336
       type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
       data:
-        mesh: {fileID: 3779772768010866474}
+        _mesh: {fileID: 3779772768010866474}
     - rid: 7194855044197646337
       type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
       data:
-        mesh: {fileID: 3779772768010866474}
+        _mesh: {fileID: 3779772768010866474}
     - rid: 7194855044197646338
       type: {class: StopLookAt, ns: , asm: Assembly-CSharp}
       data:
-        mesh: {fileID: 3779772768010866474}
+        _mesh: {fileID: 3779772768010866474}
 --- !u!195 &8240649937055098006
 NavMeshAgent:
   m_ObjectHideFlags: 0
