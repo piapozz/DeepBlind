@@ -11,16 +11,30 @@ using UnityEngine;
 
 public class EventLocker : MonoBehaviour, IEvent
 {
-    [SerializeField] UIManager uiManager;
+    private Vector3 enterPos;
+    private Vector3 exitPos;
+    private Quaternion enterRot;
+    private Quaternion exitRot;
 
-    Animator animator;
+    [SerializeField] private GameObject lockerEnterAnker = null;
+    [SerializeField] private GameObject lockerExitAnker = null;
+
+    private UIManager uiManager = null;
+    private Player player = null;
+    private bool inPlayer; 
 
     void Start()
     {
-        GameObject targetObject = GameObject.Find("UIManager");
+        uiManager = UIManager.instance;
+        player = Player.instance;
 
-        uiManager = targetObject.GetComponent<UIManager>();
-        animator = GetComponent<Animator>();
+        enterPos = lockerEnterAnker.transform.position;
+        exitPos = lockerExitAnker.transform.position;
+
+        enterRot = lockerEnterAnker.transform.rotation;
+        exitRot = lockerExitAnker.transform.rotation;
+
+        inPlayer = false;
     }
 
     /// <summary>
@@ -29,7 +43,7 @@ public class EventLocker : MonoBehaviour, IEvent
     public void Event()
     {
         EnableInteractUI();
-        OpenDoor();
+        ActionLocker();
     }
 
     /// <summary>
@@ -37,10 +51,10 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void EnableInteractUI()
     {
-        if (GetOpen() == true)
-            uiManager.DisplayIntractUI("Close:E");
+        if (inPlayer == true)
+            uiManager.DisplayIntractUI("Enter:E");
         else
-            uiManager.DisplayIntractUI("Open:E");
+            uiManager.DisplayIntractUI("Exit:E");
 
     }
 
@@ -55,19 +69,23 @@ public class EventLocker : MonoBehaviour, IEvent
     /// <summary>
     /// ドアの開閉処理
     /// </summary>
-    public void OpenDoor()
+    public void ActionLocker()
     {
-        if (animator.GetBool("open") == true)
-            animator.SetBool("open", false);
-        else
-            animator.SetBool("open", true);
-    }
-
-    /// <summary>
-    /// Animatorの状態を返す
-    /// </summary>
-    public bool GetOpen()
-    {
-        return animator.GetBool("open");
+        // ロッカーから出る
+        if (inPlayer == true)
+        {
+            player.SetRotate(exitRot);
+            player.SetPosition(exitPos);
+            player.SetCharaController(true);
+            inPlayer = false;
+        }
+        // ロッカーに入る
+        else 
+        {
+            player.SetCharaController(false);
+            player.SetRotate(enterRot);
+            player.SetPosition(enterPos);
+            inPlayer = true;
+        }
     }
 }

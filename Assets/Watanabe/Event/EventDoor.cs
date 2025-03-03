@@ -11,9 +11,9 @@ using UnityEngine;
 
 public class EventDoor : MonoBehaviour, IEvent
 {
-    [SerializeField] UIManager uiManager;
+    [SerializeField] private UIManager uiManager;
 
-    [SerializeField] bool doorLock = false;
+    [SerializeField] private bool doorLock = false;
 
     Animator animator;
 
@@ -33,7 +33,10 @@ public class EventDoor : MonoBehaviour, IEvent
     public void Event()
     {
         EnableInteractUI();
-        OpenDoor();
+        // 施錠されていなかったらドアの開け閉めを実行
+        if (doorLock == false) OpenDoor();
+        // 施錠されていたら解錠処理を実行
+        else UnlockDoor();
     }
 
     /// <summary>
@@ -53,7 +56,10 @@ public class EventDoor : MonoBehaviour, IEvent
         // 施錠されていたら
         else
         {
-            uiManager.DisplayIntractUI("The door is locked...");
+            // インベントリを見て鍵があったら
+            if (doorLock) { uiManager.DisplayIntractUI("Unlock the door:E"); }
+            // 鍵が無かったら
+            else { uiManager.DisplayIntractUI("The door is locked..."); }
         }
     }
 
@@ -71,14 +77,16 @@ public class EventDoor : MonoBehaviour, IEvent
     /// </summary>
     public void OpenDoor()
     {
-        // 施錠されていなかったら
-        if (doorLock == false)
-        {
-            if (animator.GetBool("open") == true)
-                animator.SetBool("open", false);
-            else
-                animator.SetBool("open", true);
-        }
+        if (animator.GetBool("open") == true)
+            animator.SetBool("open", false);
+        else
+            animator.SetBool("open", true);
+
+    }
+
+    public void UnlockDoor()
+    {
+        if(doorLock) { doorLock = false; }
     }
 
     /// <summary>
@@ -88,4 +96,6 @@ public class EventDoor : MonoBehaviour, IEvent
     {
         return animator.GetBool("open");
     }
+
+    public void SetDoorLock(bool isLock) { doorLock = isLock; }
 }
