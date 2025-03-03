@@ -12,8 +12,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image staminaBar;
 
     [SerializeField] Player player;
+    static public UIManager instance = null;
 
     TextMeshProUGUI textMesh;
+    private void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {

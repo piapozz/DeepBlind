@@ -192,32 +192,21 @@ public class Player : MonoBehaviour
         return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
     }
 
-    public float GetStamina()
-    {
-        return status.stamina / STAMINA_MAX;
-    }
+    public float GetStamina() { return status.stamina / STAMINA_MAX; }
 
     // 現在自身が出している音の範囲を返す
-    public float GetSoundRange()
-    {
-        return status.soundRange;
-    }
+    public float GetSoundRange() { return status.soundRange; }
 
     // 現在の座標を返す関数
-    public Vector3 GetPosition()
-    {
-        return transform.position;
-    }
+    public Vector3 GetPosition() { return transform.position; }
 
     // カメラを返す関数
-    public Camera GetCamera()
-    {
-        return Camera.main;
-    }
+    public Camera GetCamera() { return Camera.main; }
 
     // 現在の座標を返す関数
-    public Vector3 GetMoveVec()
-    {
-        return Quaternion.Euler(0, -camera.gameObject.transform.eulerAngles.y, 0) * moveVec; ;
-    }
+    public Vector3 GetMoveVec() { return Quaternion.Euler(0, -camera.gameObject.transform.eulerAngles.y, 0) * moveVec; }
+
+    public void SetPosition(Vector3 position) { transform.position = position; }
+    public void SetRotate(Quaternion rotation) { camera.transform.rotation = rotation; }
+    public void SetCharaController(bool isActive) { characterController.enabled = isActive; }
 }

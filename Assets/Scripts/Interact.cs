@@ -7,6 +7,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,41 +25,34 @@ public class Interact : MonoBehaviour
         if (inputStay == true) interact = true;
     }
 
-    void OnTriggerStay(Collider other)
+    private void Update()
+    {
+        Debug.Log(iEvent);
+    }
+
+    public void ExecuteEvent(InputAction.CallbackContext context)
+    {
+        // 一度飲み入力を受付
+        if (!context.performed) return;
+        if (iEvent == null) return;
+        iEvent.Event();
+    }
+
+    void OnTriggerEnter(Collider other)
     {
         // アタッチされているイベントを取得
-        iEvent = other.GetComponent<IEvent>();
-
-        // イベントがあったら処理を実行
-        if (iEvent != null)
-        {
-            // インタラクトの入力を受け付けるようにする
-            inputStay = true;
-
-            // 適したUIを描画する
-            iEvent.EnableInteractUI();
-            
-            // プレイヤーがインタラクトを起こしたら
-            if (interact == true)
-            {
-                // 対応するイベント実行
-                iEvent.Event();
-            }
-
-            // インタラクトを無効にする
-            interact = false;
-        }
+        IEvent triggerEvent = other.GetComponent<IEvent>();
+        if (triggerEvent == null) return;
+        iEvent = triggerEvent;
+        iEvent.EnableInteractUI();
     }
 
     void OnTriggerExit(Collider other)
     {
-        // インタラクトの入力受付を無効化する
-        inputStay = false;
-
-        // イベントを取得
-        iEvent = other.GetComponent<IEvent>();
-
+        IEvent triggerEvent = other.GetComponent<IEvent>();
+        if (triggerEvent == null) return;
         // イベントがあったらUIの非表示を実行
-        if(iEvent != null) iEvent.DisableInteractUI();
+        iEvent.DisableInteractUI();
+        iEvent = null;
     }
 }
