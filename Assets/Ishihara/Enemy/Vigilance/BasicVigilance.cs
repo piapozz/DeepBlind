@@ -6,7 +6,7 @@ using static EnemyBase;
 public class BasicVigilance : IVigilance
 {
     /// 更新する情報
-    private EnemyInfo _enemyInfo;
+    //private EnemyInfo _enemyInfo;
 
     // 追跡中から警戒に移ったかで処理を変えるフラグ
     private bool _isViaSearch = false;
@@ -21,16 +21,16 @@ public class BasicVigilance : IVigilance
     /// <param name="info"></param>
     /// <param name="skill"></param>
     /// <returns></returns>
-    public EnemyInfo Activity(EnemyInfo info, ISkill skill)
+    public void Activity()
     {
         // 取得
-        GetTarget(info);
+        GetTarget();
 
         // 完全に見失ったかどうか
         CheckLookAround();
 
         // 特殊処理
-        _enemyInfo = skill.Ability(_enemyInfo);
+       // _enemyInfo = skill.Ability(_enemyInfo);
 
         // 更新
         StatusUpdate();
@@ -38,7 +38,7 @@ public class BasicVigilance : IVigilance
         // 移動
         Move();
 
-        return _enemyInfo;
+        //return _enemyInfo;
     }
 
     /// <summary>
@@ -46,97 +46,94 @@ public class BasicVigilance : IVigilance
     /// </summary>
     public void Init()
     {
-        _enemyInfo = new EnemyInfo();
+        //_enemyInfo = new EnemyInfo();
         _isViaSearch = false;
     }
 
     public void CheckLookAround()
     {
-        _isViaSearch = true;
+        //_isViaSearch = true;
 
-        // 目標地点をリスト順に格納
+        //// 目標地点をリスト順に格納
 
-        // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = _enemyInfo.status.position;                                                   // 原点
-        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
-        Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
+        //// プレイヤーとの間に障害物があるかどうか
+        //Vector3 origin = _enemyInfo.status.position;                                                   // 原点
+        //Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
+        //Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
-        RaycastHit hit;
+        //RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, _enemyInfo.pram.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
-        {
-            string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
+        //if (Physics.Raycast(ray, out hit, _enemyInfo.pram.viewLength + 1, 1))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        //{
+        //    string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
-            // プレイヤーなら
-            if (tag == "Player")
-            {
-                float toPlayerAngle = Mathf.Atan2(_enemyInfo.playerStatus.playerPos.z - _enemyInfo.status.position.z,
-                                   _enemyInfo.playerStatus.playerPos.x - _enemyInfo.status.position.x) * Mathf.Rad2Deg;
-                float myAngle = Mathf.Atan2(_enemyInfo.status.dir.z, _enemyInfo.status.dir.x) * Mathf.Rad2Deg;
+        //    // プレイヤーなら
+        //    if (tag == "Player")
+        //    {
+        //        float toPlayerAngle = Mathf.Atan2(_enemyInfo.playerStatus.playerPos.z - _enemyInfo.status.position.z,
+        //                           _enemyInfo.playerStatus.playerPos.x - _enemyInfo.status.position.x) * Mathf.Rad2Deg;
+        //        float myAngle = Mathf.Atan2(_enemyInfo.status.dir.z, _enemyInfo.status.dir.x) * Mathf.Rad2Deg;
 
-                // 0 ~ 360にクランプ
-                toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
-                myAngle = Mathf.Repeat(myAngle, 360);
+        //        // 0 ~ 360にクランプ
+        //        toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
+        //        myAngle = Mathf.Repeat(myAngle, 360);
 
-                // 視野範囲内なら
-                if (myAngle + (_enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
-                    myAngle - (_enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
-                {
-                    // 見つけた
-                    _tracking = true;
-                }
-            }
-        }
+        //        // 視野範囲内なら
+        //        if (myAngle + (_enemyInfo.pram.fieldOfView / 2) > toPlayerAngle &&
+        //            myAngle - (_enemyInfo.pram.fieldOfView / 2) < toPlayerAngle)
+        //        {
+        //            // 見つけた
+        //            _tracking = true;
+        //        }
+        //    }
+        //}
 
-        // 部屋に到着したら見渡す
-        if (Vector3.Distance(_enemyInfo.status.position , _enemyInfo.status.targetPos) > 3.0f) return;
+        //// 部屋に到着したら見渡す
+        //if (Vector3.Distance(_enemyInfo.status.position , _enemyInfo.status.targetPos) > 3.0f) return;
 
-        // 見渡す
-        if(!LookAround()) return;
+        //// 見渡す
+        //if(!LookAround()) return;
 
-        // 次の巡回地点を設定
+        //// 次の巡回地点を設定
 
-        // 警戒終了
+        //// 警戒終了
     }
 
     private bool LookAround()
     {
 
-        // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = _enemyInfo.status.position;                                                   // 原点
-        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
-        Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
+        //// プレイヤーとの間に障害物があるかどうか
+        //Vector3 origin = _enemyInfo.status.position;                                                   // 原点
+        //Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
+        //Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))                                                       // もしRayを投射して何らかのコライダーに衝突したら
-        {
-            string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit))                                                       // もしRayを投射して何らかのコライダーに衝突したら
+        //{
+        //    string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
-            // プレイヤーなら
-            if (tag == "Player")
-            {
-                // 見つけた
-                _tracking = true;
-                return false;
-            }
-        }
+        //    // プレイヤーなら
+        //    if (tag == "Player")
+        //    {
+        //        // 見つけた
+        //        _tracking = true;
+        //        return false;
+        //    }
+        //}
 
         return true;
     }
 
     // 目標位置の取得
-    public void GetTarget(EnemyInfo info)
+    public void GetTarget()
     {
-        // ターゲットの情報取得
-        _enemyInfo = info;
+       
     }
 
     // 情報の更新
     public void StatusUpdate()
     {
-        // ステートの切り替え
-        if (_search) _enemyInfo.status.state = State.SEARCH;
-        if (_tracking) _enemyInfo.status.state = State.TRACKING;
+
     }
 
     // 移動

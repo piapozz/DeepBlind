@@ -9,7 +9,7 @@ public interface IVigilance : IEnemyState
     /// –Ú•WˆÊ’u‚ÌŽæ“¾
     /// </summary>
     /// <param name="info"></param>
-    public void GetTarget(EnemyInfo info);
+    public void GetTarget();
 
     /// <summary>
     /// Š®‘S‚ÉŒ©Ž¸‚Á‚½‚©‚Ç‚¤‚©

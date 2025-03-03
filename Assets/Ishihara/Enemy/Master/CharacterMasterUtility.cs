@@ -9,8 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using static Entity_CharacterData;
-
 public class CharacterMasterUtility {
 
 	/// <summary>
@@ -18,14 +16,14 @@ public class CharacterMasterUtility {
 	/// </summary>
 	/// <param name="ID"></param>
 	/// <returns></returns>
-	public static Param GetCharacterMaster(int ID) {
-		List<Param> characterMasterList = MasterDataManager.characterData[0];
-		for (int i = 0, max = characterMasterList.Count; i < max; i++) {
-			if (characterMasterList[i].ID != ID) continue;
+	//public static Param GetCharacterMaster(int ID) {
+	//	//List<Param> characterMasterList = MasterDataManager.characterData[0];
+	//	//for (int i = 0, max = characterMasterList.Count; i < max; i++) {
+	//	//	if (characterMasterList[i].ID != ID) continue;
 
-			return characterMasterList[i];
-		}
-		return null;
-	}
+	//	//	return characterMasterList[i];
+	//	//}
+	//	//return null;
+	//}
 
 }

@@ -57,18 +57,18 @@ public abstract class EnemyBase : MonoBehaviour
     /// </summary>
     public virtual void ResetStatus()
     {
-        var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
-        if (characterMaster == null) return;
+        //var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
+        //if (characterMaster == null) return;
 
-        SetSpeed(characterMaster.Speed);
-        SetSpeedDiameter(characterMaster.SpeedDiameter);
-        SetThreatRange(characterMaster.ThreatRange);
-        SetViewLength(characterMaster.ViewLength);
-        SetFieldOfView(characterMaster.FieldOfView);
-        SetSeach(characterMaster.Seach);
-        SetVigilance(characterMaster.Vigilance);
-        SetTracking(characterMaster.Tracking);
-        SetSkill(characterMaster.Skill);
+        //SetSpeed(characterMaster.Speed);
+        //SetSpeedDiameter(characterMaster.SpeedDiameter);
+        //SetThreatRange(characterMaster.ThreatRange);
+        //SetViewLength(characterMaster.ViewLength);
+        //SetFieldOfView(characterMaster.FieldOfView);
+        //SetSeach(characterMaster.Seach);
+        //SetVigilance(characterMaster.Vigilance);
+        //SetTracking(characterMaster.Tracking);
+        //SetSkill(characterMaster.Skill);
     }
 
     public void Teardown()
