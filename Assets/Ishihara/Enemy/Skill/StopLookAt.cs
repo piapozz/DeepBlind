@@ -74,17 +74,17 @@ public class StopLookAt : ISkill
             }
         }
 
-        if (isInsideCamera)
-        {
-            //‰f‚Á‚Ä‚¢‚½‚ç§~‚·‚é
-            _animator.speed = 0.0f;                  // ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‚ğ’â~
-            info.status.isAblity = true;
-        }
-        else
-        {
-            _animator.speed = info.pram.animSpeed;   // ’ÊíÄ¶
-            info.status.isAblity = false;
-        }
+        //if (isInsideCamera)
+        //{
+        //    //‰f‚Á‚Ä‚¢‚½‚ç§~‚·‚é
+        //    _animator.speed = 0.0f;                  // ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‚ğ’â~
+        //    info.status.isAblity = true;
+        //}
+        //else
+        //{
+        //    _animator.speed = info.pram.animSpeed;   // ’ÊíÄ¶
+        //    info.status.isAblity = false;
+        //}
 
 
         return info;
