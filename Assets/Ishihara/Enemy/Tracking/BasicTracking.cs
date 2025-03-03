@@ -6,7 +6,7 @@ using static EnemyBase;
 public class BasicTracking : ITracking
 {
     // 情報
-    private EnemyInfo _enemyInfo;
+    //private EnemyInfo _enemyInfo;
 
     // 警戒フラグ
     private bool _vigilance = false;
@@ -17,16 +17,16 @@ public class BasicTracking : ITracking
     /// <param name="info"></param>
     /// <param name="skill"></param>
     /// <returns></returns>
-    public EnemyInfo Activity(EnemyInfo info, ISkill skill)
+    public void Activity()
     {
         // 取得
-        GetTarget(info);
+        GetTarget();
 
         // 見失ったかどうか
         CheckTargetLost();
 
         // 特殊処理
-        _enemyInfo = skill.Ability(_enemyInfo);
+        //_enemyInfo = skill.Ability(_enemyInfo);
 
         // 移動
         Move();
@@ -34,7 +34,7 @@ public class BasicTracking : ITracking
         // 更新
         StatusUpdate();
 
-        return _enemyInfo;
+        //return _enemyInfo;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class BasicTracking : ITracking
     /// </summary>
     public void Init()
     {
-        _enemyInfo = new EnemyInfo();
+        //_enemyInfo = new EnemyInfo();
 
         // 警戒フラグ
         _vigilance = false;
@@ -53,32 +53,31 @@ public class BasicTracking : ITracking
     /// </summary>
     public void CheckTargetLost()
     {
-        // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = _enemyInfo.status.position;                                                              // 原点
-        Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
-        Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
+        //// プレイヤーとの間に障害物があるかどうか
+        //Vector3 origin = _enemyInfo.status.position;                                                              // 原点
+        //Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
+        //Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
 
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))                                                 // もしRayを投射して何らかのコライダーに衝突したら
-        {
-            string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit))                                                 // もしRayを投射して何らかのコライダーに衝突したら
+        //{
+        //    string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
 
-            // 初めて見失っていたら
-            if (tag != "Player")
-            {
-                _vigilance = true;
-            }
-        }
+        //    // 初めて見失っていたら
+        //    if (tag != "Player")
+        //    {
+        //        _vigilance = true;
+        //    }
+        //}
     }
 
     /// <summary>
     /// 目標位置の取得
     /// </summary>
     /// <param name="info"></param>
-    public void GetTarget(EnemyInfo info)
+    public void GetTarget()
     {
-        // ターゲットの情報取得
-        _enemyInfo = info;
+
     }
 
     /// <summary>
@@ -86,8 +85,7 @@ public class BasicTracking : ITracking
     /// </summary>
     public void StatusUpdate()
     {
-        // ステートの切り替え
-        if (_vigilance) _enemyInfo.status.state = State.VIGILANCE;
+
     }
 
     /// <summary>
@@ -95,8 +93,7 @@ public class BasicTracking : ITracking
     /// </summary>
     public void Move()
     {
-        // 目標位置を設定
-        _enemyInfo.status.targetPos = _enemyInfo.playerStatus.playerPos;                       // 追跡中
+
 
     }
 }

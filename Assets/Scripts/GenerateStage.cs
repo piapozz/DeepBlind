@@ -1005,242 +1005,242 @@ public class GenerateStage : MonoBehaviour
     }
 
     // プレイヤーが居そうな座標を返す関数
-    public List<EnemyBase.ViaSeachData> GetPredictionPlayerPos(Vector3 pos, Vector3 dir)
-    {
-        // 構造体に道中の部屋と分岐地点をlistで追加していく
-        List<EnemyBase.ViaSeachData> viaSeach = new List<EnemyBase.ViaSeachData>();
+    //public List<EnemyBase.ViaSeachData> GetPredictionPlayerPos(Vector3 pos, Vector3 dir)
+    //{
+    //    // 構造体に道中の部屋と分岐地点をlistで追加していく
+    //    List<EnemyBase.ViaSeachData> viaSeach = new List<EnemyBase.ViaSeachData>();
 
-        // ステージの二次元配列の初期化
-        Route[,] route = new Route[stageLayout.GetLength(0), stageLayout.GetLength(1)];
-        for (int w = 0; w < route.GetLength(0); w++)
-        {
-            for (int h = 0; h < route.GetLength(1); h++)
-            {
-                // 構造体内の接続情報配列の初期化
-                route[w, h].Init();
+    //    // ステージの二次元配列の初期化
+    //    Route[,] route = new Route[stageLayout.GetLength(0), stageLayout.GetLength(1)];
+    //    for (int w = 0; w < route.GetLength(0); w++)
+    //    {
+    //        for (int h = 0; h < route.GetLength(1); h++)
+    //        {
+    //            // 構造体内の接続情報配列の初期化
+    //            route[w, h].Init();
 
-                // 配列外なら選ばれないようにする
-                if (h == route.GetLength(1) - 1)
-                    route[w, h].selected[(int)Direction.North] = true;
-                if (w == route.GetLength(0) - 1)
-                    route[w, h].selected[(int)Direction.East] = true;
-                if (h == 0)
-                    route[w, h].selected[(int)Direction.South] = true;
-                if (w == 0)
-                    route[w, h].selected[(int)Direction.West] = true;
-            }
-        }
+    //            // 配列外なら選ばれないようにする
+    //            if (h == route.GetLength(1) - 1)
+    //                route[w, h].selected[(int)Direction.North] = true;
+    //            if (w == route.GetLength(0) - 1)
+    //                route[w, h].selected[(int)Direction.East] = true;
+    //            if (h == 0)
+    //                route[w, h].selected[(int)Direction.South] = true;
+    //            if (w == 0)
+    //                route[w, h].selected[(int)Direction.West] = true;
+    //        }
+    //    }
 
-        // 見失った地点が区画の手前側か奥側かで判定
+    //    // 見失った地点が区画の手前側か奥側かで判定
 
 
-        // 移動量から進む方向を予測
-        float angle = Mathf.Atan2(dir.z, dir.x) / Mathf.PI * 180;
-        Direction direction;
-        if (angle >= 45 && angle < 135)
-            direction = Direction.North;
-        else if (angle >= -45 && angle < 45)
-            direction = Direction.East;
-        else if (angle >= -135 && angle < -45)
-            direction = Direction.South;
-        else
-            direction = Direction.West;
+    //    // 移動量から進む方向を予測
+    //    float angle = Mathf.Atan2(dir.z, dir.x) / Mathf.PI * 180;
+    //    Direction direction;
+    //    if (angle >= 45 && angle < 135)
+    //        direction = Direction.North;
+    //    else if (angle >= -45 && angle < 45)
+    //        direction = Direction.East;
+    //    else if (angle >= -135 && angle < -45)
+    //        direction = Direction.South;
+    //    else
+    //        direction = Direction.West;
 
-        // 座標から区画の座標を取得
-        Vector2Int sectionPos = GetNowSection(pos);
-        Debug.Log("見失った地点:" + sectionPos);
+    //    // 座標から区画の座標を取得
+    //    Vector2Int sectionPos = GetNowSection(pos);
+    //    Debug.Log("見失った地点:" + sectionPos);
 
-        Debug.Log("逃げた方向" + direction);
+    //    Debug.Log("逃げた方向" + direction);
 
-        // 分かれ道につくまでループ
-        while (true)
-        {
-            // 今の区画を通ったことにする
-            route[sectionPos.x, sectionPos.y].throuth = true;
+    //    // 分かれ道につくまでループ
+    //    while (true)
+    //    {
+    //        // 今の区画を通ったことにする
+    //        route[sectionPos.x, sectionPos.y].throuth = true;
 
-            Direction alreadyThrough = Direction.North;
-            // 進む方向に進む
-            switch (direction)
-            {
-                case Direction.North:
-                    sectionPos.y++;
-                    alreadyThrough = Direction.South;
-                    break;
-                case Direction.East:
-                    sectionPos.x++;
-                    alreadyThrough = Direction.West;
-                    break;
-                case Direction.South:
-                    sectionPos.y--;
-                    alreadyThrough = Direction.North;
-                    break;
-                case Direction.West:
-                    sectionPos.x--;
-                    alreadyThrough = Direction.East;
-                    break;
-                default: break;
-            }
+    //        Direction alreadyThrough = Direction.North;
+    //        // 進む方向に進む
+    //        switch (direction)
+    //        {
+    //            case Direction.North:
+    //                sectionPos.y++;
+    //                alreadyThrough = Direction.South;
+    //                break;
+    //            case Direction.East:
+    //                sectionPos.x++;
+    //                alreadyThrough = Direction.West;
+    //                break;
+    //            case Direction.South:
+    //                sectionPos.y--;
+    //                alreadyThrough = Direction.North;
+    //                break;
+    //            case Direction.West:
+    //                sectionPos.x--;
+    //                alreadyThrough = Direction.East;
+    //                break;
+    //            default: break;
+    //        }
 
-            // ルートを記録
-            EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
+    //        // ルートを記録
+    //        EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
 
-            temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
-            temp.room = JudgeSectionRoom(sectionPos);
+    //        temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
+    //        temp.room = JudgeSectionRoom(sectionPos);
 
-            viaSeach.Add(temp);
+    //        viaSeach.Add(temp);
 
-            // 今の区画に分かれ道があるか判定
-            List<Direction> connectDir = new List<Direction>();
-            for (int i = 0; i < (int)Direction.Max; i++)
-            {
-                // 来た方向ならスキップ
-                if (i == (int)alreadyThrough)
-                    continue;
+    //        // 今の区画に分かれ道があるか判定
+    //        List<Direction> connectDir = new List<Direction>();
+    //        for (int i = 0; i < (int)Direction.Max; i++)
+    //        {
+    //            // 来た方向ならスキップ
+    //            if (i == (int)alreadyThrough)
+    //                continue;
 
-                // つながっている方向を記録
-                if (stageLayout[sectionPos.x, sectionPos.y].connect[i] == true)
-                    connectDir.Add((Direction)i);
-            }
+    //            // つながっている方向を記録
+    //            if (stageLayout[sectionPos.x, sectionPos.y].connect[i] == true)
+    //                connectDir.Add((Direction)i);
+    //        }
 
-            // 行き止まりなら
-            if (connectDir.Count == 0)
-                break;
-            // 一本道なら
-            else if (connectDir.Count == 1)
-                direction = connectDir[0];
-            // 分かれ道なら
-            else
-                // ループから抜ける
-                break;
-        }
-        Debug.Log("分かれ道" + sectionPos);
+    //        // 行き止まりなら
+    //        if (connectDir.Count == 0)
+    //            break;
+    //        // 一本道なら
+    //        else if (connectDir.Count == 1)
+    //            direction = connectDir[0];
+    //        // 分かれ道なら
+    //        else
+    //            // ループから抜ける
+    //            break;
+    //    }
+    //    Debug.Log("分かれ道" + sectionPos);
 
-        // 通行可能な方向のリスト
-        List<Direction> passableDir = new List<Direction>();
+    //    // 通行可能な方向のリスト
+    //    List<Direction> passableDir = new List<Direction>();
 
-        // 移動方向を記録する可変長配列
-        List<Direction> routeDir = new List<Direction>();
+    //    // 移動方向を記録する可変長配列
+    //    List<Direction> routeDir = new List<Direction>();
 
-        // 一番近い部屋までの距離
-        int distanceNearRoom = 10;
-        Vector2Int nearRoomPos = Vector2Int.zero;
+    //    // 一番近い部屋までの距離
+    //    int distanceNearRoom = 10;
+    //    Vector2Int nearRoomPos = Vector2Int.zero;
 
-        // 一番近い部屋を見つけるまでループ
-        while (true)
-        {
-            passableDir.Clear();
+    //    // 一番近い部屋を見つけるまでループ
+    //    while (true)
+    //    {
+    //        passableDir.Clear();
 
-            // 進める方向を判定する
-            // 各方向がまだ選択していないかつ、通行していないかつ、つながっているなら候補に入れる
-            // 北
-            if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.North] == false)
-                if (route[sectionPos.x, sectionPos.y + 1].throuth == false &&
-                    stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.North])
-                    passableDir.Add(Direction.North);
-            // 東
-            if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.East] == false)
-                if (route[sectionPos.x + 1, sectionPos.y].throuth == false &&
-                    stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.East])
-                    passableDir.Add(Direction.East);
-            // 南
-            if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.South] == false)
-                if (route[sectionPos.x, sectionPos.y - 1].throuth == false &&
-                    stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.South])
-                    passableDir.Add(Direction.South);
-            // 西
-            if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.West] == false)
-                if (route[sectionPos.x - 1, sectionPos.y].throuth == false &&
-                    stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.West])
-                    passableDir.Add(Direction.West);
+    //        // 進める方向を判定する
+    //        // 各方向がまだ選択していないかつ、通行していないかつ、つながっているなら候補に入れる
+    //        // 北
+    //        if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.North] == false)
+    //            if (route[sectionPos.x, sectionPos.y + 1].throuth == false &&
+    //                stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.North])
+    //                passableDir.Add(Direction.North);
+    //        // 東
+    //        if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.East] == false)
+    //            if (route[sectionPos.x + 1, sectionPos.y].throuth == false &&
+    //                stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.East])
+    //                passableDir.Add(Direction.East);
+    //        // 南
+    //        if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.South] == false)
+    //            if (route[sectionPos.x, sectionPos.y - 1].throuth == false &&
+    //                stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.South])
+    //                passableDir.Add(Direction.South);
+    //        // 西
+    //        if (route[sectionPos.x, sectionPos.y].selected[(int)Direction.West] == false)
+    //            if (route[sectionPos.x - 1, sectionPos.y].throuth == false &&
+    //                stageLayout[sectionPos.x, sectionPos.y].connect[(int)Direction.West])
+    //                passableDir.Add(Direction.West);
 
-            // 進行可能または１番近い部屋までの距離を更新できるなら
-            if (passableDir.Count != 0 && (routeDir.Count + 1) < distanceNearRoom)
-            {
-                // 進行方向の候補から抽選
-                Direction randDir = passableDir[UnityEngine.Random.Range(0, passableDir.Count)];
+    //        // 進行可能または１番近い部屋までの距離を更新できるなら
+    //        if (passableDir.Count != 0 && (routeDir.Count + 1) < distanceNearRoom)
+    //        {
+    //            // 進行方向の候補から抽選
+    //            Direction randDir = passableDir[UnityEngine.Random.Range(0, passableDir.Count)];
 
-                // 通ったことを記録
-                route[sectionPos.x, sectionPos.y].throuth = true;
-                // 既に選択済みに保存
-                route[sectionPos.x, sectionPos.y].selected[(int)randDir] = true;
+    //            // 通ったことを記録
+    //            route[sectionPos.x, sectionPos.y].throuth = true;
+    //            // 既に選択済みに保存
+    //            route[sectionPos.x, sectionPos.y].selected[(int)randDir] = true;
 
-                // 進行方向を決定する
-                routeDir.Add(randDir);
+    //            // 進行方向を決定する
+    //            routeDir.Add(randDir);
 
-                // 方向によって座標の変更
-                switch (randDir)
-                {
-                    case Direction.North:
-                        sectionPos.y++;
-                        break;
-                    case Direction.East:
-                        sectionPos.x++;
-                        break;
-                    case Direction.South:
-                        sectionPos.y--;
-                        break;
-                    case Direction.West:
-                        sectionPos.x--;
-                        break;
-                    default: break;
-                }
+    //            // 方向によって座標の変更
+    //            switch (randDir)
+    //            {
+    //                case Direction.North:
+    //                    sectionPos.y++;
+    //                    break;
+    //                case Direction.East:
+    //                    sectionPos.x++;
+    //                    break;
+    //                case Direction.South:
+    //                    sectionPos.y--;
+    //                    break;
+    //                case Direction.West:
+    //                    sectionPos.x--;
+    //                    break;
+    //                default: break;
+    //            }
 
-                // 今の座標が部屋なら候補にする
-                if (JudgeSectionRoom(sectionPos) == true)
-                {
-                    distanceNearRoom = routeDir.Count;
-                    nearRoomPos = sectionPos;
-                }
+    //            // 今の座標が部屋なら候補にする
+    //            if (JudgeSectionRoom(sectionPos) == true)
+    //            {
+    //                distanceNearRoom = routeDir.Count;
+    //                nearRoomPos = sectionPos;
+    //            }
 
-                // ルートを記録
-                EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
-                temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
-                temp.room = JudgeSectionRoom(sectionPos);
-                viaSeach.Add(temp);
-            }
-            // それ以外なら戻る
-            else
-            {
-                // 近い部屋を見つけたら終える
-                if (routeDir.Count == 0) break;
+    //            // ルートを記録
+    //            EnemyBase.ViaSeachData temp = new EnemyBase.ViaSeachData();
+    //            temp.viaPosition = GetPos(sectionPos.x, sectionPos.y);
+    //            temp.room = JudgeSectionRoom(sectionPos);
+    //            viaSeach.Add(temp);
+    //        }
+    //        // それ以外なら戻る
+    //        else
+    //        {
+    //            // 近い部屋を見つけたら終える
+    //            if (routeDir.Count == 0) break;
 
-                // 今いるマスを初期化
-                route[sectionPos.x, sectionPos.y].Init();
-                // 配列外なら選ばれないようにする
-                if (sectionPos.y == route.GetLength(1) - 1)
-                    route[sectionPos.x, sectionPos.y].selected[(int)Direction.North] = true;
-                if (sectionPos.x == route.GetLength(0) - 1)
-                    route[sectionPos.x, sectionPos.y].selected[(int)Direction.East] = true;
-                if (sectionPos.y == 0)
-                    route[sectionPos.x, sectionPos.y].selected[(int)Direction.South] = true;
-                if (sectionPos.x == 0)
-                    route[sectionPos.x, sectionPos.y].selected[(int)Direction.West] = true;
+    //            // 今いるマスを初期化
+    //            route[sectionPos.x, sectionPos.y].Init();
+    //            // 配列外なら選ばれないようにする
+    //            if (sectionPos.y == route.GetLength(1) - 1)
+    //                route[sectionPos.x, sectionPos.y].selected[(int)Direction.North] = true;
+    //            if (sectionPos.x == route.GetLength(0) - 1)
+    //                route[sectionPos.x, sectionPos.y].selected[(int)Direction.East] = true;
+    //            if (sectionPos.y == 0)
+    //                route[sectionPos.x, sectionPos.y].selected[(int)Direction.South] = true;
+    //            if (sectionPos.x == 0)
+    //                route[sectionPos.x, sectionPos.y].selected[(int)Direction.West] = true;
 
-                // 方向によって座標の変更
-                switch (routeDir[routeDir.Count - 1])
-                {
-                    case Direction.North:
-                        sectionPos.y--;
-                        break;
-                    case Direction.East:
-                        sectionPos.x--;
-                        break;
-                    case Direction.South:
-                        sectionPos.y++;
-                        break;
-                    case Direction.West:
-                        sectionPos.x++;
-                        break;
-                    default: break;
-                }
+    //            // 方向によって座標の変更
+    //            switch (routeDir[routeDir.Count - 1])
+    //            {
+    //                case Direction.North:
+    //                    sectionPos.y--;
+    //                    break;
+    //                case Direction.East:
+    //                    sectionPos.x--;
+    //                    break;
+    //                case Direction.South:
+    //                    sectionPos.y++;
+    //                    break;
+    //                case Direction.West:
+    //                    sectionPos.x++;
+    //                    break;
+    //                default: break;
+    //            }
 
-                // 戻る
-                routeDir.RemoveAt(routeDir.Count - 1);
-            }
-        }
+    //            // 戻る
+    //            routeDir.RemoveAt(routeDir.Count - 1);
+    //        }
+    //    }
 
-        Debug.Log("予測地点" + nearRoomPos);
+    //    Debug.Log("予測地点" + nearRoomPos);
 
-        return viaSeach;
-    }
+    //    return viaSeach;
+    //}
 }

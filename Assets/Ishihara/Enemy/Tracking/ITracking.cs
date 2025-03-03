@@ -8,7 +8,7 @@ public interface ITracking : IEnemyState
     /// –Ú•WˆÊ’u‚ÌŽæ“¾
     /// </summary>
     /// <param name="info"></param>
-    public void GetTarget(EnemyBase.EnemyInfo info);
+    public void GetTarget();
 
     /// <summary>
     /// Œ©Ž¸‚Á‚½‚©‚Ç‚¤‚©

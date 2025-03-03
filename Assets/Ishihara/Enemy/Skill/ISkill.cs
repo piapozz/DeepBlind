@@ -8,12 +8,12 @@ public interface ISkill
     /// ‰Šú‰»
     /// </summary>
     /// <param name="animator"></param>
-    void Init(Animator animator);
+    void Init();
 
     /// <summary>
     /// “Áêˆ—
     /// </summary>
     /// <param name="info"></param>
     /// <returns></returns>
-    EnemyBase.EnemyInfo Ability(EnemyBase.EnemyInfo info);
+    void Ability();
 }

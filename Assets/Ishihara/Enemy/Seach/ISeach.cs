@@ -6,7 +6,7 @@ using static EnemyBase;
 public interface ISeach : IEnemyState
 {
     // 目標位置の取得
-    public void GetTarget(EnemyInfo info);
+    public void GetTarget();
 
     // 見つけたかどうか
     public void CheckTracking();
@@ -15,5 +15,5 @@ public interface ISeach : IEnemyState
     public void CheckVigilance();
 
     // 情報の更新
-    public void StatusUpdate(EnemyInfo info);
+    public void StatusUpdate();
 }
