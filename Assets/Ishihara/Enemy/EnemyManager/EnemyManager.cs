@@ -60,7 +60,6 @@ public class EnemyManager : SystemObject
         while (true)
         {
             ExecuteAll(enemy => enemy.Active());
-            ExecuteAll(enemy => enemy.MoveNavAgent());
 
             // エネミーとプレイヤーが接触しているかを確認
             
@@ -99,10 +98,10 @@ public class EnemyManager : SystemObject
                 EnemyBase useEnemy = enemy.GetComponent<EnemyBase>();
                 
                 // 使用可能なIDを取得して使用リストに追加
-                //int useID = UseCharacter(useEnemy);
-                //_useObjectList[useID] = enemy;
+                int useID = UseCharacter(useEnemy, j);
+                _useObjectList[useID] = enemy;
                 enemy.transform.SetParent(_useObjectRoot);
-                //useEnemy.Setup(useID, squareData, masterID);
+                useEnemy.Setup(useID, GenerateStage.instance.GetRandCorridorPos(), j);
 
                 Vector3 position = GenerateStage.instance.GetRandRoomPos();
                 UseEnemy(position, 1);
@@ -150,8 +149,8 @@ public class EnemyManager : SystemObject
         GameObject useObject = null;
         if (IsEmpty(_unuseObjectList))
         {
-            //Entity_EnemyData.Pram pram = CharacterMasterUtility.GetCharacterMaster(masterID);
-            //useObject = Instantiate(Resources.Load("Prefab/" + pram.Name));
+            Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
+            useObject = Instantiate((GameObject)Resources.Load("Prefab/" + param.Name));
         }
         else
         {

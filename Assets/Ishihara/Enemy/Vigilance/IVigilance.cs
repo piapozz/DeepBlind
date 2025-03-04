@@ -17,11 +17,6 @@ public interface IVigilance : IEnemyState
     public void CheckLookAround();
 
     /// <summary>
-    /// ˆÚ“®
-    /// </summary>
-    public void Move();
-
-    /// <summary>
     /// î•ñ‚ÌXV
     /// </summary>
     public void StatusUpdate();

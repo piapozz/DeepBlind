@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -11,36 +12,39 @@ using UnityEngine.AI;
 
 // エネミーの元となる親クラス
 
-public abstract class EnemyBase : MonoBehaviour
+public  class EnemyBase : MonoBehaviour
 {
-    protected static System.Func<int, GameObject> _GetObject = null;
+    private static System.Func<int, GameObject> _GetObject = null;
 
     public static void SetGetObjectCallback(System.Func<int, GameObject> setCallback)
     {
         _GetObject = setCallback;
     }
 
-    public int ID               { get; protected set; } = -1;
+    public int ID               { get; private set; } = -1;
     private int _masterID = -1;
-    public Vector3 Position     { get; protected set; } = Vector3.zero;
-
-    public float speed          { get; protected set; } = -1;       // エネミーの速さ
-    public float speedDiameter  { get; protected set; } = -1;       // 見つけた時の速さの倍率
-    public float threatRange    { get; protected set; } = -1;       // 脅威範囲
-    public float viewLength     { get; protected set; } = -1;       // 視界の長さ
-    public float fieldOfView    { get; protected set; } = -1;       // 視野角
+    public Transform transform  { get; private set; } = null;
+    
+    public float speed          { get; private set; } = -1;       // エネミーの速さ
+    public float speedDiameter  { get; private set; } = -1;       // 見つけた時の速さの倍率
+    public float threatRange    { get; private set; } = -1;       // 脅威範囲
+    public float viewLength     { get; private set; } = -1;       // 視界の長さ
+    public float fieldOfView    { get; private set; } = -1;       // 視野角
 
     // それぞれのステートクラス
-    protected ISeach seach;
-    protected IVigilance vigilance;
-    protected ITracking tracking;
+    private ISeach _seach;
+    private IVigilance _vigilance;
+    private ITracking _tracking;
 
     // それぞれのスキルクラス
-    protected ISkill skill;
+    private ISkill _skill;
+    private List<IEnemyState> _state;
+    private State _nowState;
 
-    protected static System.Action<State> _ChangeState = null;
+    // ナビメッシュ
+    private NavMeshAgent _agent;
 
-    private IEnemyState _state;
+    private static System.Action<State> _ChangeState = null;
 
     public virtual void Setup(int setID, Vector3 position, int masterID)
     {
@@ -50,6 +54,22 @@ public abstract class EnemyBase : MonoBehaviour
         _GetObject(ID).SetActive(true);
         ResetStatus();
         _ChangeState = StateChange;
+
+        //ステートの初期化
+        int stateMax = (int)State.MAX;
+        _state = new List<IEnemyState>(stateMax);
+        _state.Add(_seach);
+        _state.Add(_vigilance);
+        _state.Add(_tracking);
+        for (int i = 0, max = stateMax; i < max; i++)
+        {
+            _state[i].Init(ID);
+        }
+        _nowState = State.SEARCH;
+
+        _skill.Init();
+
+        _agent = _GetObject(ID).GetComponent<NavMeshAgent>();
     }
 
     /// <summary>
@@ -57,24 +77,25 @@ public abstract class EnemyBase : MonoBehaviour
     /// </summary>
     public virtual void ResetStatus()
     {
-        //var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
-        //if (characterMaster == null) return;
+        var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
+        if (characterMaster == null) return;
 
-        //SetSpeed(characterMaster.Speed);
-        //SetSpeedDiameter(characterMaster.SpeedDiameter);
-        //SetThreatRange(characterMaster.ThreatRange);
-        //SetViewLength(characterMaster.ViewLength);
-        //SetFieldOfView(characterMaster.FieldOfView);
-        //SetSeach(characterMaster.Seach);
-        //SetVigilance(characterMaster.Vigilance);
-        //SetTracking(characterMaster.Tracking);
-        //SetSkill(characterMaster.Skill);
+        SetSpeed(characterMaster.Speed);
+        SetSpeedDiameter(characterMaster.SpeedDiameter);
+        SetThreatRange(characterMaster.ThreatRange);
+        SetViewLength(characterMaster.ViewLength);
+        SetFieldOfView(characterMaster.FieldOfView);
+        SetSeach(characterMaster.Seach);
+        SetVigilance(characterMaster.Vigilance);
+        SetTracking(characterMaster.Tracking);
+        SetSkill(characterMaster.Skill);
     }
 
     public void Teardown()
     {
         _GetObject(ID).SetActive(false);
         ID = -1;
+        _state.Clear();
     }
 
     public void SetSpeed(float setSpeed)
@@ -102,24 +123,28 @@ public abstract class EnemyBase : MonoBehaviour
         fieldOfView = setFieldOfView;
     }
 
-    public void SetSeach(ISeach setSeach)
+    public void SetSeach(string setSeach)
     {
-        seach = setSeach;
+        Type type = Type.GetType(setSeach);
+        _seach = (ISeach)type;
     }
 
-    public void SetVigilance(IVigilance setVigilance)
+    public void SetVigilance(string setVigilance)
     {
-        vigilance = setVigilance;
+        Type type = Type.GetType(setVigilance);
+        _vigilance = (IVigilance)type;
     }
 
-    public void SetTracking(ITracking setTracking)
+    public void SetTracking(string setTracking)
     {
-        tracking = setTracking;
+        Type type = Type.GetType(setTracking);
+        _tracking = (ITracking)type;
     }
 
-    public void SetSkill(ISkill setSkill)
+    public void SetSkill(string setSkill)
     {
-        skill = setSkill;
+        Type type = Type.GetType(setSkill);
+        _skill = (ISkill)type;
     }
 
     // ステート
@@ -135,17 +160,17 @@ public abstract class EnemyBase : MonoBehaviour
     /// <summary>
     /// ナビメッシュで移動する
     /// </summary>
-    public void MoveNavAgent()
+    public void SetNavTarget(Vector3 targetPosition)
     {
         // 目標位置を設定
-        //_enemyAgent.SetDestination(myInfo.status.targetPos);
+        _agent.SetDestination(targetPosition);
     }
 
     public void Active()
     {
-        _state.Activity();
+        _state[(int)_nowState].Activity();
 
-        skill.Ability();
+        _skill.Ability();
     }
 
     /// <summary>
@@ -154,27 +179,6 @@ public abstract class EnemyBase : MonoBehaviour
     /// <param name="state"></param>
     public void StateChange(State state)
     {
-        // ステート、スキルを切り替える
-        switch (state)
-        {
-            case State.SEARCH:
-
-                _state = seach;
-                break;
-
-            case State.VIGILANCE:
-
-                _state = vigilance;
-                break;
-
-            case State.TRACKING:
-
-                _state = tracking;
-                break;
-        }
-
-        // ステート、スキルの初期化
-        skill.Init();
-        _state.Init();
+        _nowState = state;
     }
 }
