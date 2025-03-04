@@ -928,11 +928,11 @@ public class GenerateStage : MonoBehaviour
                     // ‰ñ“]İ’è
                     // •ûŒü‚É‚æ‚Á‚Ä‰ñ“]
                     Quaternion genRot = Quaternion.Euler(0, 90 * i, 0);
-
+                  
                     GameObject genObj = Instantiate(genOriginObj, genPos, genRot, section.transform);
                     // ƒS[ƒ‹•”‰®‚È‚çƒƒbƒN‚·‚é
                     if (stageLayout[w, h].type == SectionType.GoalRoom && i == (int)Direction.South)
-                        genObj.GetComponent<EventDoor>().SetDoorLock(true);
+                        genObj.GetComponentInChildren<EventDoor>().SetDoorLock(true);
                 }
             }
         }

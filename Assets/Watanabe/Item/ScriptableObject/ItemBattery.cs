@@ -10,14 +10,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 派生クラス：消耗品アイテム
-[CreateAssetMenu(fileName = "ItemObject", menuName = "ScriptableObjects/Battery")]
+[CreateAssetMenu(fileName = "ItemObject", menuName = "ScriptableObjects/Items/Battery")]
 
 public class ItemBattery : BaseItem
 {
     [SerializeField] private int recoveryValue;
 
-    public override void ItemEffect(GameObject character)
+    public override bool ItemEffect()
     {
         LightManager.instance.SetBattery(recoveryValue);
+        return true;
     }
 }
