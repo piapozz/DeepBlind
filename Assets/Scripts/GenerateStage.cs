@@ -1007,6 +1007,7 @@ public class GenerateStage : MonoBehaviour
         return result;
     }
 
+    /*
     // プレイヤーが居そうな座標を返す関数
     public List<EnemyBase.ViaSeachData> GetPredictionPlayerPos(Vector3 pos, Vector3 dir)
     {
@@ -1246,4 +1247,7 @@ public class GenerateStage : MonoBehaviour
 
         return viaSeach;
     }
+    */
 }
+
+    
