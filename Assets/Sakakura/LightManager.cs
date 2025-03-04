@@ -38,7 +38,6 @@ public class LightManager : MonoBehaviour
             batteryPower = 0;
             SwitchLight();
         }
-        Debug.Log("バッテリー" + batteryPower);
     }
 
     /// <summary>
