@@ -13,7 +13,7 @@ public class EventDoor : MonoBehaviour, IEvent
 {
     [SerializeField] private UIManager uiManager;
 
-    [SerializeField] private bool doorLock = false;
+    [SerializeField] public bool doorLock = false;
 
     Animator animator;
 
@@ -35,8 +35,6 @@ public class EventDoor : MonoBehaviour, IEvent
         EnableInteractUI();
         // 施錠されていなかったらドアの開け閉めを実行
         if (doorLock == false) OpenDoor();
-        // 施錠されていたら解錠処理を実行
-        else UnlockDoor();
     }
 
     /// <summary>
@@ -84,6 +82,7 @@ public class EventDoor : MonoBehaviour, IEvent
 
     }
 
+    // ドアの鍵を開く
     public void UnlockDoor()
     {
         if(doorLock) { doorLock = false; }

@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 using static UnityEngine.EventSystems.StandaloneInputModule;
 
 public class Player : MonoBehaviour
@@ -204,7 +205,8 @@ public class Player : MonoBehaviour
 
     // 現在の座標を返す関数
     public Vector3 GetPosition() { return transform.position; }
-
+    // トランスフォームを返す関数
+    public Transform GetTransform() { return transform; }
     // カメラを返す関数
     public Camera GetCamera() { return Camera.main; }
 

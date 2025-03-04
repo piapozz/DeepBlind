@@ -8,6 +8,8 @@ public class EventItem : MonoBehaviour, IEvent
     private UIManager _uiManager = null;
     private Inventory _inventory = null;
 
+    private bool isUsed = false;
+
     [SerializeField] private BaseItem item = null;
 
     void Start()
@@ -18,8 +20,13 @@ public class EventItem : MonoBehaviour, IEvent
 
     public void Event()
     {
-        _inventory.AddItem(item);
-        Destroy(this.gameObject);
+        if (isUsed != true)
+        {
+            _inventory.AddItem(item);
+            _uiManager.DisableIntractUI();
+            isUsed = true;
+            Destroy(this.gameObject);
+        }
     }
 
     /// <summary>

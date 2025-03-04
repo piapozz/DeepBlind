@@ -7,6 +7,7 @@ public abstract class BaseItem : ScriptableObject
     public string itemName;
     public Sprite icon;
     public bool canStack;
+    public bool isConsume;
 
-    public abstract void ItemEffect(GameObject character);
+    public abstract bool ItemEffect();
 }

@@ -9,11 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f75aeffc86d04141b8424fe42073137, type: 3}
-  m_Name: BatteryLarge
+  m_Script: {fileID: 11500000, guid: 64252873600f14942b100f0eae3744fc, type: 3}
+  m_Name: Key
   m_EditorClassIdentifier: 
-  itemName: BatteryLarge
-  icon: {fileID: 21300000, guid: 0e187b4fa40922d448c70912aa9a219f, type: 3}
+  itemName: Key
+  icon: {fileID: 21300000, guid: 2f4a757f45b41bd40ba84f1458c69b0c, type: 3}
   canStack: 1
   isConsume: 1
-  recoveryValue: 25
+  distance: 5
+  doorLayer:
+    serializedVersion: 2
+    m_Bits: 8
