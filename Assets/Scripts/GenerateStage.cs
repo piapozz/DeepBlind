@@ -901,13 +901,13 @@ public class GenerateStage : MonoBehaviour
                 for (int i = 0; i < (int)Direction.Max; i++)
                 {
                     // オブジェクト設定
-                    GameObject genObj;
+                    GameObject genOriginObj;
                     // ドアの設置
                     if (stageLayout[w, h].connect[i] == true)
-                        genObj = door;
+                        genOriginObj = door;
                     // 壁の設置
                     else
-                        genObj = wall;
+                        genOriginObj = wall;
 
                     // 座標設定
                     // 場所によるオフセットを指定し部屋の座標と足す
@@ -929,7 +929,10 @@ public class GenerateStage : MonoBehaviour
                     // 方向によって回転
                     Quaternion genRot = Quaternion.Euler(0, 90 * i, 0);
 
-                    Instantiate(genObj, genPos, genRot, section.transform);
+                    GameObject genObj = Instantiate(genOriginObj, genPos, genRot, section.transform);
+                    // ゴール部屋ならロックする
+                    if (stageLayout[w, h].type == SectionType.GoalRoom && i == (int)Direction.South)
+                        genObj.GetComponent<EventDoor>().SetDoorLock(true);
                 }
             }
         }

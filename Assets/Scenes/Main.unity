@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 00a90e072c24fbc4e90a35e60da9b71c, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -234,7 +234,19 @@ MonoBehaviour:
     m_ActionId: c17bf305-c727-4041-bdc3-1871ddcc2dc7
     m_ActionName: Player/Look[/Mouse/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 128369019}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: c5fc8f50-56d4-4aed-ae9e-92dc34263aae
     m_ActionName: Player/Fire[/Mouse/leftButton]
   - m_PersistentCalls:
@@ -277,6 +289,18 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9a4c7129-c667-4564-9cd2-e5f520f70a81
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b12823ef-80a7-4c17-b609-6e614812fa83
+    m_ActionName: Player/Dash[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ff6def61-505e-4c21-86bd-a8de72331deb
+    m_ActionName: Player/NoBreath[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4b0a4526-a35c-49fd-9f19-9cbc35a500a5
+    m_ActionName: Player/Light[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -443,6 +467,7 @@ GameObject:
   - component: {fileID: 255332078}
   - component: {fileID: 255332080}
   - component: {fileID: 255332081}
+  - component: {fileID: 255332082}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -637,6 +662,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: ff6def61-505e-4c21-86bd-a8de72331deb
     m_ActionName: Player/NoBreath[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255332082}
+        m_TargetAssemblyTypeName: LightManager, Assembly-CSharp
+        m_MethodName: SwitchLight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4b0a4526-a35c-49fd-9f19-9cbc35a500a5
+    m_ActionName: Player/Light[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -656,6 +697,18 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.78, z: 0}
+--- !u!114 &255332082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255332076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d37b1cfa63bc4be41877c3566e540724, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &300827811 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1319729435723597870, guid: 55d48f789a6331845906de0f84aea95a, type: 3}
@@ -705,12 +758,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80a37be1b9ecc344aa6dcaedd442eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  managementEnemy: 1
-  enemies:
-  - {fileID: 7832492252065794931, guid: 6b8f8a8a1c5a0a34aba72e469b3176a4, type: 3}
-  createEnemies: 03000000
-  player: {fileID: 255332078}
-  generateStage: {fileID: 1115948082}
+  _enemies: []
+  _createEnemies: 
+  _player: {fileID: 0}
+  _generateStage: {fileID: 0}
 --- !u!1 &392306567
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,7 +2232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddf3da011ee8fd54a9ed23434dec7ee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshObject: {fileID: 0}
   _seach:
     rid: 5759521710375960576
   _vigilance:

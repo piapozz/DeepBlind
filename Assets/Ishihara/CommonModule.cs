@@ -112,4 +112,160 @@ public class CommonModule {
 			await UniTask.DelayFrame(1);
 		}
 	}
+
+    #region WaitAction(sec)
+
+    /// <summary>
+    /// 指定した秒数後に関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask WaitAction(float sec, System.Action action)
+    {
+        float elapsedTime = 0.0f;
+        while (action != null &&
+            elapsedTime < sec)
+        {
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
+        }
+        action();
+    }
+
+    /// <summary>
+    /// 指定した秒数後に関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask WaitAction<T>(float sec, System.Action<T> action, T pram)
+    {
+        float elapsedTime = 0.0f;
+        while (action != null &&
+            pram != null &&
+            elapsedTime < sec)
+        {
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
+        }
+        action(pram);
+    }
+
+    /// <summary>
+    /// 指定した秒数後に関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask<T> WaitAction<T>(float sec, System.Func<T> action)
+    {
+        float elapsedTime = 0.0f;
+        while (action != null &&
+            elapsedTime < sec)
+        {
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
+        }
+        return action();
+    }
+
+    /// <summary>
+    /// 指定した秒数後に関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask<T> WaitAction<T>(float sec, System.Func<T, T> action, T pram)
+    {
+        float elapsedTime = 0.0f;
+        while (action != null &&
+            pram != null &&
+            elapsedTime < sec)
+        {
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
+        }
+        return action(pram);
+    }
+
+    #endregion
+
+    #region WaitAction(frame)
+
+    /// <summary>
+    /// 指定したフレームに関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask WaitAction(int frame, System.Action action)
+    {
+        float elapsedFrame = 0;
+        while (action != null &&
+            elapsedFrame < frame)
+        {
+            elapsedFrame += Time.timeScale;
+            await UniTask.DelayFrame(1);
+        }
+        action();
+    }
+
+    /// <summary>
+    /// 指定したフレームに関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask WaitAction<T>(int frame, System.Action<T> action, T pram)
+    {
+        float elapsedFrame = 0;
+        while (action != null &&
+            pram != null &&
+            elapsedFrame < frame)
+        {
+            elapsedFrame += Time.timeScale;
+            await UniTask.DelayFrame(1);
+        }
+        action(pram);
+    }
+
+    /// <summary>
+    /// 指定したフレームに関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask<T> WaitAction<T>(int frame, System.Func<T> action)
+    {
+        float elapsedFrame = 0;
+        while (action != null &&
+            elapsedFrame < frame)
+        {
+            elapsedFrame += Time.timeScale;
+            await UniTask.DelayFrame(1);
+        }
+        return action();
+    }
+
+    /// <summary>
+    /// 指定したフレームに関数を実行する
+    /// </summary>
+    /// <param name="sec"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask<T> WaitAction<T>(int frame, System.Func<T, T> action, T pram)
+    {
+        float elapsedFrame = 0;
+        while (action != null &&
+            pram != null &&
+            elapsedFrame < frame)
+        {
+            elapsedFrame += Time.timeScale;
+            await UniTask.DelayFrame(1);
+        }
+        return action(pram);
+    }
+
+    #endregion
 }
