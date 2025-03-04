@@ -11,11 +11,6 @@ using UnityEngine;
 
 public class EventLocker : MonoBehaviour, IEvent
 {
-    private Vector3 enterPos;
-    private Vector3 exitPos;
-    private Quaternion enterRot;
-    private Quaternion exitRot;
-
     [SerializeField] private GameObject lockerEnterAnker = null;
     [SerializeField] private GameObject lockerExitAnker = null;
 
@@ -28,12 +23,6 @@ public class EventLocker : MonoBehaviour, IEvent
         uiManager = UIManager.instance;
         player = Player.instance;
 
-        enterPos = lockerEnterAnker.transform.position;
-        exitPos = lockerExitAnker.transform.position;
-
-        enterRot = lockerEnterAnker.transform.rotation;
-        exitRot = lockerExitAnker.transform.rotation;
-
         inPlayer = false;
     }
 
@@ -42,7 +31,6 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void Event()
     {
-        EnableInteractUI();
         ActionLocker();
     }
 
@@ -51,7 +39,7 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void EnableInteractUI()
     {
-        if (inPlayer == true)
+        if (inPlayer == false)
             uiManager.DisplayIntractUI("Enter:E");
         else
             uiManager.DisplayIntractUI("Exit:E");
@@ -71,20 +59,29 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void ActionLocker()
     {
+        Vector3 nextPos;
+        Quaternion nextRot;
+
         // ロッカーから出る
         if (inPlayer == true)
         {
-            player.SetRotate(exitRot);
-            player.SetPosition(exitPos);
+            nextPos = lockerExitAnker.transform.position;
+            nextRot = lockerExitAnker.transform.rotation;
+
+            player.SetRotate(nextRot);
+            player.SetPosition(nextPos);
             player.SetCharaController(true);
             inPlayer = false;
         }
         // ロッカーに入る
         else 
         {
+            nextPos = lockerEnterAnker.transform.position;
+            nextRot = lockerEnterAnker.transform.rotation;
+
             player.SetCharaController(false);
-            player.SetRotate(enterRot);
-            player.SetPosition(enterPos);
+            player.SetRotate(nextRot);
+            player.SetPosition(nextPos);
             inPlayer = true;
         }
     }

@@ -15,21 +15,6 @@ public class Interact : MonoBehaviour
 {
     private IEvent iEvent;
 
-    bool inputStay = false;                 // 入力を受け付けるかを管理する
-
-    public bool interact = false;
-
-    // ActionsのFireに登録されているキーが押されたときに入力値を取得
-    public void OnFire(InputValue inputValue)
-    {
-        if (inputStay == true) interact = true;
-    }
-
-    private void Update()
-    {
-        Debug.Log(iEvent);
-    }
-
     public void ExecuteEvent(InputAction.CallbackContext context)
     {
         // 一度飲み入力を受付

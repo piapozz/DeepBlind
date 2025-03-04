@@ -9,9 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject intractUI;
     [SerializeField] GameObject miniMapUI;
     [SerializeField] GameObject compassUI;
-    [SerializeField] Image staminaBar;
 
-    [SerializeField] Player player;
     static public UIManager instance = null;
 
     TextMeshProUGUI textMesh;
@@ -28,9 +26,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        // Playerクラスの GetStamina() で「現在のスタミナ / スタミナの最大値」を受け取って代入
-        // それに応じてゲージを増減させる
-        staminaBar.GetComponent<Image>().fillAmount = player.GetStamina();
+        
     }
 
     public void DisplayIntractUI(string text)
