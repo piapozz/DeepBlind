@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1442752615931933314}
   - component: {fileID: 8853432124135593149}
   - component: {fileID: 5566963575642399204}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 241964184818458752}
   - component: {fileID: 61284671129703780}
   - component: {fileID: 2858093920563701484}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: door.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,9 +228,9 @@ GameObject:
   - component: {fileID: 3683614213441797107}
   - component: {fileID: 7341418953635120142}
   - component: {fileID: 8454832207080763699}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: Door
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -268,7 +268,7 @@ BoxCollider:
   m_Center: {x: -0.016027927, y: 1.7820343, z: -0.0016630068}
 --- !u!95 &3683614213441797107
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -285,7 +285,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &7341418953635120142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 0}
+  doorLock: 0
 --- !u!1 &4770926400035944876
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,7 +547,7 @@ GameObject:
   - component: {fileID: 5211762357547326281}
   - component: {fileID: 3547704452098479010}
   - component: {fileID: 8761120412993832025}
-  m_Layer: 2
+  m_Layer: 3
   m_Name: door.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
