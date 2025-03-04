@@ -16,5 +16,5 @@ public interface IEnemyState
     /// <summary>
     /// ‰Šú‰»
     /// </summary>
-    public void Init();
+    public void Init(int setID);
 }

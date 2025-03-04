@@ -2,18 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static EnemyBase;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class BasicVigilance : IVigilance
 {
-    /// 更新する情報
-    //private EnemyInfo _enemyInfo;
-
-    // 追跡中から警戒に移ったかで処理を変えるフラグ
-    private bool _isViaSearch = false;
-
-    // 状態管理フラグ
-    private bool _search = false;
-    private bool _tracking = false;
+    private int _ID = -1;
+    private EnemyBase _enemy;
+    private Player _player;
 
     /// <summary>
     /// 行動
@@ -29,31 +24,22 @@ public class BasicVigilance : IVigilance
         // 完全に見失ったかどうか
         CheckLookAround();
 
-        // 特殊処理
-       // _enemyInfo = skill.Ability(_enemyInfo);
-
         // 更新
         StatusUpdate();
-
-        // 移動
-        Move();
-
-        //return _enemyInfo;
     }
 
     /// <summary>
     /// 初期化
     /// </summary>
-    public void Init()
+    public void Init(int setID)
     {
-        //_enemyInfo = new EnemyInfo();
-        _isViaSearch = false;
+        _ID = setID;
+        _enemy = EnemyUtility.GetCharacter(_ID);
+        _player = EnemyUtility.GetPlayer();
     }
 
     public void CheckLookAround()
     {
-        //_isViaSearch = true;
-
         //// 目標地点をリスト順に格納
 
         //// プレイヤーとの間に障害物があるかどうか
@@ -89,10 +75,10 @@ public class BasicVigilance : IVigilance
         //}
 
         //// 部屋に到着したら見渡す
-        //if (Vector3.Distance(_enemyInfo.status.position , _enemyInfo.status.targetPos) > 3.0f) return;
+        //if (Vector3.Distance(_enemyInfo.status.position, _enemyInfo.status.targetPos) > 3.0f) return;
 
         //// 見渡す
-        //if(!LookAround()) return;
+        //if (!LookAround()) return;
 
         //// 次の巡回地点を設定
 
@@ -101,7 +87,6 @@ public class BasicVigilance : IVigilance
 
     private bool LookAround()
     {
-
         //// プレイヤーとの間に障害物があるかどうか
         //Vector3 origin = _enemyInfo.status.position;                                                   // 原点
         //Vector3 direction = Vector3.Normalize(_enemyInfo.playerStatus.playerPos - _enemyInfo.status.position);     // X軸方向を表すベクトル
@@ -132,12 +117,6 @@ public class BasicVigilance : IVigilance
 
     // 情報の更新
     public void StatusUpdate()
-    {
-
-    }
-
-    // 移動
-    public void Move()
     {
 
     }
