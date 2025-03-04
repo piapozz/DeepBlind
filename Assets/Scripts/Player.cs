@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
 
-    const float STAMINA_MAX = 50.0f;               // スタミナの最大値
+    const float STAMINA_MAX = 25.0f;               // スタミナの最大値
     const float WALK_SPEED = 2.5f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
@@ -104,10 +104,11 @@ public class Player : MonoBehaviour
                 status.speed = TIRED_SPEED;
 
                 // 徐々にスタミナ回復
-                status.stamina += Time.deltaTime * 10.0f;
+                status.stamina += Time.deltaTime * 5.0f;
 
                 // 四分の位置回復したら疲れている状態を解除
                 if (status.stamina >= STAMINA_MAX) isTired = false;
+                return;
             }
 
             // スタミナが足りていたらただの歩き
@@ -117,7 +118,7 @@ public class Player : MonoBehaviour
                 status.speed = WALK_SPEED;
 
                 // 徐々にスタミナ回復
-                if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 1.0f;
+                if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 0.5f;
             }
 
             // ダッシュのキーが押されたとき移動する速さを変更する
@@ -135,7 +136,11 @@ public class Player : MonoBehaviour
         }
 
         // 止まっていたらノイズの変更なし
-        else { NoiseValue(0.5f, 1.0f); }
+        else
+        {
+            NoiseValue(0.5f, 1.0f);
+            status.stamina += Time.deltaTime * 1.0f;
+        }
     }
 
     // VirtualCameraにあるNoiseProfileの値をスクリプトから変更します

@@ -16,13 +16,11 @@ using UnityEngine.SceneManagement;
 
 public class EventGoal : MonoBehaviour, IEvent 
 {
-    [SerializeField] UIManager uiManager;
+    private UIManager uiManager;
 
     void Start()
     {
-        GameObject targetObject = GameObject.Find("UIManager");
-
-        uiManager = targetObject.GetComponent<UIManager>();
+        uiManager = UIManager.instance;
     }
 
     /// <summary>
