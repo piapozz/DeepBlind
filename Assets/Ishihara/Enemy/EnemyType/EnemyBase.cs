@@ -33,13 +33,16 @@ public class EnemyBase : MonoBehaviour
     private ISkill _skill;
     private List<IEnemyState> _state;
     [SerializeField]
-    private State _nowState;
+    public State _nowState { get; private set; }
 
     // ナビメッシュ
     private NavMeshAgent _agent;
 
     // アニメーター
     private Animator _animator;
+
+    // 3Dオーディオソース
+    private AudioSource _audioSource;
 
     public virtual void Setup(int setID, Vector3 position, int masterID)
     {
@@ -70,6 +73,7 @@ public class EnemyBase : MonoBehaviour
 
         _agent = obj.GetComponent<NavMeshAgent>();
         _animator = obj.GetComponent<Animator>();
+        _audioSource = obj.GetComponent<AudioSource>();
         _agent.speed = speed;
         target = position;
     }
@@ -168,6 +172,8 @@ public class EnemyBase : MonoBehaviour
     {
         _state?[(int)_nowState]?.Activity();
         _skill?.Ability();
+        // 止まっているとき以外足音再生
+        //AudioManager.instance.PlaySE(SE.ENEMY_WALK, _audioSource);
     }
 
     /// <summary>
@@ -175,6 +181,7 @@ public class EnemyBase : MonoBehaviour
     /// </summary>
     public void StateChange(State state)
     {
+        if (state == State.TRACKING) EnemyUtility.GetPlayer().EnemyFound();
         _nowState = state;
     }
 
@@ -198,5 +205,11 @@ public class EnemyBase : MonoBehaviour
         {
             _agent.speed = speed;
         }
+    }
+
+    // プレイヤーと接触したかどうか
+    public bool ChackCaughtPlayer()
+    {
+        return Vector3.Distance(transform.position, EnemyUtility.GetPlayer().transform.position) < 1;
     }
 }

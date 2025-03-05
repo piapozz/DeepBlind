@@ -181,7 +181,6 @@ public class Player : MonoBehaviour
 
     public void EnemyCaught(GameObject enemy)
     {
-
         Vector3 enemyPosition = enemy.transform.position;
         Vector3 playerPosition = GetPosition();
 

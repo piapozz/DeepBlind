@@ -6,7 +6,6 @@ using static EnemyBase;
 
 public class StopLookAt : ISkill
 {
-
     [SerializeField]
     private GameObject _mesh;
 
@@ -20,7 +19,6 @@ public class StopLookAt : ISkill
     public void Init(int setID)
     {
         ID = setID;
-        
     }
 
     /// <summary>
@@ -79,7 +77,6 @@ public class StopLookAt : ISkill
         {
             enemy.SetAnimationSpeed(0);
             enemy.SetNavSpeed(0);
-            enemy.StateChange(EnemyBase.State.TRACKING);
         }
         else
         {

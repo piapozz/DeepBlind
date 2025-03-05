@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using static CommonModule;
@@ -83,8 +84,17 @@ public class EnemyManager : SystemObject
             ExecuteAll(enemy => enemy.Active()); 
 
             // エネミーとプレイヤーが接触しているかを確認
+            if(ExecuteAll<bool>(enemy =>
             {
-               
+                if (enemy.ChackCaughtPlayer())
+                {
+                    EnemyUtility.GetPlayer().EnemyCaught(enemy.gameObject);
+                    return true;
+                }
+                return false;
+            }))
+            {
+                return;
             }
 
             // 次のフレームまで待機
@@ -219,8 +229,21 @@ public class EnemyManager : SystemObject
             if (_useList[i] == null) continue;
 
             action(_useList[i]);
-
         }
+    }
+
+    public T ExecuteAll<T>(System.Func<EnemyBase , T> action)
+    {
+        if (action == null || IsEmpty(_useList)) return default;
+
+        for (int i = 0, max = _useList.Count; i < max; i++)
+        {
+            if (_useList[i] == null) continue;
+
+            return action(_useList[i]);
+        }
+
+        return default;
     }
 
     public async UniTask ExecuteAllTask(System.Func<EnemyBase, UniTask> task)
