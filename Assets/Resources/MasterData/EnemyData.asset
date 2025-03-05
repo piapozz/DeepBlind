@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde0b975addbb40429e924c6ec24c9f2, type: 3}
+  m_Name: EnemyData
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: EnemyData
+    list:
+    - ID: 0
+      Name: Stop
+      Speed: 1
+      SpeedDiameter: 1
+      ThreatRange: 10
+      ViewLength: 10
+      FieldOfView: 30
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 2
+      SpeedDiameter: 1.5
+      ThreatRange: 15
+      ViewLength: 15
+      FieldOfView: 50
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 3
+      SpeedDiameter: 2
+      ThreatRange: 20
+      ViewLength: 20
+      FieldOfView: 70
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt

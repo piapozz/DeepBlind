@@ -16,7 +16,8 @@ public enum ItemID
 public enum BGM
 {
     TITLE = 0,
-    MAIN,
+    MAIN_NORMAL,
+    MAIN_TRACKING,
     OTHER,
 
     MAX
@@ -28,8 +29,11 @@ public enum SE
     DOOR_OPEN,
     DOOR_CLOSE,
     DOOR_UNLOCK,
-    ITEM_USE,
     PLAYER_SURPRISE,
+    WALK,
+    RUN,
+    ENEMY_WALK,
+    CAUGHT,
 
     MAX
 }

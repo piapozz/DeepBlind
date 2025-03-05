@@ -16,7 +16,7 @@ public class MasterDataManager {
 
 	public static void LoadAllData()
 	{
-        enemyData = Load<Entity_EnemyData, Entity_EnemyData.Sheet, Entity_EnemyData.Param>("FloorData");
+        enemyData = Load<Entity_EnemyData, Entity_EnemyData.Sheet, Entity_EnemyData.Param>("EnemyData");
 	}
 
 	private static List<List<T3>> Load<T1, T2, T3>(string dataName) where T1 : ScriptableObject

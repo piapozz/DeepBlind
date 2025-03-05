@@ -10,14 +10,17 @@ public class StopLookAt : ISkill
     [SerializeField]
     private GameObject _mesh;
 
-    private Animator _animator;
+    private int ID;
+    private  Bounds bounds;
 
     /// <summary>
     /// 初期化
     /// </summary>
     /// <param name="animator"></param>
-    public void Init()
+    public void Init(int setID)
     {
+        ID = setID;
+        
     }
 
     /// <summary>
@@ -27,11 +30,8 @@ public class StopLookAt : ISkill
     /// <returns></returns>
     public void Ability()
     {
-        SkinnedMeshRenderer filter = _mesh.GetComponent<SkinnedMeshRenderer>();
-
-        // フィルターのメッシュ情報からバウンドボックスを取得する
-        Bounds bounds = filter.bounds;
-
+        SkinnedMeshRenderer filter = EnemyManager.instance.Get(ID).GetComponentInChildren<SkinnedMeshRenderer>();
+        bounds = filter.bounds;
         Vector3[] targetPoints = new Vector3[8];
 
         targetPoints[0] = bounds.min + new Vector3(0.0f, 0.5f, 0.0f);
@@ -58,11 +58,12 @@ public class StopLookAt : ISkill
             if (GeometryUtility.TestPlanesAABB(planes, bounds))
             {
                 // コーナーからカメラ位置へのレイキャスト
-                Vector3 direction = -(targetPoint - camera.transform.position);
+                Vector3 direction = -(targetPoint - EnemyUtility.GetPlayer().transform.position);
                 Ray ray = new Ray(targetPoint, direction.normalized);
                 RaycastHit hit;
                 // レイキャストがプレイヤーに直接当たるか確認
-                if (Physics.Raycast(ray, out hit, direction.magnitude + 1))
+                LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
+                if (Physics.Raycast(ray, out hit, direction.magnitude + 1, layer))
                 {
                     // 障害物がなく直接当たった場合に true を返す
                     if (hit.collider.CompareTag("Player"))
@@ -72,5 +73,19 @@ public class StopLookAt : ISkill
                 }
             }
         }
+
+        EnemyBase enemy = EnemyUtility.GetCharacter(ID);
+        if (isInsideCamera)
+        {
+            enemy.SetAnimationSpeed(0);
+            enemy.SetNavSpeed(0);
+            enemy.StateChange(EnemyBase.State.TRACKING);
+        }
+        else
+        {
+            enemy.SetAnimationSpeed(1);
+            enemy.SetNavSpeed(enemy.speed);
+        }
+
     }
 }

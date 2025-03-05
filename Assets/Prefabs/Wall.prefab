@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4161314235116307395}
   - component: {fileID: 5676167974606425395}
   - component: {fileID: 5415259981842448442}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1003973210907383171}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
