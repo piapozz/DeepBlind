@@ -22,6 +22,7 @@ public class EventItem : MonoBehaviour, IEvent
     {
         if (isUsed != true)
         {
+            AudioManager.instance.PlaySE(SE.ITEM_PICK);
             _inventory.AddItem(item);
             _uiManager.DisableIntractUI();
             isUsed = true;

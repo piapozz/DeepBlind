@@ -46,9 +46,14 @@ public class EventDoor : MonoBehaviour, IEvent
         if (doorLock == false)
         {
             if (GetOpen() == true)
+            {
                 uiManager.DisplayIntractUI("Close:E");
+            }
+
             else
+            {
                 uiManager.DisplayIntractUI("Open:E");
+            }
         }
 
         // é{è˘Ç≥ÇÍÇƒÇ¢ÇΩÇÁ
@@ -78,12 +83,12 @@ public class EventDoor : MonoBehaviour, IEvent
         if (animator.GetBool("open") == true)
         {
             animator.SetBool("open", false);
-            // AudioManager.instance.PlaySE(SE.DOOR_CLOSE);
+            AudioManager.instance.PlaySE(SE.DOOR_CLOSE);
         }
         else
         {
             animator.SetBool("open", true);
-            // AudioManager.instance.PlaySE(SE.DOOR_OPEN);
+            AudioManager.instance.PlaySE(SE.DOOR_OPEN);
         }
 
     }
