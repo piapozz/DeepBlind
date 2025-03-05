@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6545195032389282967}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Locker
   m_TagString: Locker
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4474347443232601767}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Objects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5258148220047779349}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SouthWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 5258148220089163465}
   - component: {fileID: 5258148220089163464}
   - component: {fileID: 710338190315544044}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5258148220410605351}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Room1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 5258148220564069317}
   - component: {fileID: 5258148220564069316}
   - component: {fileID: 4123398592785990586}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 5258148220651462735}
   - component: {fileID: 5258148220651462734}
   - component: {fileID: 7963014704760916914}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 5258148220798563107}
   - component: {fileID: 5258148220798563106}
   - component: {fileID: 4931197303839821981}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -593,7 +593,7 @@ GameObject:
   - component: {fileID: 5258148221049474747}
   - component: {fileID: 5258148221049474746}
   - component: {fileID: 5628997851581340202}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -704,7 +704,7 @@ GameObject:
   - component: {fileID: 5258148221061033294}
   - component: {fileID: 5258148221061033293}
   - component: {fileID: 6946131429583901132}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -815,7 +815,7 @@ GameObject:
   - component: {fileID: 5258148221155941042}
   - component: {fileID: 5258148221155941041}
   - component: {fileID: 1455840774165435395}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -926,7 +926,7 @@ GameObject:
   - component: {fileID: 5258148221279019045}
   - component: {fileID: 5258148221279019044}
   - component: {fileID: 4270482269374046526}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1033,7 +1033,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5258148221452201948}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EastWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1066,7 +1066,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5258148221453639624}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WestWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1099,7 +1099,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5258148221835612222}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NorthWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1136,7 +1136,7 @@ GameObject:
   - component: {fileID: 5258148221853946089}
   - component: {fileID: 5258148221853946088}
   - component: {fileID: 7576007698854198097}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1247,7 +1247,7 @@ GameObject:
   - component: {fileID: 5258148222034371329}
   - component: {fileID: 5258148222034371328}
   - component: {fileID: 125180885514808684}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ceiling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1357,7 +1357,7 @@ GameObject:
   - component: {fileID: 3107465628962166710}
   - component: {fileID: 781314137161116417}
   - component: {fileID: 2867976262083973471}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1451,7 +1451,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3001302196561876554}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Item
   m_TagString: Item
   m_Icon: {fileID: 0}

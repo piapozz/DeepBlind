@@ -48,14 +48,15 @@ public class BasicTracking : ITracking
         Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
 
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))                                                 // もしRayを投射して何らかのコライダーに衝突したら
+        LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
+        if (Physics.Raycast(ray, out hit, Vector3.Distance(_enemy.transform.position, _player.transform.position), layer))                                                 // もしRayを投射して何らかのコライダーに衝突したら
         {
             string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
 
             // 初めて見失っていたら
             if (tag != "Player")
             {
-                _enemy.StateChange(State.VIGILANCE);
+                _enemy.StateChange(State.SEARCH);
             }
         }
     }

@@ -33,6 +33,7 @@ public class EnemyManager : SystemObject
 
     public override void Initialize()
     {
+        MasterDataManager.LoadAllData();
         instance = this;
         EnemyBase.SetGetObjectCallback(GetCharacterObject);
 
@@ -44,6 +45,26 @@ public class EnemyManager : SystemObject
 
         // 必要なキャラクターとオブジェクトのインスタンスを生成して未使用状態にしておく
         _useList = new List<EnemyBase>(enemyMax);
+        _unuseList = new List<EnemyBase>(enemyMax);
+        _useObjectList = new List<GameObject>(enemyMax);
+        _unuseObjectList = new List<GameObject>(enemyMax);
+
+        for (int i = 0; i < enemyMax; i++)
+        {
+            _useList.Add(new EnemyBase());
+        }
+        for (int i = 0; i < enemyMax; i++)
+        {
+            _unuseList.Add(new EnemyBase());
+        }
+        for (int i = 0; i < enemyMax; i++)
+        {
+            _useObjectList.Add(new GameObject());
+        }
+        for (int i = 0; i < enemyMax; i++)
+        {
+            _unuseObjectList.Add(new GameObject());
+        }
 
         // エネミーの生成
         CreateEnemy();
@@ -59,10 +80,9 @@ public class EnemyManager : SystemObject
     {
         while (true)
         {
-            ExecuteAll(enemy => enemy.Active());
+            ExecuteAll(enemy => enemy.Active()); 
 
             // エネミーとプレイヤーが接触しているかを確認
-            
             {
                
             }
@@ -78,7 +98,7 @@ public class EnemyManager : SystemObject
     public Vector3 DispatchTargetPosition()
     {
         // 目標位置を再設定
-        return GenerateStage.instance.GetRandRoomPos();
+        return GenerateStage.instance.GetRandCorridorPos();
     }
 
     /// <summary>
@@ -86,28 +106,15 @@ public class EnemyManager : SystemObject
     /// </summary>
     private async UniTask CreateEnemy()
     {
-        for (int i = 0; i < _enemies.Length; i++)
+        for (int i = 0; i < MasterDataManager.enemyData[0].Count; i++)
         {
-            for (int j = 0; j < _createEnemies[i]; j++)
-            {
-                // 生成
-                var enemy = Instantiate(_enemies[i], GenerateStage.instance.GetRandCorridorPos(), Quaternion.identity, this.transform);
+            // 生成
+            // 使用可能なIDを取得して使用リストに追加
+            Entity_EnemyData.Param param = MasterDataManager.enemyData[0][i];
+            Vector3 position = GenerateStage.instance.GetRandRoomPos();
+            UseEnemy(position, param.ID);
 
-                // IDの取得
-                // インスタンスの取得
-                EnemyBase useEnemy = enemy.GetComponent<EnemyBase>();
-                
-                // 使用可能なIDを取得して使用リストに追加
-                int useID = UseCharacter(useEnemy, j);
-                _useObjectList[useID] = enemy;
-                enemy.transform.SetParent(_useObjectRoot);
-                useEnemy.Setup(useID, GenerateStage.instance.GetRandCorridorPos(), j);
-
-                Vector3 position = GenerateStage.instance.GetRandRoomPos();
-                UseEnemy(position, 1);
-
-                await UniTask.DelayFrame(1);
-            }
+            await UniTask.DelayFrame(1);
         }
     }
 
@@ -115,20 +122,17 @@ public class EnemyManager : SystemObject
 	/// エネミーの生成
 	/// </summary>
 	/// <param name="squareData"></param>
-	public void UseEnemy(Vector3 squareData, int masterID)
+	public void UseEnemy(Vector3 position, int masterID)
     {
         // インスタンスの取得
-        EnemyBase useEnemy = null;
-        useEnemy = _unuseList[0];
         _unuseList.RemoveAt(0);
-        
 
         // 使用可能なIDを取得して使用リストに追加
-        int useID = UseCharacter(useEnemy, masterID);
-        useEnemy.Setup(useID, squareData, masterID);
+        int useID = UseCharacter(masterID);
+        _useList[useID].Setup(useID, position, masterID);
     }
 
-    private int UseCharacter(EnemyBase useCharacter, int masterID)
+    private int UseCharacter(int masterID)
     {
         // 使用可能なIDを取得して使用リストに追加
         int useID = -1;
@@ -137,29 +141,31 @@ public class EnemyManager : SystemObject
             if (_useList[i] != null) continue;
 
             useID = i;
-            _useList[i] = useCharacter;
             break;
         }
         if (useID < 0)
         {
             useID = _useList.Count;
-            _useList.Add(useCharacter);
+            _useList.Add(new EnemyBase());
         }
         // オブジェクトの取得
         GameObject useObject = null;
         if (IsEmpty(_unuseObjectList))
         {
-            Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
-            useObject = Instantiate((GameObject)Resources.Load("Prefab/" + param.Name));
+            _useObjectList.Add(new GameObject());
+            _unuseObjectList.Add(new GameObject());
         }
         else
         {
             useObject = _unuseObjectList[0];
             _unuseObjectList.RemoveAt(0);
         }
+        Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
+        useObject = Instantiate((GameObject)Resources.Load("Prefab/" + param.Name));
         // オブジェクトの使用リストへの追加
         while (!IsEnableIndex(_useObjectList, useID)) _useObjectList.Add(null);
 
+        _useList[useID] = useObject.AddComponent<EnemyBase>();
         _useObjectList[useID] = useObject;
         useObject.transform.SetParent(_useObjectRoot);
         return useID;
@@ -211,7 +217,9 @@ public class EnemyManager : SystemObject
         for (int i = 0, max = _useList.Count; i < max; i++)
         {
             if (_useList[i] == null) continue;
-            
+
+            action(_useList[i]);
+
         }
     }
 

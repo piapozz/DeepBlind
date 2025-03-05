@@ -8,7 +8,7 @@ public interface ISkill
     /// ‰Šú‰»
     /// </summary>
     /// <param name="animator"></param>
-    void Init();
+    void Init(int setID);
 
     /// <summary>
     /// “Áêˆ—

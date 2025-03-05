@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5907045080379666698}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ExitPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7256703749297925687}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Locker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 774697447833278724}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnterPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,13 +145,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8277158053328706933, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5514973854646914966, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -3167299574701864104, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
       propertyPath: m_Name
       value: Locker
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2040542448765327740, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564783574603935192, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3587788796799408565, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3672548509089925874, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5639405848544218604, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -168,6 +200,26 @@ PrefabInstance:
     - target: {fileID: 5639405848544218604, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562889748348933850, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6989972652074480914, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7750397243111347764, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7887587906704532359, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8536400945726557719, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff290bc9cc110774b952acdeeb92e61a, type: 3}
@@ -214,7 +266,7 @@ BoxCollider:
   m_Center: {x: 0.0016762346, y: 0.0011584044, z: -0.0013943851}
 --- !u!95 &4606184111177478532
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -231,7 +283,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &3631355428783345927
 MonoBehaviour:
   m_ObjectHideFlags: 0

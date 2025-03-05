@@ -8,8 +8,8 @@ using NPOI.XSSF.UserModel;
 using NPOI.SS.UserModel;
 
 public class EnemyData_importer : AssetPostprocessor {
-	private static readonly string filePath = "Assets/Ishihara/Enemy/Master/MasterData/EnemyData.xlsx";
-	private static readonly string exportPath = "Assets/Ishihara/Enemy/Master/MasterData/EnemyData.asset";
+	private static readonly string filePath = "Assets/Resources/MasterData/EnemyData.xlsx";
+	private static readonly string exportPath = "Assets/Resources/MasterData/EnemyData.asset";
 	private static readonly string[] sheetNames = { "EnemyData", };
 	
 	static void OnPostprocessAllAssets (string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
@@ -52,7 +52,7 @@ public class EnemyData_importer : AssetPostprocessor {
 						
 					cell = row.GetCell(0); p.ID = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(1); p.Name = (cell == null ? "" : cell.StringCellValue);
-					cell = row.GetCell(2); p.Speed = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(2); p.Speed = (float)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(3); p.SpeedDiameter = (float)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(4); p.ThreatRange = (float)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(5); p.ViewLength = (float)(cell == null ? 0 : cell.NumericCellValue);

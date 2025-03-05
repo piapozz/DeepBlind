@@ -59,7 +59,8 @@ public class BasicSeach : ISeach
         Vector3 direction = Vector3.Normalize(playerPos - enemyPos);     // X軸方向を表すベクトル
         Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
 
-        if (Physics.Raycast(ray, out hit, _enemy.viewLength + 1, 1))
+        LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
+        if (Physics.Raycast(ray, out hit, _enemy.viewLength + 1, layer))
         {
             string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
 
@@ -87,11 +88,16 @@ public class BasicSeach : ISeach
     // 仮目標地点にたどり着いたかどうか
     private void CheckReaching()
     {
-        //if ((Vector3.Distance(_enemyInfo.status.targetPos, _enemy.transform.position) < 2.0f) && (!_enemyInfo.status.isAblity))
-        //{
-        //    // 探索箇所をランダムに設定する
-        //    _enemyInfo.status.targetPos = EnemyManager.Instance.DispatchTargetPosition();
-        //}
+        Debug.DrawLine(_enemy.transform.position, _enemy.target);
+        if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
+        {
+            // 探索箇所をランダムに設定する
+            _enemy.SetNavTarget(EnemyManager.instance.DispatchTargetPosition());
+        }
+        else
+        {
+            _enemy.SetNavTarget(_enemy.target);
+        }
     }
 
     // 警戒条件を満たしたかどうか

@@ -1,35 +1,28 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-// スモーク
-// ドア固め
-// ロッカーワープ
-
 // エネミーの元となる親クラス
-
-public  class EnemyBase : MonoBehaviour
+public class EnemyBase : MonoBehaviour
 {
     private static System.Func<int, GameObject> _GetObject = null;
 
-    public static void SetGetObjectCallback(System.Func<int, GameObject> setCallback)
+    public static void SetGetObjectCallback(Func<int, GameObject> setCallback)
     {
         _GetObject = setCallback;
     }
 
-    public int ID               { get; private set; } = -1;
+    public int ID { get; private set; } = -1;
     private int _masterID = -1;
-    public Transform transform  { get; private set; } = null;
-    
-    public float speed          { get; private set; } = -1;       // エネミーの速さ
-    public float speedDiameter  { get; private set; } = -1;       // 見つけた時の速さの倍率
-    public float threatRange    { get; private set; } = -1;       // 脅威範囲
-    public float viewLength     { get; private set; } = -1;       // 視界の長さ
-    public float fieldOfView    { get; private set; } = -1;       // 視野角
+    public Vector3 target { get; private set; }
+
+    public float speed { get; private set; } = -1;       // エネミーの速さ
+    public float speedDiameter { get; private set; } = -1;       // 見つけた時の速さの倍率
+    public float threatRange { get; private set; } = -1;       // 脅威範囲
+    public float viewLength { get; private set; } = -1;       // 視界の長さ
+    public float fieldOfView { get; private set; } = -1;       // 視野角
 
     // それぞれのステートクラス
     private ISeach _seach;
@@ -39,37 +32,46 @@ public  class EnemyBase : MonoBehaviour
     // それぞれのスキルクラス
     private ISkill _skill;
     private List<IEnemyState> _state;
+    [SerializeField]
     private State _nowState;
 
     // ナビメッシュ
     private NavMeshAgent _agent;
 
-    private static System.Action<State> _ChangeState = null;
+    // アニメーター
+    private Animator _animator;
 
     public virtual void Setup(int setID, Vector3 position, int masterID)
     {
         ID = setID;
         _masterID = masterID;
-        _GetObject(ID).transform.position = position;
-        _GetObject(ID).SetActive(true);
-        ResetStatus();
-        _ChangeState = StateChange;
+        GameObject obj = _GetObject(ID);
+        if (obj == null) return;
 
-        //ステートの初期化
+        obj.transform.position = position;
+        obj.SetActive(true);
+        ResetStatus();
+
+        // ステートの初期化
         int stateMax = (int)State.MAX;
         _state = new List<IEnemyState>(stateMax);
-        _state.Add(_seach);
-        _state.Add(_vigilance);
-        _state.Add(_tracking);
-        for (int i = 0, max = stateMax; i < max; i++)
+
+        if (_seach != null) _state.Add(_seach);
+        if (_vigilance != null) _state.Add(_vigilance);
+        if (_tracking != null) _state.Add(_tracking);
+
+        foreach (var state in _state)
         {
-            _state[i].Init(ID);
+            state.Init(ID);
         }
+
         _nowState = State.SEARCH;
+        _skill?.Init(ID);
 
-        _skill.Init();
-
-        _agent = _GetObject(ID).GetComponent<NavMeshAgent>();
+        _agent = obj.GetComponent<NavMeshAgent>();
+        _animator = obj.GetComponent<Animator>();
+        _agent.speed = speed;
+        target = position;
     }
 
     /// <summary>
@@ -93,58 +95,51 @@ public  class EnemyBase : MonoBehaviour
 
     public void Teardown()
     {
-        _GetObject(ID).SetActive(false);
+        _GetObject(ID)?.SetActive(false);
         ID = -1;
-        _state.Clear();
+        _state?.Clear();
     }
 
-    public void SetSpeed(float setSpeed)
-    {
-        speed = setSpeed;
-    }
-
-    public void SetSpeedDiameter(float setSpeedDiameter)
-    {
-        speedDiameter = setSpeedDiameter;
-    }
-
-    public void SetThreatRange(float setThreatRange)
-    {
-        threatRange = setThreatRange;
-    }
-
-    public void SetViewLength(float setViewLength)
-    {
-        viewLength = setViewLength;
-    }
-
-    public void SetFieldOfView(float setFieldOfView)
-    {
-        fieldOfView = setFieldOfView;
-    }
+    public void SetSpeed(float setSpeed) => speed = setSpeed;
+    public void SetSpeedDiameter(float setSpeedDiameter) => speedDiameter = setSpeedDiameter;
+    public void SetThreatRange(float setThreatRange) => threatRange = setThreatRange;
+    public void SetViewLength(float setViewLength) => viewLength = setViewLength;
+    public void SetFieldOfView(float setFieldOfView) => fieldOfView = setFieldOfView;
 
     public void SetSeach(string setSeach)
     {
         Type type = Type.GetType(setSeach);
-        _seach = (ISeach)type;
+        if (type != null)
+        {
+            _seach = Activator.CreateInstance(type) as ISeach;
+        }
     }
 
     public void SetVigilance(string setVigilance)
     {
         Type type = Type.GetType(setVigilance);
-        _vigilance = (IVigilance)type;
+        if (type != null)
+        {
+            _vigilance = Activator.CreateInstance(type) as IVigilance;
+        }
     }
 
     public void SetTracking(string setTracking)
     {
         Type type = Type.GetType(setTracking);
-        _tracking = (ITracking)type;
+        if (type != null)
+        {
+            _tracking = Activator.CreateInstance(type) as ITracking;
+        }
     }
 
     public void SetSkill(string setSkill)
     {
         Type type = Type.GetType(setSkill);
-        _skill = (ISkill)type;
+        if (type != null)
+        {
+            _skill = Activator.CreateInstance(type) as ISkill;
+        }
     }
 
     // ステート
@@ -153,7 +148,6 @@ public  class EnemyBase : MonoBehaviour
         SEARCH,        // 探索
         VIGILANCE,     // 警戒
         TRACKING,      // 追跡
-
         MAX
     }
 
@@ -163,22 +157,46 @@ public  class EnemyBase : MonoBehaviour
     public void SetNavTarget(Vector3 targetPosition)
     {
         // 目標位置を設定
-        _agent.SetDestination(targetPosition);
+        if (_agent != null)
+        {
+            target = targetPosition;
+            _agent.SetDestination(target);
+        }
     }
 
     public void Active()
     {
-        _state[(int)_nowState].Activity();
-
-        _skill.Ability();
+        _state?[(int)_nowState]?.Activity();
+        _skill?.Ability();
     }
 
     /// <summary>
     /// ステートとスキルの切り替え処理
     /// </summary>
-    /// <param name="state"></param>
     public void StateChange(State state)
     {
         _nowState = state;
+    }
+
+    /// <summary>
+    /// アニメーションの速度変更
+    /// </summary>
+    public void SetAnimationSpeed(float speed)
+    {
+        if (_animator != null)
+        {
+            _animator.speed = speed;
+        }
+    }
+
+    /// <summary>
+    /// ナビメッシュの速度変更
+    /// </summary>
+    public void SetNavSpeed(float speed)
+    {
+        if (_agent != null)
+        {
+            _agent.speed = speed;
+        }
     }
 }
