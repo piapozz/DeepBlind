@@ -34,6 +34,7 @@ public enum SE
     RUN,
     ENEMY_WALK,
     CAUGHT,
+    ITEM_PICK,
 
     MAX
 }
