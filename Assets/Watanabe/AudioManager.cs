@@ -57,6 +57,12 @@ public class AudioManager : SystemObject
         source.PlayOneShot(_seClip.seClips[(int)num]);
     }
 
+    // 既存のソースを利用して再生する
+    public void PlaySE(SE num, AudioSource source)
+    {
+        source.PlayOneShot(_seClip.seClips[(int)num]);
+    }
+    
     /// <summary>
     /// 未使用のソースを取得する
     /// </summary>
