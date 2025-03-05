@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
     [SerializeField] float rotationSpeed = 1.0f;
 
-    const float STAMINA_MAX = 25.0f;               // スタミナの最大値
+    const float STAMINA_MAX = 10.0f;               // スタミナの最大値
     const float WALK_SPEED = 2.5f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度

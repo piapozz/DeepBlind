@@ -12,7 +12,8 @@ public class GenerateItem : MonoBehaviour
     GameObject[] itemPlace;
     List<Transform> itemPlaceList = new List<Transform>();
 
-    float itemProbability = 0.5f;       // アイテム生成確率
+    [SerializeField]
+    private float _itemProbability = 0.6f;       // アイテム生成確率
 
     void Start()
     {
@@ -78,7 +79,7 @@ public class GenerateItem : MonoBehaviour
         for (int i = 0; i < itemPlaceList.Count; i++)
         {
             // アイテムを生成するかをランダムに決める
-            if (Random.value >= itemProbability) continue;
+            if (Random.value >= _itemProbability) continue;
 
             // 生成するオブジェクトをランダムに決める
             int rand = Random.Range(0, itemObj.Length);
