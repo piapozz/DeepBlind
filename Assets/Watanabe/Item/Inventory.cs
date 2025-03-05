@@ -19,6 +19,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Image mainSlotUI = null;
     [SerializeField] private Sprite iconBatsu = null;
 
+    [SerializeField] private GameObject compassObject = null;
+    [SerializeField] private GameObject mapObject = null;
+
     private int selectedSlot = -1;
     private readonly int SELECTEDSLOT_INITIAL = 0;
 
@@ -61,6 +64,18 @@ public class Inventory : MonoBehaviour
         {
             selectedSlot = (selectedSlot + 1) % inventoryCount;
         }
+
+        if (itemList[selectedSlot] is ItemMap)
+        {
+            mapObject.SetActive(true);
+        }
+        else { mapObject.SetActive(false); }
+
+        if (itemList[selectedSlot] is ItemCompass)
+        {
+            compassObject.SetActive(true);
+        }
+        else { compassObject.SetActive(false); }
     }
 
     public void AddItem(BaseItem item)
