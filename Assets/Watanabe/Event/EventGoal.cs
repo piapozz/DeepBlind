@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static SceneChanger;
 
 public class EventGoal : MonoBehaviour, IEvent 
 {
@@ -28,8 +29,6 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void Event()
     {
-        FadeScreen.instance.FadeOutRun();
-
         _ = SceneChange();
     }
 
@@ -51,9 +50,13 @@ public class EventGoal : MonoBehaviour, IEvent
 
     public async UniTask SceneChange()
     {
+        FadeScreen.instance.FadeOutRun();
+
         // 3•bŠÔ‘Ò‚Â
         await Task.Delay(TimeSpan.FromSeconds(2));
 
-        SceneManager.LoadScene("Result");
+        SceneManager.LoadScene("result");
+
+        FadeScreen.instance.FadeInRun();
     }
 }

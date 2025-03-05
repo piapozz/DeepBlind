@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
                 status.speed = TIRED_SPEED;
 
                 // 徐々にスタミナ回復
-                status.stamina += Time.deltaTime * 5.0f;
+                status.stamina += Time.deltaTime * 2.0f;
 
                 // 四分の位置回復したら疲れている状態を解除
                 if (status.stamina >= STAMINA_MAX) isTired = false;
@@ -121,7 +121,7 @@ public class Player : MonoBehaviour
                 status.speed = WALK_SPEED;
 
                 // 徐々にスタミナ回復
-                if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 0.5f;
+                if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 2.0f;
             }
 
             // ダッシュのキーが押されたとき移動する速さを変更する
