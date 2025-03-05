@@ -76,9 +76,15 @@ public class EventDoor : MonoBehaviour, IEvent
     public void OpenDoor()
     {
         if (animator.GetBool("open") == true)
+        {
             animator.SetBool("open", false);
+            AudioManager.instance.PlaySE(SE.DOOR_CLOSE);
+        }
         else
+        {
             animator.SetBool("open", true);
+            AudioManager.instance.PlaySE(SE.DOOR_OPEN);
+        }
 
     }
 

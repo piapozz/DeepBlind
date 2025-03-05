@@ -37,6 +37,7 @@ public class Interact : MonoBehaviour
         IEvent triggerEvent = other.GetComponent<IEvent>();
         if (triggerEvent == null) return;
         // イベントがあったらUIの非表示を実行
+        if(iEvent == null) return;
         iEvent.DisableInteractUI();
         iEvent = null;
     }

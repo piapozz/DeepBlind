@@ -31,6 +31,7 @@ public class ItemKey : BaseItem
                 EventDoor eventDoor = hit.collider.GetComponent<EventDoor>();
                 if (eventDoor.doorLock == true)
                 {
+                    AudioManager.instance.PlaySE(SE.DOOR_UNLOCK);
                     eventDoor.UnlockDoor();
                     return true;
                 }
