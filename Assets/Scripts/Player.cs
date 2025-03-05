@@ -14,10 +14,12 @@ public class Player : MonoBehaviour
 
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
+    [SerializeField] GameObject playerObject;
     CinemachineVirtualCamera virtualCamera;                         // 制御対象のカメラ
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
+    [SerializeField] float rotationSpeed = 1.0f;
 
     const float STAMINA_MAX = 25.0f;               // スタミナの最大値
     const float WALK_SPEED = 2.5f;                                  // 歩く速度
@@ -140,7 +142,7 @@ public class Player : MonoBehaviour
         else
         {
             NoiseValue(0.5f, 1.0f);
-            status.stamina += Time.deltaTime * 1.0f;
+            if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 1.0f;
         }
     }
 
@@ -169,6 +171,23 @@ public class Player : MonoBehaviour
     public void OnDash(InputAction.CallbackContext context)
     {
         inputDash = context.ReadValue<float>();
+    }
+
+    public void EnemyFound()
+    {
+        // 音を鳴らす
+        AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
+    }
+
+    public void EnemyCaught(GameObject enemy)
+    {
+
+        Vector3 enemyPosition = enemy.transform.position;
+        Vector3 playerPosition = GetPosition();
+
+        // 敵の方を見る
+        Quaternion targetRotation = Quaternion.LookRotation(enemyPosition - playerPosition);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
     }
 
     // 回転

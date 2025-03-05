@@ -38,6 +38,8 @@ public class Inventory : MonoBehaviour
     // マウスホイールでアイテム変更の処理
     public void Update()
     {
+        Debug.Log(selectedSlot);
+
         if (IsEmpty(itemList))
         {
             mainSlotUI.sprite = iconBatsu;
@@ -95,6 +97,7 @@ public class Inventory : MonoBehaviour
         {
             // if(useItem.canStack == false) itemList.RemoveAt(selectedSlot);
             itemList.RemoveAt(selectedSlot);
+            if (selectedSlot != 0) selectedSlot--;
         }
     }
 }
