@@ -9,14 +9,14 @@ public class LightManager : MonoBehaviour
     private readonly float _BATTERY_CONSUME = 0.01f;
 
     private Light _light = null;
-    public bool nowSwitch { get; private set; } = true;
-    public float batteryPower { get; private set; } = -1;
+    public bool _nowSwitch = true;
+    private float _batteryPower = -1;
     public static LightManager instance { get; private set; } = null;
 
     private void Start()
     {
         instance = this;
-        batteryPower = _BATTERY_MAX;
+        _batteryPower = _BATTERY_MAX;
         _light = GetComponentInChildren<Light>();
     }
 
@@ -30,12 +30,12 @@ public class LightManager : MonoBehaviour
     /// </summary>
     public void ConsumeBattery()
     {
-        if (!nowSwitch || batteryPower <= 0) return;
+        if (!_nowSwitch || _batteryPower <= 0) return;
 
-        batteryPower -= _BATTERY_CONSUME;
-        if (batteryPower < 0)
+        _batteryPower -= _BATTERY_CONSUME;
+        if (_batteryPower < 0)
         {
-            batteryPower = 0;
+            _batteryPower = 0;
             SwitchLight();
         }
     }
@@ -46,16 +46,16 @@ public class LightManager : MonoBehaviour
     /// <param name="setPower"></param>
     public void SetBattery(float addPower)
     {
-        batteryPower += addPower;
-        if (batteryPower > _BATTERY_MAX)
-            batteryPower = _BATTERY_MAX;
+        _batteryPower += addPower;
+        if (_batteryPower > _BATTERY_MAX)
+            _batteryPower = _BATTERY_MAX;
     }
 
     public void OnSwitchLight(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
 
-        if (batteryPower <= 0) return;
+        if (_batteryPower <= 0) return;
 
         SwitchLight();
     }
@@ -65,15 +65,15 @@ public class LightManager : MonoBehaviour
     /// </summary>
     public void SwitchLight()
     {
-        if (nowSwitch)
+        if (_nowSwitch)
         {
-            SetLightParam(5, 0.5f);
-            nowSwitch = false;
+            SetLightParam(5.0f, 0.5f);
+            _nowSwitch = false;
         }
         else
         {
-            SetLightParam(10, 1.5f);
-            nowSwitch = true;
+            SetLightParam(10.0f, 1.0f);
+            _nowSwitch = true;
         }
     }
 
@@ -86,5 +86,14 @@ public class LightManager : MonoBehaviour
     {
         _light.range = range;
         _light.intensity = intensity;
+    }
+
+    /// <summary>
+    /// バッテリー残量を取得する
+    /// </summary>
+    /// <returns></returns>
+    public int GetBatteryPower()
+    {
+        return (int)(_batteryPower / _BATTERY_MAX * 100) + 1;
     }
 }

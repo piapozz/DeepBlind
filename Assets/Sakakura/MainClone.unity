@@ -183,7 +183,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37353eaf699f6ee47a698bcb0b03ab12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interact: 0
 --- !u!54 &128369020
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -485,8 +484,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 255332079}
   camera: {fileID: 963194225}
+  playerObject: {fileID: 0}
   hold: {fileID: 0}
   isDebug: 0
+  rotationSpeed: 1
 --- !u!143 &255332079
 CharacterController:
   m_ObjectHideFlags: 0
@@ -654,6 +655,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 4b0a4526-a35c-49fd-9f19-9cbc35a500a5
     m_ActionName: Player/Light[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 66f30d92-877e-497d-bf26-7563f8f33240
+    m_ActionName: Player/UseItem[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -685,6 +690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37b1cfa63bc4be41877c3566e540724, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _nowSwitch: 1
 --- !u!1 &346562573
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,12 +735,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80a37be1b9ecc344aa6dcaedd442eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  managementEnemy: 1
-  enemies:
-  - {fileID: 7832492252065794931, guid: 6b8f8a8a1c5a0a34aba72e469b3176a4, type: 3}
-  createEnemies: 03000000
-  player: {fileID: 255332078}
-  generateStage: {fileID: 1115948082}
+  _enemies: []
+  _createEnemies: 
+  _useObjectRoot: {fileID: 0}
+  _unuseObjectRoot: {fileID: 0}
 --- !u!1 &392306567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,6 +1535,7 @@ MonoBehaviour:
   - {fileID: 4226501587566825988, guid: 70cb2e984d62bb14ab5ee1d0efcb9137, type: 3}
   - {fileID: 8977971572442568254, guid: 4d14bef462ca638439fb68113e10d226, type: 3}
   - {fileID: 7207941588580341023, guid: 442a72958f3163940a336dcc63c592be, type: 3}
+  _itemProbability: 0.6
 --- !u!114 &1115948086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2353,8 +2358,6 @@ MonoBehaviour:
   intractUI: {fileID: 1231826988}
   miniMapUI: {fileID: 0}
   compassUI: {fileID: 0}
-  staminaBar: {fileID: 1808988973}
-  player: {fileID: 255332078}
 --- !u!1 &1808988971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2576,6 +2579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit

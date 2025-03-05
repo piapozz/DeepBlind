@@ -55,7 +55,7 @@ public class EventGoal : MonoBehaviour, IEvent
         // 3•bŠÔ‘Ò‚Â
         await Task.Delay(TimeSpan.FromSeconds(2));
 
-        SceneManager.LoadScene("result");
+        SceneManager.LoadScene("GameResult");
 
         FadeScreen.instance.FadeInRun();
     }

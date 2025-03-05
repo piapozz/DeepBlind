@@ -60,7 +60,7 @@ public class EventDoor : MonoBehaviour, IEvent
         else
         {
             // ƒCƒ“ƒxƒ“ƒgƒŠ‚ðŒ©‚ÄŒ®‚ª‚ ‚Á‚½‚ç
-            if (doorLock) { uiManager.DisplayIntractUI("Unlock the door:E"); }
+            if (doorLock) { uiManager.DisplayIntractUI("Unlock the door:RightClick"); }
             // Œ®‚ª–³‚©‚Á‚½‚ç
             else { uiManager.DisplayIntractUI("The door is locked..."); }
         }
