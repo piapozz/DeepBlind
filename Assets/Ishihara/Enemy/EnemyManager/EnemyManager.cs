@@ -32,6 +32,9 @@ public class EnemyManager : SystemObject
     // 未使用状態のキャラクターオブジェクトリスト
     private List<GameObject> _unuseObjectList = null;
 
+    // 再生中のBGM
+    BGM bgm;
+
     public override void Initialize()
     {
         MasterDataManager.LoadAllData();
@@ -66,6 +69,8 @@ public class EnemyManager : SystemObject
         {
             _unuseObjectList.Add(new GameObject());
         }
+        AudioManager.instance.PlayBGM(BGM.MAIN_NORMAL);
+        bgm = BGM.MAIN_NORMAL;
 
         // エネミーの生成
         CreateEnemy();
@@ -81,7 +86,9 @@ public class EnemyManager : SystemObject
     {
         while (true)
         {
-            ExecuteAll(enemy => enemy.Active()); 
+            ExecuteAll(enemy => enemy.Active());
+
+            CheckChangeBGM();
 
             // エネミーとプレイヤーが接触しているかを確認
             if(ExecuteAll<bool>(enemy =>
@@ -99,6 +106,33 @@ public class EnemyManager : SystemObject
 
             // 次のフレームまで待機
             await UniTask.DelayFrame(1);
+        }
+    }
+
+    private void CheckChangeBGM()
+    {
+        EnemyBase.State state = EnemyBase.State.TRACKING;
+        bool tracking = false;
+
+        for(int i = 0, max = _useList.Count;i < max; i++)
+        {
+            if (_useList[i]._nowState == EnemyBase.State.TRACKING)
+            {
+                tracking = true;
+            }
+        }
+
+        if (tracking && bgm == BGM.MAIN_NORMAL)
+        {
+            bgm = BGM.MAIN_TRACKING;
+            AudioManager.instance.PlayBGM(bgm);
+            return;
+        }
+
+        if (!tracking && bgm == BGM.MAIN_TRACKING)
+        {
+            bgm = BGM.MAIN_NORMAL;
+            AudioManager.instance.PlayBGM(bgm);
         }
     }
 

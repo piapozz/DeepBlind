@@ -47,6 +47,17 @@ public class AudioManager : SystemObject
     }
 
     /// <summary>
+    /// BGM‚ğ~‚ß‚éŠÖ”
+    /// </summary>
+    /// <param name="num"></param>
+    public void StopBGM()
+    {
+        AudioSource source = BGMSourceList[0];
+
+        source.Stop();
+    }
+
+    /// <summary>
     /// SE‚ğ–Â‚ç‚·ŠÖ”
     /// </summary>
     /// <param name="num"></param>
@@ -120,5 +131,4 @@ public class AudioManager : SystemObject
 
         return source[number];
     }
-
 }
