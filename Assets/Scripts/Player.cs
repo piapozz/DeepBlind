@@ -1,12 +1,8 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
-using static UnityEngine.EventSystems.StandaloneInputModule;
+using static CommonModule;
 
 public class Player : MonoBehaviour
 {
@@ -15,7 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
     [SerializeField] GameObject playerObject;
-    CinemachineVirtualCamera virtualCamera;                         // §Œä‘ÎÛ‚ÌƒJƒƒ‰
+    [SerializeField] CinemachineVirtualCamera virtualCamera;                         // §Œä‘ÎÛ‚ÌƒJƒƒ‰
     [SerializeField] private InputActionReference hold;             // ’·‰Ÿ‚µ‚ğó‚¯æ‚é‘ÎÛ‚ÌAction
 
     [SerializeField] bool isDebug = false;                          // ”æ‚ê‚È‚¢‚æ‚¤‚É‚·‚é
@@ -52,7 +48,7 @@ public class Player : MonoBehaviour
         instance = this;
 
         // Virtual Camera æ“¾
-        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        //virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
 
         if (hold == null) return;
 
@@ -179,14 +175,15 @@ public class Player : MonoBehaviour
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
     }
 
-    public void EnemyCaught(GameObject enemy)
+    public void EnemyCaught(CinemachineVirtualCamera vcam)
     {
-        Vector3 enemyPosition = enemy.transform.position;
-        Vector3 playerPosition = GetPosition();
+        vcam.Priority = 100;
+        UniTask task = WaitAction(1.0f, FadeChangeScene);
 
-        // “G‚Ì•û‚ğŒ©‚é
-        Quaternion targetRotation = Quaternion.LookRotation(enemyPosition - playerPosition);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+    }
+    public void FadeChangeScene()
+    {
+        FadeSceneChange.instance.ChangeSceneEvent("GameResult");
     }
 
     // ‰ñ“]
