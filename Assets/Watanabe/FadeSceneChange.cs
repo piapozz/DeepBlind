@@ -9,10 +9,21 @@ using System.Threading.Tasks;
 public class FadeSceneChange : MonoBehaviour
 {
     public static FadeSceneChange instance = null;
+    public bool cursorLock = false;
 
     private void Start()
     {
         instance = this;
+        if(cursorLock)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     public void ChangeSceneEvent(string sceneName)
