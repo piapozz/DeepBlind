@@ -19,13 +19,9 @@ public class EnemyManager : SystemObject
 
     // 使用中のキャラクターリスト
     private List<EnemyBase> _useList = null;
-    // 未使用状態のエネミーリスト
-    private List<EnemyBase> _unuseList = null;
 
     // 使用中のキャラクターオブジェクトリスト
     private List<GameObject> _useObjectList = null;
-    // 未使用状態のキャラクターオブジェクトリスト
-    private List<GameObject> _unuseObjectList = null;
 
 
     // 再生中のBGM
@@ -42,9 +38,7 @@ public class EnemyManager : SystemObject
 
         // 必要なキャラクターとオブジェクトのインスタンスを生成して未使用状態にしておく
         _useList = new List<EnemyBase>(enemyMax);
-        _unuseList = new List<EnemyBase>(enemyMax);
         _useObjectList = new List<GameObject>(enemyMax);
-        _unuseObjectList = new List<GameObject>(enemyMax);
 
         for (int i = 0; i < enemyMax; i++)
         {
@@ -52,15 +46,7 @@ public class EnemyManager : SystemObject
         }
         for (int i = 0; i < enemyMax; i++)
         {
-            _unuseList.Add(new EnemyBase());
-        }
-        for (int i = 0; i < enemyMax; i++)
-        {
-            _useObjectList.Add(new GameObject());
-        }
-        for (int i = 0; i < enemyMax; i++)
-        {
-            _unuseObjectList.Add(new GameObject());
+            _useObjectList.Add(null);
         }
         AudioManager.instance.PlayBGM(BGM.MAIN_NORMAL);
         bgm = BGM.MAIN_NORMAL;
@@ -84,11 +70,13 @@ public class EnemyManager : SystemObject
             CheckChangeBGM();
 
             // エネミーとプレイヤーが接触しているかを確認
-            if(ExecuteAll<bool>(enemy =>
+            if(ExecuteAll(enemy =>
             {
-                if (enemy.ChackCaughtPlayer())
+                if (enemy.CheckCaughtPlayer())
                 {
-                    EnemyUtility.GetPlayer().EnemyCaught(enemy._camera);
+                    EnemyUtility.GetPlayer().EnemyCaught(enemy._camera, enemy);
+                    enemy.SetNavTarget(enemy.transform.position);
+                    enemy.SetAnimationSpeed(1);
                     return true;
                 }
                 return false;
@@ -162,8 +150,6 @@ public class EnemyManager : SystemObject
 	public void UseEnemy(Vector3 position, int masterID)
     {
         // インスタンスの取得
-        _unuseList.RemoveAt(0);
-
         // 使用可能なIDを取得して使用リストに追加
         int useID = UseCharacter(masterID);
         _useList[useID].Setup(useID, position, masterID);
@@ -187,16 +173,6 @@ public class EnemyManager : SystemObject
         }
         // オブジェクトの取得
         GameObject useObject = null;
-        if (IsEmpty(_unuseObjectList))
-        {
-            _useObjectList.Add(new GameObject());
-            _unuseObjectList.Add(new GameObject());
-        }
-        else
-        {
-            useObject = _unuseObjectList[0];
-            _unuseObjectList.RemoveAt(0);
-        }
         Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
         useObject = Instantiate((GameObject)Resources.Load("Prefab/" + param.Name));
         // オブジェクトの使用リストへの追加
@@ -217,7 +193,6 @@ public class EnemyManager : SystemObject
         if (IsEnableIndex(_useList, unuseID)) _useList[unuseID] = null;
         // 片付け処理を読んで未使用リストに加える
         unuseEnemy.Teardown();
-        _unuseList.Add(unuseEnemy);
         // オブジェクトを未使用にする
         UnuseObject(unuseID);
     }
@@ -229,8 +204,6 @@ public class EnemyManager : SystemObject
         if (IsEnableIndex(_useObjectList, unuseID)) _useObjectList[unuseID] = null;
         // 見えない場所に置く
         unuseCharacterObject.transform.SetParent(_unuseObjectRoot);
-        // 未使用リストに追加
-        _unuseObjectList.Add(unuseCharacterObject);
     }
 
     private GameObject GetCharacterObject(int ID)
@@ -259,7 +232,7 @@ public class EnemyManager : SystemObject
         }
     }
 
-    public T ExecuteAll<T>(System.Func<EnemyBase , T> action)
+    public bool ExecuteAll(System.Func<EnemyBase , bool> action)
     {
         if (action == null || IsEmpty(_useList)) return default;
 
@@ -267,7 +240,10 @@ public class EnemyManager : SystemObject
         {
             if (_useList[i] == null) continue;
 
-            return action(_useList[i]);
+            if (action(_useList[i]))
+            {
+                return true;
+            }
         }
 
         return default;
