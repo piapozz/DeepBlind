@@ -11,12 +11,6 @@ public class EnemyManager : SystemObject
     public static EnemyManager instance { get; private set; } = null;
 
     [SerializeField]
-    private GameObject[] _enemies;              // プレハブ一覧
-
-    [SerializeField]
-    private int[] _createEnemies;               // 生成するエネミーの数と種類
-
-    [SerializeField]
     private Transform _useObjectRoot = null;
 
     [SerializeField]
@@ -41,11 +35,7 @@ public class EnemyManager : SystemObject
         instance = this;
         EnemyBase.SetGetObjectCallback(GetCharacterObject);
 
-        int enemyMax = 0;
-        for(int i = 0, max = _enemies.Length; i < max; i++)
-        {
-            enemyMax += _createEnemies[i];
-        }
+        int enemyMax = MasterDataManager.enemyData[0].Count;
 
         // 必要なキャラクターとオブジェクトのインスタンスを生成して未使用状態にしておく
         _useList = new List<EnemyBase>(enemyMax);
@@ -155,7 +145,7 @@ public class EnemyManager : SystemObject
             // 生成
             // 使用可能なIDを取得して使用リストに追加
             Entity_EnemyData.Param param = MasterDataManager.enemyData[0][i];
-            Vector3 position = GenerateStage.instance.GetRandRoomPos();
+            Vector3 position = DispatchTargetPosition();
             UseEnemy(position, param.ID);
 
             await UniTask.DelayFrame(1);

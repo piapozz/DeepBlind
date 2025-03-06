@@ -48,3 +48,69 @@ MonoBehaviour:
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 4
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 5
+      SpeedDiameter: 3
+      ThreatRange: 30
+      ViewLength: 30
+      FieldOfView: 110
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 6
+      SpeedDiameter: 3.5
+      ThreatRange: 35
+      ViewLength: 35
+      FieldOfView: 130
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 7
+      SpeedDiameter: 4
+      ThreatRange: 40
+      ViewLength: 40
+      FieldOfView: 150
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 8
+      SpeedDiameter: 4.5
+      ThreatRange: 45
+      ViewLength: 45
+      FieldOfView: 170
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Name: Stop
+      Speed: 9
+      SpeedDiameter: 5
+      ThreatRange: 50
+      ViewLength: 50
+      FieldOfView: 190
+      Seach: BasicSeach
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
