@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Compass
   m_EditorClassIdentifier: 
   itemName: Compass
-  icon: {fileID: 21300000, guid: a70eecf63fc16f549a8cec92d88fb56d, type: 3}
+  icon: {fileID: 21300000, guid: 437506f19798f924d82b19c4a24659ad, type: 3}
   canStack: 0
   isConsume: 0
