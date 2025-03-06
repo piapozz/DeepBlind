@@ -1,3 +1,4 @@
+using Cinemachine;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,8 @@ public class EnemyBase : MonoBehaviour
     // 3Dオーディオソース
     private AudioSource _audioSource;
 
+    public CinemachineVirtualCamera _camera { get; private set; } = null;
+
     public virtual void Setup(int setID, Vector3 position, int masterID)
     {
         ID = setID;
@@ -73,7 +76,8 @@ public class EnemyBase : MonoBehaviour
 
         _agent = obj.GetComponent<NavMeshAgent>();
         _animator = obj.GetComponent<Animator>();
-        _audioSource = obj.GetComponent<AudioSource>();
+        _audioSource = obj.GetComponent<AudioSource>(); 
+        _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
         _agent.speed = speed;
         target = position;
     }
@@ -172,8 +176,6 @@ public class EnemyBase : MonoBehaviour
     {
         _state?[(int)_nowState]?.Activity();
         _skill?.Ability();
-        // 止まっているとき以外足音再生
-        //AudioManager.instance.PlaySE(SE.ENEMY_WALK, _audioSource);
     }
 
     /// <summary>
@@ -210,6 +212,6 @@ public class EnemyBase : MonoBehaviour
     // プレイヤーと接触したかどうか
     public bool ChackCaughtPlayer()
     {
-        return Vector3.Distance(transform.position, EnemyUtility.GetPlayer().transform.position) < 1;
+        return Vector3.Distance(transform.position, EnemyUtility.GetPlayer().transform.position) < 1.5f;
     }
 }

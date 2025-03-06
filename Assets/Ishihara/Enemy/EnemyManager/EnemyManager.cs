@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
@@ -26,6 +27,7 @@ public class EnemyManager : SystemObject
     // 未使用状態のキャラクターオブジェクトリスト
     private List<GameObject> _unuseObjectList = null;
 
+
     // 再生中のBGM
     BGM bgm;
 
@@ -34,6 +36,7 @@ public class EnemyManager : SystemObject
         MasterDataManager.LoadAllData();
         instance = this;
         EnemyBase.SetGetObjectCallback(GetCharacterObject);
+        
 
         int enemyMax = MasterDataManager.enemyData[0].Count;
 
@@ -85,13 +88,13 @@ public class EnemyManager : SystemObject
             {
                 if (enemy.ChackCaughtPlayer())
                 {
-                    EnemyUtility.GetPlayer().EnemyCaught(enemy.gameObject);
+                    EnemyUtility.GetPlayer().EnemyCaught(enemy._camera);
                     return true;
                 }
                 return false;
             }))
             {
-                return;
+                break;
             }
 
             // 次のフレームまで待機
