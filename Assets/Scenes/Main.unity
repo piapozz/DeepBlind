@@ -782,8 +782,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80a37be1b9ecc344aa6dcaedd442eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemies: []
-  _createEnemies: 
   _useObjectRoot: {fileID: 0}
   _unuseObjectRoot: {fileID: 0}
 --- !u!1 &392306567
@@ -1710,7 +1708,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 963194228}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 31
+    m_Bits: 223
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
   antialiasingMode: 0

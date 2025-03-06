@@ -32,7 +32,6 @@ public enum SE
     PLAYER_SURPRISE,
     WALK,
     RUN,
-    ENEMY_WALK,
     CAUGHT,
     ITEM_PICK,
 
