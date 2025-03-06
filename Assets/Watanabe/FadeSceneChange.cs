@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 public class FadeSceneChange : MonoBehaviour
 {
+    public static FadeSceneChange instance = null;
+
+    private void Start()
+    {
+        instance = this;
+    }
+
     public void ChangeSceneEvent(string sceneName)
     {
         _ = ChangeScene(sceneName);
