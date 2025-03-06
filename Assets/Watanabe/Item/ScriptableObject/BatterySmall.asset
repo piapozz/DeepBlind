@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BatterySmall
   m_EditorClassIdentifier: 
   itemName: BatterySmall
-  icon: {fileID: 21300000, guid: cbf612630e5adce4681fe15463578883, type: 3}
+  icon: {fileID: 21300000, guid: f597ac6646a8b224db37f46d4cab1a83, type: 3}
   canStack: 1
   isConsume: 1
   recoveryValue: 10

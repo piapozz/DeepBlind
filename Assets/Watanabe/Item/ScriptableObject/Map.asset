@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Map
   m_EditorClassIdentifier: 
   itemName: Map
-  icon: {fileID: 21300000, guid: ba614db57789d56499ab5e01a6df7f12, type: 3}
+  icon: {fileID: 21300000, guid: 8ed6c3c65c94d9c4a96c3d32f0f10e98, type: 3}
   canStack: 0
   isConsume: 0
