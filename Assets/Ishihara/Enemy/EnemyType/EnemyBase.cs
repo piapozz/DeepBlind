@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-// エネミーの元となる親クラス
 public class EnemyBase : MonoBehaviour
 {
     private static System.Func<int, GameObject> _GetObject = null;
@@ -19,32 +18,24 @@ public class EnemyBase : MonoBehaviour
     private int _masterID = -1;
     public Vector3 target { get; private set; }
 
-    public float speed { get; private set; } = -1;       // エネミーの速さ
-    public float speedDiameter { get; private set; } = -1;       // 見つけた時の速さの倍率
-    public float threatRange { get; private set; } = -1;       // 脅威範囲
-    public float viewLength { get; private set; } = -1;       // 視界の長さ
-    public float fieldOfView { get; private set; } = -1;       // 視野角
+    public float speed { get; private set; } = -1;
+    public float speedDiameter { get; private set; } = -1;
+    public float threatRange { get; private set; } = -1;
+    public float viewLength { get; private set; } = -1;
+    public float fieldOfView { get; private set; } = -1;
 
-    // それぞれのステートクラス
     private ISeach _seach;
     private IVigilance _vigilance;
     private ITracking _tracking;
-
-    // それぞれのスキルクラス
     private ISkill _skill;
     private List<IEnemyState> _state;
+
     [SerializeField]
     public State _nowState { get; private set; }
 
-    // ナビメッシュ
     private NavMeshAgent _agent;
-
-    // アニメーター
     private Animator _animator;
-
-    // 3Dオーディオソース
     private AudioSource _audioSource;
-
     public CinemachineVirtualCamera _camera { get; private set; } = null;
 
     public virtual void Setup(int setID, Vector3 position, int masterID)
@@ -52,13 +43,13 @@ public class EnemyBase : MonoBehaviour
         ID = setID;
         _masterID = masterID;
         GameObject obj = _GetObject(ID);
-        if (obj == null) return;
+
+        if (obj == null) return; // objがnullなら以降の処理をしない
 
         obj.transform.position = position;
         obj.SetActive(true);
         ResetStatus();
 
-        // ステートの初期化
         int stateMax = (int)State.MAX;
         _state = new List<IEnemyState>(stateMax);
 
@@ -76,15 +67,14 @@ public class EnemyBase : MonoBehaviour
 
         _agent = obj.GetComponent<NavMeshAgent>();
         _animator = obj.GetComponent<Animator>();
-        _audioSource = obj.GetComponent<AudioSource>(); 
+        _audioSource = obj.GetComponent<AudioSource>();
         _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
-        _agent.speed = speed;
+
+        if (_agent != null) _agent.speed = speed;
+
         target = position;
     }
 
-    /// <summary>
-    /// ステータス初期化
-    /// </summary>
     public virtual void ResetStatus()
     {
         var characterMaster = CharacterMasterUtility.GetCharacterMaster(_masterID);
@@ -150,21 +140,16 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    // ステート
     public enum State
     {
-        SEARCH,        // 探索
-        VIGILANCE,     // 警戒
-        TRACKING,      // 追跡
+        SEARCH,
+        VIGILANCE,
+        TRACKING,
         MAX
     }
 
-    /// <summary>
-    /// ナビメッシュで移動する
-    /// </summary>
     public void SetNavTarget(Vector3 targetPosition)
     {
-        // 目標位置を設定
         if (_agent != null)
         {
             target = targetPosition;
@@ -178,18 +163,12 @@ public class EnemyBase : MonoBehaviour
         _skill?.Ability();
     }
 
-    /// <summary>
-    /// ステートとスキルの切り替え処理
-    /// </summary>
     public void StateChange(State state)
     {
         if (state == State.TRACKING) EnemyUtility.GetPlayer().EnemyFound();
         _nowState = state;
     }
 
-    /// <summary>
-    /// アニメーションの速度変更
-    /// </summary>
     public void SetAnimationSpeed(float speed)
     {
         if (_animator != null)
@@ -198,9 +177,6 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ナビメッシュの速度変更
-    /// </summary>
     public void SetNavSpeed(float speed)
     {
         if (_agent != null)
@@ -209,9 +185,31 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    // プレイヤーと接触したかどうか
-    public bool ChackCaughtPlayer()
+    private bool caught = false;
+
+    private void OnTriggerStay(Collider other)
     {
-        return Vector3.Distance(transform.position, EnemyUtility.GetPlayer().transform.position) < 1.5f;
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            caught = true;
+        }
+    }
+
+    public bool CheckCaughtPlayer()
+    {
+        Vector3 start = transform.position;
+        start.y = 0;
+        Vector3 end = Player.instance.transform.position;
+        end.y = 0;
+
+        return caught;
+    }
+
+    public void SetScreamTrigger()
+    {
+        if (_animator != null)
+        {
+            _animator.SetTrigger("scream");
+        }
     }
 }

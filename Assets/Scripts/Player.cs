@@ -175,8 +175,10 @@ public class Player : MonoBehaviour
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
     }
 
-    public void EnemyCaught(CinemachineVirtualCamera vcam)
+    public void EnemyCaught(CinemachineVirtualCamera vcam, EnemyBase enemy)
     {
+        AudioManager.instance.PlaySE(SE.CAUGHT);
+        enemy.SetScreamTrigger();
         vcam.Priority = 100;
         UniTask task = WaitAction(1.0f, FadeChangeScene);
 
