@@ -27,12 +27,6 @@ public class BasicSeach : ISeach
 
         // 警戒条件を満たしたかどうか
         CheckVigilance();
-
-        // 仮目標地点にたどり着いたかどうか
-        CheckReaching();
-
-        // 更新
-        StatusUpdate();
     }
 
     /// <summary>
@@ -85,21 +79,6 @@ public class BasicSeach : ISeach
         }
     }
 
-    // 仮目標地点にたどり着いたかどうか
-    private void CheckReaching()
-    {
-        Debug.DrawLine(_enemy.transform.position, _enemy.target);
-        if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
-        {
-            // 探索箇所をランダムに設定する
-            _enemy.SetNavTarget(EnemyManager.instance.DispatchTargetPosition());
-        }
-        else
-        {
-            _enemy.SetNavTarget(_enemy.target);
-        }
-    }
-
     // 警戒条件を満たしたかどうか
     public void CheckVigilance()
     {
@@ -112,15 +91,15 @@ public class BasicSeach : ISeach
     /// <param name="info"></param>
     public void GetTarget()
     {
-
-    }
-
-    /// <summary>
-    /// 情報の更新
-    /// </summary>
-    /// <param name="info"></param>
-    public void StatusUpdate()
-    {
-
+        Debug.DrawLine(_enemy.transform.position, _enemy.target);
+        if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
+        {
+            // 探索箇所をランダムに設定する
+            _enemy.SetNavTarget(EnemyManager.instance.DispatchTargetPosition());
+        }
+        else
+        {
+            _enemy.SetNavTarget(_enemy.target);
+        }
     }
 }

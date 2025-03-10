@@ -15,9 +15,4 @@ public interface IVigilance : IEnemyState
     /// Š®‘S‚ÉŒ©¸‚Á‚½‚©‚Ç‚¤‚©
     /// </summary>
     public void CheckLookAround();
-
-    /// <summary>
-    /// î•ñ‚ÌXV
-    /// </summary>
-    public void StatusUpdate();
 }

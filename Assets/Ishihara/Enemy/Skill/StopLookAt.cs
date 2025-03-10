@@ -80,7 +80,7 @@ public class StopLookAt : ISkill
         }
         else
         {
-            enemy.SetAnimationSpeed(1);
+            enemy.SetAnimationSpeed(enemy.speed);
             enemy.SetNavSpeed(enemy.speed);
         }
     }
