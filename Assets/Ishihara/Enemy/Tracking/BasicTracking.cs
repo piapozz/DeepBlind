@@ -9,6 +9,9 @@ public class BasicTracking : ITracking
     private EnemyBase _enemy;
     private Player _player;
 
+    private bool _IsTargetlost = false;
+    private float _lostTime = 0;
+
     /// <summary>
     /// 行動
     /// </summary>
@@ -22,9 +25,6 @@ public class BasicTracking : ITracking
 
         // 見失ったかどうか
         CheckTargetLost();
-
-        // 更新
-        StatusUpdate();
     }
 
     /// <summary>
@@ -35,7 +35,9 @@ public class BasicTracking : ITracking
         _ID = setID;
         _enemy = EnemyUtility.GetCharacter(_ID);
         _player = EnemyUtility.GetPlayer();
-    }
+        _IsTargetlost = false;
+        _lostTime = 0;
+}
 
     /// <summary>
     /// 見失ったかどうか
@@ -53,11 +55,41 @@ public class BasicTracking : ITracking
         {
             string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
 
-            // 初めて見失っていたら
+            // 見失っていたら
             if (tag != "Player")
             {
-                _enemy.StateChange(State.SEARCH);
+                if (!_IsTargetlost) _lostTime = 0.0f;
+                _IsTargetlost = true;
+                //_enemy.StateChange(State.SEARCH);
             }
+            else
+            {
+                _IsTargetlost = false;
+            }
+        }
+
+        if (!_IsTargetlost) return;
+
+        // 距離が一定以下なら警戒
+        // 秒数が一定以上になったら警戒
+        _lostTime += Time.deltaTime;
+        if(_lostTime > 10.0f)
+        {
+            _enemy.StateChange(State.VIGILANCE);
+            return;
+        }
+
+
+        Vector3 start = _enemy.transform.position;
+        Vector3 end = Player.instance.transform.position;
+        start.y = 0;
+        end.y = 0;
+
+        float length = Vector3.Distance(start, end);
+        if (length > _enemy.viewLength + 10)
+        {
+            _enemy.StateChange(State.VIGILANCE);
+            return;
         }
     }
 
@@ -68,13 +100,5 @@ public class BasicTracking : ITracking
     public void GetTarget()
     {
         _enemy.SetNavTarget(_player.transform.position);
-    }
-
-    /// <summary>
-    /// 情報の更新
-    /// </summary>
-    public void StatusUpdate()
-    {
-
     }
 }

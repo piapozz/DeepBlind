@@ -30,6 +30,8 @@ public class EnemyBase : MonoBehaviour
     private ISkill _skill;
     private List<IEnemyState> _state;
 
+    private bool caught = false;
+
     [SerializeField]
     public State _nowState { get; private set; }
 
@@ -185,14 +187,12 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    private bool caught = false;
-
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            caught = true;
-        }
+        //if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        //{
+        //    caught = true;
+        //}
     }
 
     public bool CheckCaughtPlayer()
@@ -201,6 +201,10 @@ public class EnemyBase : MonoBehaviour
         start.y = 0;
         Vector3 end = Player.instance.transform.position;
         end.y = 0;
+
+        float length = Vector3.Distance(start, end);
+
+        caught = length < 0.5;
 
         return caught;
     }

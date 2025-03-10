@@ -13,7 +13,4 @@ public interface ISeach : IEnemyState
 
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance();
-
-    // î•ñ‚ÌXV
-    public void StatusUpdate();
 }
