@@ -9,81 +9,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using static CommonModule;
-
 // 音を鳴らすと音量を減らしながら消えていく
-// 敵の耳の良さは
-public class SoundObjectManager : MonoBehaviour, SoundObjectObserver
+public class SoundObjectManager : MonoBehaviour
 {
-    /// <summary>
-    /// 環境音のデータ
-    /// </summary>
-    private class ObjectSoundData
-    {
-        public int ID = -1;
-        public Vector3 position = new Vector3();
-        public float volume = -1;
-        public bool isRing = false;
-
-        public void SetParam(int setID, Vector3 setPosition, float setVolume)
-        {
-            ID = setID;
-            position = setPosition;
-            volume = setVolume;
-            isRing = true;
-        }
-    }
-
-    /// <summary>
-    /// 音の届く最大距離
-    /// </summary>
-    private const float _ECHO_RADIUS = 100.0f;
-
-    private const int _SOUND_MAX = 50;
-
     public static SoundObjectManager instance = null;
 
-    private List<ObjectSoundData> _soundList = null;
+    private List<SoundObject> _soundList = null;
+
+    /// <summary>音の届く標準距離</summary>
+    private const float _DEFAULT_ECHO_RADIUS = 100.0f;
+    /// <summary>音源の最大数</summary>
+    private const int _SOUND_MAX = 100;
 
     public void Initialize()
     {
         instance = this;
-        _soundList = new List<ObjectSoundData>(_SOUND_MAX);
+        _soundList = new List<SoundObject>(_SOUND_MAX);
         for (int i = 0; i < _SOUND_MAX; i++)
         {
-            _soundList.Add(new ObjectSoundData());
+            _soundList.Add(new SoundObject());
         }
-    }
-
-    public void UpdatePosition(int ID, Vector3 position)
-    {
-        _soundList[ID].position = position;
-    }
-
-    public void SetRing(int ID, bool ring)
-    {
-        _soundList[ID].isRing = ring;
     }
 
     /// <summary>
     /// パラメーターを指定して音源リストに加える
     /// </summary>
     /// <param name="setPosition"></param>
-    /// <param name="setRadius"></param>
-    /// <param name="setTime"></param>
-    public int SetSound(Vector3 setPosition, float setRadius)
+    /// <param name="volume"></param>
+    /// <returns></returns>
+    public int SetSound(Vector3 setPosition, float volume)
     {
-        ObjectSoundData setSound = new ObjectSoundData();
+        SoundObject setSound = new SoundObject();
         int setID = SearchSoundID();
         if (setID >= 0)
         {
-            setSound.SetParam(setID, setPosition, setRadius);
+            setSound.SetParam(setID, setPosition, volume);
             _soundList[setID] = setSound;
         }
         else
         {
             setID = _soundList.Count;
-            setSound.SetParam(setID, setPosition, setRadius);
+            setSound.SetParam(setID, setPosition, volume);
             _soundList.Add(setSound);
         }
         return setID;
@@ -106,28 +72,27 @@ public class SoundObjectManager : MonoBehaviour, SoundObjectObserver
     }
 
     /// <summary>
-    /// 指定した座標に一番近い音源を返す
+    /// 一番大きい音源の位置を取得
     /// </summary>
     /// <param name="position"></param>
+    /// <param name="sensMinVolume">可聴音量(0～1)</param>
     /// <returns></returns>
-    public Vector3 GetNearSound(Vector3 position)
+    public Vector3 GetBigSoundPosition(Vector3 position, float sensMinVolume)
     {
-        ObjectSoundData nearSound = null;
-        float minDistance = float.MaxValue;
+        float maxVolume = float.MinValue;
+        Vector3 resultPos = Vector3.zero;
         for (int i = 0, max = _soundList.Count; i < max; i++)
         {
-            float distance = Vector3.Distance(position, _soundList[i].position);
-
-            //if (distance > _soundList[i].effectRadius) continue;
-
-            if (distance < minDistance)
-            {
-                nearSound = _soundList[i];
-                minDistance = distance;
-            }
+            // オブジェクトの距離
+            float objectDistance = Vector3.Distance(position, _soundList[i].position);
+            // 指定の座標での音量
+            float listenVolume = _soundList[i].volume * (1 - objectDistance / _DEFAULT_ECHO_RADIUS);
+            // 大きい音かつ感知音量なら
+            if (listenVolume <= maxVolume || listenVolume < sensMinVolume) continue;
+            maxVolume = listenVolume;
+            resultPos = _soundList[i].position;
         }
-
-        return nearSound.position;
+        return resultPos;
     }
 
     /// <summary>
