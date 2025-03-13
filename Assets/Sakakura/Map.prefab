@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 1319729435723597870}
   - component: {fileID: 1319729435723597858}
   - component: {fileID: 1319729435723597859}
-  - component: {fileID: 1319729435723597868}
   - component: {fileID: 1319729435723597869}
   m_Layer: 0
   m_Name: Map
@@ -118,20 +117,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1319729435723597868
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319729435723597871}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &1319729435723597869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,8 +137,6 @@ MonoBehaviour:
   TCorridor: {fileID: 131444110122056304, guid: b370343650ce95b4dbfe8900152f9bf9, type: 3}
   XCorridor: {fileID: 1905075957335727666, guid: 483ee7f57496ec848b4ca90e577ee675, type: 3}
   point: {fileID: 4818000797057031904, guid: 9e1e64ae42935c043ae058d90d3b3d63, type: 3}
-  player: {fileID: 0}
-  generateStage: {fileID: 0}
 --- !u!1 &6453319263637033464
 GameObject:
   m_ObjectHideFlags: 0
