@@ -13,6 +13,8 @@ public class EventDoor : MonoBehaviour, IEvent
 {
     [SerializeField] private UIManager uiManager;
 
+    [SerializeField] private BoxCollider[] _doorCollision = null;
+
     [SerializeField] public bool doorLock = false;
 
     Animator animator;
@@ -84,11 +86,13 @@ public class EventDoor : MonoBehaviour, IEvent
         {
             animator.SetBool("open", false);
             AudioManager.instance.PlaySE(SE.DOOR_OPEN);
+            SwitchDoorCollision(true);
         }
         else
         {
             animator.SetBool("open", true);
             AudioManager.instance.PlaySE(SE.DOOR_OPEN);
+            SwitchDoorCollision(false);
         }
 
     }
@@ -105,6 +109,14 @@ public class EventDoor : MonoBehaviour, IEvent
     public bool GetOpen()
     {
         return animator.GetBool("open");
+    }
+
+    private void SwitchDoorCollision(bool enable)
+    {
+        for (int i = 0, max = _doorCollision.Length; i < max; i++)
+        {
+            _doorCollision[i].enabled = enable;
+        }
     }
 
     public void SetDoorLock(bool isLock) { doorLock = isLock; }

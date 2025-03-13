@@ -13,11 +13,14 @@ public class MasterDataManager {
 	private static readonly string _DATA_PATH = "MasterData/";
 
 	public static List<List<Entity_EnemyData.Param>> enemyData = null;
+    public static List<List<Entity_StageData.Param>> stageData = null;
 
-	public static void LoadAllData()
+    public static void LoadAllData()
 	{
         enemyData = Load<Entity_EnemyData, Entity_EnemyData.Sheet, Entity_EnemyData.Param>("EnemyData");
-	}
+        stageData = Load<Entity_StageData, Entity_StageData.Sheet, Entity_StageData.Param>("StageData");
+
+    }
 
 	private static List<List<T3>> Load<T1, T2, T3>(string dataName) where T1 : ScriptableObject
 	{
