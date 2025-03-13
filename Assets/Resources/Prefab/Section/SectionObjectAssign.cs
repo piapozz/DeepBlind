@@ -7,9 +7,13 @@ public class SectionObjectAssign : ScriptableObject
 {
     public GameObject[] roomObjectList = null;
 
-    public GameObject startRoomList = null;
+    public GameObject startRoom = null;
 
-    public GameObject keyRoomList = null;
+    public GameObject keyRoom = null;
 
     public GameObject[] corridorObjectList = null;
+
+    public GameObject wallObject = null;
+
+    public GameObject doorObject = null;
 }

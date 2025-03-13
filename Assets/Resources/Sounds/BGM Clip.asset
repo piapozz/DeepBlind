@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BGM Clip
   m_EditorClassIdentifier: 
   bgmClips:
-  - {fileID: 8300000, guid: 45989012b0fe19b408d1f430411dcc0e, type: 3}
-  - {fileID: 8300000, guid: 13fbad31a84eaaa4bb6a86bb1a291519, type: 3}
-  - {fileID: 8300000, guid: 695990ac2782d1549a0d5a85097dba15, type: 3}
-  - {fileID: 8300000, guid: 45989012b0fe19b408d1f430411dcc0e, type: 3}
+  - {fileID: 8300000, guid: d0a3bad00ff048d40949b0f8b287108b, type: 3}
+  - {fileID: 8300000, guid: 3dcf1471a793c304f8a8dc97c6f9d70a, type: 3}
+  - {fileID: 8300000, guid: fa6ae17c1bfb77742a969936aaa6d055, type: 3}
+  - {fileID: 8300000, guid: d0a3bad00ff048d40949b0f8b287108b, type: 3}
