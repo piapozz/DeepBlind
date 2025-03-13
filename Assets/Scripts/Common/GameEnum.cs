@@ -37,3 +37,35 @@ public enum SE
 
     MAX
 }
+
+// 4方向
+public enum Direction
+{
+    Invalid = -1,
+    Up,
+    Right,
+    Down,
+    Left,
+    Max
+}
+
+// 部屋の種類
+public enum RoomType
+{
+    Invalid = -1,
+    NormalRoom,           // 通常部屋
+    StartRoom,      // スタート部屋
+    KeyRoom,        // 鍵部屋
+    Max
+}
+
+// 廊下の種類
+public enum CorridorType
+{
+    Invalid = -1,
+    I,
+    L,
+    T,
+    X,
+    Max
+}

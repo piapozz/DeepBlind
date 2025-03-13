@@ -12,4 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6d4c2f82cecac4db63daae8cf15fb1, type: 3}
   m_Name: StageData
   m_EditorClassIdentifier: 
-  sheets: []
+  sheets:
+  - name: StageData
+    list:
+    - widthSize: 8
+      heightSize: 8
+      roomCount: 20
