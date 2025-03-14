@@ -2,17 +2,22 @@ using Cinemachine;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.PostProcessing;
 using static CommonModule;
+using static UnityEditor.Rendering.CameraUI;
 
 public class Player : MonoBehaviour
 {
     public static Player instance { get; private set; } = null;
+    private ColorGrading colorGranding = null;
 
     [SerializeField] CharacterController characterController;
     [SerializeField] GameObject camera;
     [SerializeField] GameObject playerObject;
     [SerializeField] CinemachineVirtualCamera virtualCamera;                         // 制御対象のカメラ
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
+    [SerializeField] CinemachineImpulseSource impulseSource;
+    [SerializeField] PostProcessVolume volume;
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
     [SerializeField] float rotationSpeed = 1.0f;
@@ -64,6 +69,7 @@ public class Player : MonoBehaviour
     {
         status.stamina = STAMINA_MAX;
 
+        volume.profile.TryGetSettings(out colorGranding);
         transform.position = GenerateStage.instance.GetStartPos() + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -87,6 +93,7 @@ public class Player : MonoBehaviour
 
         // フレームごとの移動量を計算し動かす
         characterController.Move(moveVec * Time.deltaTime * status.speed);
+        
 
         // スタミナを見て疲れていたら＆デバッグ状態ではなかったら、疲れてる状態に変える
         if (status.stamina <= 0.0f && isDebug != true) isTired = true;
@@ -170,16 +177,18 @@ public class Player : MonoBehaviour
         inputDash = context.ReadValue<float>();
     }
 
-    public void EnemyFound()
+    public async void EnemyFound()
     {
         // 音を鳴らす
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
+        impulseSource.GenerateImpulseAt(transform.position,new Vector3(1,1,1));
+        colorGranding.gamma.value = Color.red;
+        await UniTask.Delay(1000);
+        colorGranding.gamma.value = Color.white; 
     }
 
     public void EnemyCaught(CinemachineVirtualCamera vcam)
     {
-        // ロッカーに入っていたら
-
         AudioManager.instance.PlaySE(SE.CAUGHT);
         vcam.Priority = 100;
         UniTask task = WaitAction(2.0f, FadeChangeScene);
@@ -189,6 +198,17 @@ public class Player : MonoBehaviour
     {
         FadeSceneChange.instance.ChangeSceneEvent("GameResult");
     }
+
+
+
+    //public async UniTask Footsteps(int speed)
+    //{
+    //    while (true)
+    //    {
+    //        AudioManager.instance.PlaySE(SE.WALK);
+    //        await UniTask.DelayFrame(500);
+    //    }
+    //}
 
     // 回転
     void Rotate()
