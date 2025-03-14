@@ -33,12 +33,10 @@ public class EnemyBase : MonoBehaviour
 
     private bool caught = false;
 
-    [SerializeField]
     public State _nowState { get; private set; }
 
     private NavMeshAgent _agent;
     private Animator _animator;
-    private AudioSource _audioSource;
     public CinemachineVirtualCamera _camera { get; private set; } = null;
 
     public virtual void Setup(int setID, Vector3 position, int masterID)
@@ -70,7 +68,6 @@ public class EnemyBase : MonoBehaviour
 
         _agent = obj.GetComponent<NavMeshAgent>();
         _animator = obj.GetComponent<Animator>();
-        _audioSource = obj.GetComponent<AudioSource>();
         _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
 
         if (_agent != null) _agent.speed = speed;

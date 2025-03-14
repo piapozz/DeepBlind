@@ -36,11 +36,39 @@ public class BasicVigilance : IVigilance
     {
         // ˆê’è”ÍˆÍ“à‚ð„‰ñ‚µ‚½‚çI‚í‚é
 
-        _enemy.StateChange(State.SEARCH);
+        Vector3 playerPos = _player.transform.position;
+        Vector3 enemyPos = _enemy.transform.position;
+
+        if (EnemyUtility.CheckViewPlayer(_ID))
+        {
+            float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,
+                                   playerPos.x - enemyPos.x) * Mathf.Rad2Deg;
+            Vector3 dir = _enemy.transform.forward;
+            float myAngle = Mathf.Atan2(dir.z, dir.x) * Mathf.Rad2Deg;
+
+            // 0 ~ 360‚ÉƒNƒ‰ƒ“ƒv
+            toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
+            myAngle = Mathf.Repeat(myAngle, 360);
+
+            // Ž‹–ì”ÍˆÍ“à‚È‚ç
+            if (myAngle + (_enemy.fieldOfView / 2) > toPlayerAngle &&
+                myAngle - (_enemy.fieldOfView / 2) < toPlayerAngle)
+            {
+                // Œ©‚Â‚¯‚½
+                _enemy.StateChange(State.TRACKING);
+            }
+        }
     }
 
     public void GetTarget()
     {
-        
+        if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
+        {
+            _enemy.StateChange(State.SEARCH);
+        }
+        else
+        {
+            _enemy.SetNavTarget(_enemy.target);
+        }
     }
 }

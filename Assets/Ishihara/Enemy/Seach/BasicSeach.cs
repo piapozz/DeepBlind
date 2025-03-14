@@ -45,7 +45,6 @@ public class BasicSeach : ISeach
     /// </summary>
     public void CheckTracking()
     {
-        RaycastHit hit;
         Vector3 playerPos = _player.transform.position;
         Vector3 enemyPos = _enemy.transform.position;
 
@@ -73,7 +72,12 @@ public class BasicSeach : ISeach
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance()
     {
+        Vector3 position = SoundObjectManager.instance.GetBigSoundPosition(_enemy.transform.position, 1);
+        if (position == Vector3.zero) return;
 
+        // Œx‰úó‘Ô
+        _enemy.StateChange(State.VIGILANCE);
+        _enemy.SetNavTarget(position);
     }
 
     /// <summary>
