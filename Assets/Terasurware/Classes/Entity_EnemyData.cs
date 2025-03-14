@@ -18,7 +18,6 @@ public class Entity_EnemyData : ScriptableObject
 	{
 		
 		public int ID;
-		public string Name;
 		public float Speed;
 		public float SpeedDiameter;
 		public float ThreatRange;

@@ -15,8 +15,7 @@ MonoBehaviour:
   sheets:
   - name: EnemyData
     list:
-    - ID: 0
-      Name: Stop
+    - ID: 1
       Speed: 5
       SpeedDiameter: 2.5
       ThreatRange: 25
@@ -26,8 +25,7 @@ MonoBehaviour:
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: StopLookAt
-    - ID: 1
-      Name: Normal
+    - ID: 0
       Speed: 3
       SpeedDiameter: 2.5
       ThreatRange: 25
@@ -37,69 +35,3 @@ MonoBehaviour:
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: Norm
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 
-    - ID: 0
-      Name: 
-      Speed: 0
-      SpeedDiameter: 0
-      ThreatRange: 0
-      ViewLength: 0
-      FieldOfView: 0
-      Seach: 
-      Vigilance: 
-      Tracking: 
-      Skill: 

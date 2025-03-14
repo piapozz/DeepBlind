@@ -15,6 +15,9 @@ public class EnemyManager : SystemObject
     [SerializeField]
     private Transform _unuseObjectRoot = null;
 
+    [SerializeField]
+    EnemyPrefabs enemyOrigin;
+
     private List<EnemyBase> _useList = new List<EnemyBase>();
     private List<GameObject> _useObjectList = new List<GameObject>();
 
@@ -92,7 +95,6 @@ public class EnemyManager : SystemObject
     {
         foreach (var param in MasterDataManager.enemyData[0])
         {
-            if (string.IsNullOrEmpty(param.Name)) continue;
             Vector3 position = DispatchTargetPosition();
             UseEnemy(position, param.ID);
             await UniTask.DelayFrame(1);
@@ -118,7 +120,7 @@ public class EnemyManager : SystemObject
         }
 
         Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
-        GameObject useObject = Instantiate(Resources.Load<GameObject>("Prefab/" + param.Name));
+        GameObject useObject = Instantiate(enemyOrigin.enemies[masterID]);
         useObject.transform.SetParent(_useObjectRoot);
 
         _useList[useID] = useObject.AddComponent<EnemyBase>();
