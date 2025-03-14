@@ -23,6 +23,7 @@ public class EnemyBase : MonoBehaviour
     public float threatRange { get; private set; } = -1;
     public float viewLength { get; private set; } = -1;
     public float fieldOfView { get; private set; } = -1;
+    public bool isAbility { get; private set; } = false;
 
     private ISeach _seach;
     private IVigilance _vigilance;
@@ -183,28 +184,21 @@ public class EnemyBase : MonoBehaviour
     {
         if (_agent != null)
         {
+            if(speed == 0) _agent.velocity = Vector3.zero;
             _agent.speed = speed;
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    public void SetIsAbility()
     {
-        //if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        //{
-        //    caught = true;
-        //}
+        isAbility = !isAbility;
     }
 
     public bool CheckCaughtPlayer()
     {
-        Vector3 start = transform.position;
-        start.y = 0;
-        Vector3 end = Player.instance.transform.position;
-        end.y = 0;
+        float length = EnemyUtility.EnemyToPlayerLength(ID);
 
-        float length = Vector3.Distance(start, end);
-
-        caught = length < 0.5;
+        caught = (length < 0.7 && !isAbility) || caught;
 
         return caught;
     }

@@ -72,6 +72,7 @@ public class EventLocker : MonoBehaviour, IEvent
             player.SetPosition(nextPos);
             player.SetCharaController(true);
             inPlayer = false;
+            player.isLocker = false;
         }
         // ÉçÉbÉJÅ[Ç…ì¸ÇÈ
         else 
@@ -83,6 +84,7 @@ public class EventLocker : MonoBehaviour, IEvent
             player.SetRotate(nextRot);
             player.SetPosition(nextPos);
             inPlayer = true;
+            player.isLocker = true;
         }
     }
 }

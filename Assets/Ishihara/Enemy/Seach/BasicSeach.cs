@@ -19,6 +19,7 @@ public class BasicSeach : ISeach
     /// <returns></returns>
     public void Activity()
     {
+        if(_enemy == null) return;
         // 取得
         GetTarget();
 
@@ -48,18 +49,8 @@ public class BasicSeach : ISeach
         Vector3 playerPos = _player.transform.position;
         Vector3 enemyPos = _enemy.transform.position;
 
-        // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = _enemy.transform.position;                                              // 原点
-        Vector3 direction = Vector3.Normalize(playerPos - enemyPos);     // X軸方向を表すベクトル
-        Ray ray = new Ray(origin, direction);                                                    // Rayを生成;
-
-        LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
-        if (Physics.Raycast(ray, out hit, _enemy.viewLength + 1, layer))
-        {
-            string tag = hit.collider.gameObject.tag;                                            // 衝突した相手オブジェクトの名前を取得
-
-            if (tag != "Player") return;                                                          // プレイヤー以外なら終わる
-                                                                
+        if (EnemyUtility.CheckViewPlayer(_ID))
+        {                          
             float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,
                                    playerPos.x - enemyPos.x) * Mathf.Rad2Deg;
             Vector3 dir = _enemy.transform.forward;
@@ -91,7 +82,6 @@ public class BasicSeach : ISeach
     /// <param name="info"></param>
     public void GetTarget()
     {
-        Debug.DrawLine(_enemy.transform.position, _enemy.target);
         if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
         {
             // 探索箇所をランダムに設定する

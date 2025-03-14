@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemyUtility : MonoBehaviour
 {
@@ -46,5 +47,47 @@ public class EnemyUtility : MonoBehaviour
         EnemyManager.instance.UnuseEnemy(character);
         
         await UniTask.CompletedTask;
+    }
+
+    public static float EnemyToPlayerLength(int ID)
+    {
+        EnemyBase enemy = GetCharacter(ID);
+        Player player = GetPlayer();
+
+        Vector3 start = enemy.transform.position;
+        start.y = 0;
+        Vector3 end = player.transform.position;
+        end.y = 0;
+
+        float length = Vector3.Distance(start, end);
+        return length;
+    }
+
+    /// <summary>
+    /// エネミーからプレイヤーが確認できるかの関数
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="locker">ロッカーを無視するかどうか</param>
+    /// <returns></returns>
+    public static bool CheckViewPlayer(int ID, bool ignoreLocker = true)
+    {
+        bool isHit = false;
+
+        EnemyBase enemy = GetCharacter(ID);
+        Player player = GetPlayer();
+
+        if (enemy == null || player == null) return false;
+        if (player.isLocker && !ignoreLocker) return false;
+
+        // プレイヤーとの間に障害物があるかどうか
+        Vector3 origin = enemy.transform.position;                                                              // 原点
+        Vector3 direction = Vector3.Normalize(player.transform.position - enemy.transform.position);     // X軸方向を表すベクトル
+        Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
+
+        RaycastHit hit;
+        LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
+        isHit = Physics.Raycast(ray, out hit, Vector3.Distance(enemy.transform.position, player.transform.position), layer);
+
+        return isHit && hit.collider.tag == "Player";
     }
 }
