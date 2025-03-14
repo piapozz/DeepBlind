@@ -48,8 +48,6 @@ public class InventoryManager : SystemObject
     // マウスホイールでアイテム変更の処理
     public void Update()
     {
-        Debug.Log(selectedSlot);
-
         if (IsEmpty(itemsList))
         {
             mainSlotUI.sprite = iconBatsu;

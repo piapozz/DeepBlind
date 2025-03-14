@@ -518,8 +518,11 @@ MonoBehaviour:
   playerObject: {fileID: 255332076}
   virtualCamera: {fileID: 1569953912}
   hold: {fileID: 0}
+  impulseSource: {fileID: 0}
+  volume: {fileID: 0}
   isDebug: 0
   rotationSpeed: 1
+  isLocker: 0
 --- !u!143 &255332079
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2967,7 +2970,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originSystemList:
   - {fileID: 7444886754234939135, guid: 2ae1eff5b3705a24ca832d2910f7186b, type: 3}
-  - {fileID: 3668009338227965922, guid: 71c3781517fd71143beb714ea4322bbe, type: 3}
 --- !u!4 &1735833091
 Transform:
   m_ObjectHideFlags: 0
