@@ -8,6 +8,7 @@ TagManager:
   - Locker
   - Enemy
   - Door
+  - ItemObject
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - UI
   - Player
   - Stage
-  - 
+  - Item
   - 
   - 
   - 

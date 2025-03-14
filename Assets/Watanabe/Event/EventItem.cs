@@ -6,7 +6,7 @@ using UnityEngine;
 public class EventItem : MonoBehaviour, IEvent
 {
     private UIManager _uiManager = null;
-    private Inventory _inventory = null;
+    private InventoryManager _inventory = null;
 
     private bool isUsed = false;
 
@@ -15,7 +15,7 @@ public class EventItem : MonoBehaviour, IEvent
     void Start()
     {
         _uiManager = UIManager.instance;
-        _inventory = Inventory.instance;
+        _inventory = InventoryManager.instance;
     }
 
     public void Event()
