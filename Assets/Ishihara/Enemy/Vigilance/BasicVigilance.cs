@@ -20,6 +20,8 @@ public class BasicVigilance : IVigilance
         if (_enemy == null) return;
         // Š®‘S‚ÉŒ©Ž¸‚Á‚½‚©‚Ç‚¤‚©
         CheckLookAround();
+
+        GetTarget();
     }
 
     /// <summary>

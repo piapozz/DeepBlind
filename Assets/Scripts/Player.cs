@@ -49,6 +49,8 @@ public class Player : MonoBehaviour
 
     Vector3 moveVec;                                                // ˆÚ“®—Ê
 
+    private Color gamma;
+
     private void Awake()
     {
         instance = this;
@@ -72,6 +74,7 @@ public class Player : MonoBehaviour
         volume.profile.TryGetSettings(out colorGranding);
         transform.position = GenerateStage.instance.GetStartPos() + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
+        gamma = colorGranding.gamma.value;
     }
 
     void Update()
@@ -181,10 +184,10 @@ public class Player : MonoBehaviour
     {
         // ‰¹‚ð–Â‚ç‚·
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
-        impulseSource.GenerateImpulseAt(transform.position,new Vector3(1,1,1));
-        colorGranding.gamma.value = Color.red;
+        impulseSource.GenerateImpulse(); 
+        colorGranding.gamma.value = Color.red + gamma;
         await UniTask.Delay(1000);
-        colorGranding.gamma.value = Color.white; 
+        colorGranding.gamma.value = gamma; 
     }
 
     public void EnemyCaught(CinemachineVirtualCamera vcam)

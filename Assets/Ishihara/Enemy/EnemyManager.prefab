@@ -108,8 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80a37be1b9ecc344aa6dcaedd442eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemies:
-  - {fileID: 0}
-  _createEnemies: 03000000
   _useObjectRoot: {fileID: 7438962224440494080}
   _unuseObjectRoot: {fileID: 2969164556715917859}
+  enemyOrigin: {fileID: 11400000, guid: a7d0f218e7c03b04eb9df63a977b7fe1, type: 2}

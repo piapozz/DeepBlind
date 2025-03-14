@@ -472,6 +472,7 @@ GameObject:
   - component: {fileID: 255332081}
   - component: {fileID: 255332082}
   - component: {fileID: 255332083}
+  - component: {fileID: 255332084}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -518,8 +519,11 @@ MonoBehaviour:
   playerObject: {fileID: 255332076}
   virtualCamera: {fileID: 1569953912}
   hold: {fileID: 0}
+  impulseSource: {fileID: 1569953915}
+  volume: {fileID: 963194229}
   isDebug: 0
   rotationSpeed: 1
+  isLocker: 0
 --- !u!143 &255332079
 CharacterController:
   m_ObjectHideFlags: 0
@@ -751,6 +755,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &255332084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255332076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a5decd31cf104f4aabaad393ead358a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &300827811 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1319729435723597870, guid: 55d48f789a6331845906de0f84aea95a, type: 3}
@@ -1618,6 +1634,7 @@ GameObject:
   - component: {fileID: 963194230}
   - component: {fileID: 963194229}
   - component: {fileID: 963194231}
+  - component: {fileID: 963194232}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1803,6 +1820,28 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &963194232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c11265b855408d42af33d62691f5194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChannelMask: -1
+  m_Gain: 1
+  m_Use2DDistance: 0
+  m_UseLocalSpace: 1
+  m_ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &964020865
 GameObject:
   m_ObjectHideFlags: 0
@@ -2617,6 +2656,7 @@ GameObject:
   - component: {fileID: 1569953913}
   - component: {fileID: 1569953912}
   - component: {fileID: 1569953914}
+  - component: {fileID: 1569953915}
   m_Layer: 0
   m_Name: Virual Camera
   m_TagString: Untagged
@@ -2694,6 +2734,59 @@ MonoBehaviour:
   m_Damping: 1
   m_MinFOV: 1
   m_MaxFOV: 100
+--- !u!114 &1569953915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569953911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: -1
+    m_ImpulseShape: 3
+    m_CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_ImpulseDuration: 0.5
+    m_ImpulseType: 0
+    m_DissipationRate: 0.271
+    m_RawSignal: {fileID: 0}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 100
+    m_PropagationSpeed: 343
+  m_DefaultVelocity: {x: 0, y: -0.3, z: 0}
 --- !u!1 &1636975099
 GameObject:
   m_ObjectHideFlags: 0
