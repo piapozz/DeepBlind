@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static EnemyBase;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class StopLookAt : ISkill
 {
@@ -11,6 +12,9 @@ public class StopLookAt : ISkill
 
     private int ID;
     private  Bounds bounds;
+
+    public float detectionRange = 5.0f; // 近づいたとみなす距離
+    private bool canCollide = false;  // 当たり判定を持つか
 
     /// <summary>
     /// 初期化
@@ -28,8 +32,14 @@ public class StopLookAt : ISkill
     /// <returns></returns>
     public void Ability()
     {
-        SkinnedMeshRenderer filter = EnemyManager.instance.Get(ID).GetComponentInChildren<SkinnedMeshRenderer>();
+        if(EnemyManager.instance.Get(ID) ==null) return;
+
+        EnemyBase enemy = EnemyUtility.GetCharacter(ID);
+        Transform player = EnemyUtility.GetPlayer().transform;
+
+        SkinnedMeshRenderer filter = enemy.GetComponentInChildren<SkinnedMeshRenderer>();
         bounds = filter.bounds;
+        detectionRange = bounds.size.magnitude / 2;
         Vector3[] targetPoints = new Vector3[8];
 
         targetPoints[0] = bounds.min + new Vector3(0.0f, 0.5f, 0.0f);
@@ -40,6 +50,18 @@ public class StopLookAt : ISkill
         targetPoints[5] = new Vector3(bounds.max.x, bounds.min.y + 0.5f, bounds.max.z);
         targetPoints[6] = new Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
         targetPoints[7] = bounds.max;
+
+        // 接触間近範囲なら
+        float length = EnemyUtility.EnemyToPlayerLength(ID);
+        bool isCloseEnough = false;
+        if (length < detectionRange)
+        {
+            isCloseEnough = true;
+        }
+        else
+        {
+            isCloseEnough = false;
+        }
 
         //　カメラ内にオブジェクトがあるかどうか
         bool isInsideCamera = false;
@@ -56,7 +78,7 @@ public class StopLookAt : ISkill
             if (GeometryUtility.TestPlanesAABB(planes, bounds))
             {
                 // コーナーからカメラ位置へのレイキャスト
-                Vector3 direction = -(targetPoint - EnemyUtility.GetPlayer().transform.position);
+                Vector3 direction = -(targetPoint - player.position);
                 Ray ray = new Ray(targetPoint, direction.normalized);
                 RaycastHit hit;
                 // レイキャストがプレイヤーに直接当たるか確認
@@ -72,16 +94,31 @@ public class StopLookAt : ISkill
             }
         }
 
-        EnemyBase enemy = EnemyUtility.GetCharacter(ID);
-        if (isInsideCamera)
+        if(isCloseEnough && isInsideCamera && !enemy.isAbility)
         {
-            enemy.SetAnimationSpeed(0);
-            enemy.SetNavSpeed(0);
+            canCollide = true;
+        }
+        else if (isInsideCamera)
+        {
+            canCollide = false;
         }
         else
         {
-            enemy.SetAnimationSpeed(enemy.speed);
+            canCollide = true;
+        }
+
+
+        if (!canCollide)
+        {
+            enemy.SetAnimationSpeed(0);
+            enemy.SetNavSpeed(0);
+            if(!enemy.isAbility) enemy.SetIsAbility();
+        }
+        else
+        {
+            enemy.SetAnimationSpeed(Mathf.Min(enemy.speed, 2));
             enemy.SetNavSpeed(enemy.speed);
+            if (enemy.isAbility) enemy.SetIsAbility();
         }
     }
 }

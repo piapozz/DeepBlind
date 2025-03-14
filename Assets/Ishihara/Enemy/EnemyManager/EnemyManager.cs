@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Cysharp.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
 using static CommonModule;
 
@@ -17,247 +15,179 @@ public class EnemyManager : SystemObject
     [SerializeField]
     private Transform _unuseObjectRoot = null;
 
-    // 使用中のキャラクターリスト
-    private List<EnemyBase> _useList = null;
+    private List<EnemyBase> _useList = new List<EnemyBase>();
+    private List<GameObject> _useObjectList = new List<GameObject>();
 
-    // 使用中のキャラクターオブジェクトリスト
-    private List<GameObject> _useObjectList = null;
-
-
-    // 再生中のBGM
-    BGM bgm;
+    private BGM bgm;
 
     public override void Initialize()
     {
-        MasterDataManager.LoadAllData();
+        if (instance != null)
+        {
+            Debug.LogError("EnemyManager instance already exists!");
+            return;
+        }
         instance = this;
+        MasterDataManager.LoadAllData();
         EnemyBase.SetGetObjectCallback(GetCharacterObject);
-        
 
         int enemyMax = MasterDataManager.enemyData[0].Count;
+        _useList.Capacity = enemyMax;
+        _useObjectList.Capacity = enemyMax;
 
-        // 必要なキャラクターとオブジェクトのインスタンスを生成して未使用状態にしておく
-        _useList = new List<EnemyBase>(enemyMax);
-        _useObjectList = new List<GameObject>(enemyMax);
-
-        for (int i = 0; i < enemyMax; i++)
-        {
-            _useList.Add(new EnemyBase());
-        }
-        for (int i = 0; i < enemyMax; i++)
-        {
-            _useObjectList.Add(null);
-        }
         AudioManager.instance.PlayBGM(BGM.MAIN_NORMAL);
         bgm = BGM.MAIN_NORMAL;
 
-        // エネミーの生成
-        CreateEnemy();
-        // 非同期ループを開始
-        StartEnemyBehaviorLoop();
+        CreateEnemy().Forget();
+        StartEnemyBehaviorLoop().Forget();
     }
 
-    /// <summary>
-    /// 非同期のエネミー管理ループ
-    /// </summary>
-    /// <returns></returns>
     private async UniTask StartEnemyBehaviorLoop()
     {
         while (true)
         {
             ExecuteAll(enemy => enemy.Active());
-
             CheckChangeBGM();
 
-            // エネミーとプレイヤーが接触しているかを確認
-            if(ExecuteAll(enemy =>
-            {
+            if(ExecuteAll(enemy => {
                 if (enemy.CheckCaughtPlayer())
                 {
-                    EnemyUtility.GetPlayer().EnemyCaught(enemy._camera, enemy);
-                    enemy.SetNavTarget(enemy.transform.position);
+                    Player.instance.EnemyCaught(enemy._camera);
                     enemy.SetAnimationSpeed(1);
+                    enemy.SetScreamTrigger();
                     return true;
                 }
+
                 return false;
             }))
             {
                 break;
             }
-
-            // 次のフレームまで待機
             await UniTask.DelayFrame(1);
         }
     }
 
     private void CheckChangeBGM()
     {
-        EnemyBase.State state = EnemyBase.State.TRACKING;
-        bool tracking = false;
-
-        for(int i = 0, max = _useList.Count;i < max; i++)
-        {
-            if (_useList[i]._nowState == EnemyBase.State.TRACKING)
-            {
-                tracking = true;
-            }
-        }
+        bool tracking = _useList.Exists(enemy => enemy._nowState == EnemyBase.State.TRACKING);
 
         if (tracking && bgm == BGM.MAIN_NORMAL)
         {
             bgm = BGM.MAIN_TRACKING;
             AudioManager.instance.PlayBGM(bgm);
-            return;
         }
-
-        if (!tracking && bgm == BGM.MAIN_TRACKING)
+        else if (!tracking && bgm == BGM.MAIN_TRACKING)
         {
             bgm = BGM.MAIN_NORMAL;
             AudioManager.instance.PlayBGM(bgm);
         }
     }
 
-    /// <summary>
-    /// 探索状態のエネミーの目標位置を振り分ける
-    /// </summary>
     public Vector3 DispatchTargetPosition()
     {
-        // 目標位置を再設定
         return GenerateStage.instance.GetRandCorridorPos();
     }
 
-    /// <summary>
-    /// エネミーの生成
-    /// </summary>
     private async UniTask CreateEnemy()
     {
-        for (int i = 0; i < MasterDataManager.enemyData[0].Count; i++)
+        foreach (var param in MasterDataManager.enemyData[0])
         {
-            // 生成
-            // 使用可能なIDを取得して使用リストに追加
-            Entity_EnemyData.Param param = MasterDataManager.enemyData[0][i];
+            if (string.IsNullOrEmpty(param.Name)) continue;
             Vector3 position = DispatchTargetPosition();
             UseEnemy(position, param.ID);
-
             await UniTask.DelayFrame(1);
         }
     }
 
-    /// <summary>
-	/// エネミーの生成
-	/// </summary>
-	/// <param name="squareData"></param>
-	public void UseEnemy(Vector3 position, int masterID)
+    public void UseEnemy(Vector3 position, int masterID)
     {
-        // インスタンスの取得
-        // 使用可能なIDを取得して使用リストに追加
         int useID = UseCharacter(masterID);
-        _useList[useID].Setup(useID, position, masterID);
+        if (useID >= 0)
+        {
+            _useList[useID]?.Setup(useID, position, masterID);
+        }
     }
 
     private int UseCharacter(int masterID)
     {
-        // 使用可能なIDを取得して使用リストに追加
-        int useID = -1;
-        for (int i = 0, max = _useList.Count; i < max; i++)
-        {
-            if (_useList[i] != null) continue;
-
-            useID = i;
-            break;
-        }
-        if (useID < 0)
+        int useID = _useList.FindIndex(enemy => enemy == null);
+        if (useID == -1)
         {
             useID = _useList.Count;
-            _useList.Add(new EnemyBase());
+            _useList.Add(null);
         }
-        // オブジェクトの取得
-        GameObject useObject = null;
+
         Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
-        useObject = Instantiate((GameObject)Resources.Load("Prefab/" + param.Name));
-        // オブジェクトの使用リストへの追加
-        while (!IsEnableIndex(_useObjectList, useID)) _useObjectList.Add(null);
+        GameObject useObject = Instantiate(Resources.Load<GameObject>("Prefab/" + param.Name));
+        useObject.transform.SetParent(_useObjectRoot);
 
         _useList[useID] = useObject.AddComponent<EnemyBase>();
-        _useObjectList[useID] = useObject;
-        useObject.transform.SetParent(_useObjectRoot);
+        _useObjectList.Insert(useID, useObject);
+
         return useID;
     }
 
     public void UnuseEnemy(EnemyBase unuseEnemy)
     {
         if (unuseEnemy == null) return;
-
         int unuseID = unuseEnemy.ID;
-        // 使用リストから取り除く
-        if (IsEnableIndex(_useList, unuseID)) _useList[unuseID] = null;
-        // 片付け処理を読んで未使用リストに加える
+
+        if (IsEnableIndex(_useList, unuseID))
+        {
+            _useList[unuseID] = null;
+        }
+
         unuseEnemy.Teardown();
-        // オブジェクトを未使用にする
         UnuseObject(unuseID);
     }
 
     private void UnuseObject(int unuseID)
     {
-        GameObject unuseCharacterObject = GetCharacterObject(unuseID);
-        // 使用リストから取り除く
-        if (IsEnableIndex(_useObjectList, unuseID)) _useObjectList[unuseID] = null;
-        // 見えない場所に置く
-        unuseCharacterObject.transform.SetParent(_unuseObjectRoot);
+        if (!IsEnableIndex(_useObjectList, unuseID)) return;
+        GameObject unuseObject = _useObjectList[unuseID];
+
+        if (unuseObject != null)
+        {
+            unuseObject.transform.SetParent(_unuseObjectRoot);
+            _useObjectList[unuseID] = null;
+        }
     }
 
     private GameObject GetCharacterObject(int ID)
     {
-        if (!IsEnableIndex(_useObjectList, ID)) return null;
-
-        return _useObjectList[ID];
+        return IsEnableIndex(_useObjectList, ID) ? _useObjectList[ID] : null;
     }
 
     public EnemyBase Get(int ID)
     {
-        if (!IsEnableIndex(_useList, ID)) return null;
-
-        return _useList[ID];
+        return IsEnableIndex(_useList, ID) ? _useList[ID] : null;
     }
 
     public void ExecuteAll(System.Action<EnemyBase> action)
     {
-        if (action == null || IsEmpty(_useList)) return;
-
-        for (int i = 0, max = _useList.Count; i < max; i++)
+        if (action == null) return;
+        foreach (var enemy in _useList)
         {
-            if (_useList[i] == null) continue;
-
-            action(_useList[i]);
+            action(enemy);
         }
     }
 
-    public bool ExecuteAll(System.Func<EnemyBase , bool> action)
+    public bool ExecuteAll(System.Func<EnemyBase, bool> action)
     {
-        if (action == null || IsEmpty(_useList)) return default;
-
-        for (int i = 0, max = _useList.Count; i < max; i++)
+        if (action == null) return false;
+        foreach (var enemy in _useList)
         {
-            if (_useList[i] == null) continue;
-
-            if (action(_useList[i]))
-            {
-                return true;
-            }
+            if (enemy != null && action(enemy)) return true;
         }
-
-        return default;
+        return false;
     }
 
     public async UniTask ExecuteAllTask(System.Func<EnemyBase, UniTask> task)
     {
-        if (task == null || IsEmpty(_useList)) return;
-
-        for (int i = 0, max = _useList.Count; i < max; i++)
+        if (task == null) return;
+        foreach (var enemy in _useList)
         {
-            if (_useList[i] == null) continue;
-
-            await task(_useList[i]);
+            if (enemy != null) await task(enemy);
         }
     }
 }

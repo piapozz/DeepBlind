@@ -17,6 +17,7 @@ public class BasicVigilance : IVigilance
     /// <returns></returns>
     public void Activity()
     {
+        if (_enemy == null) return;
         // Š®‘S‚ÉŒ©Ž¸‚Á‚½‚©‚Ç‚¤‚©
         CheckLookAround();
     }

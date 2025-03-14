@@ -20,6 +20,7 @@ public class BasicTracking : ITracking
     /// <returns></returns>
     public void Activity()
     {
+        if (_enemy == null) return;
         // 取得
         GetTarget();
 
@@ -44,48 +45,29 @@ public class BasicTracking : ITracking
     /// </summary>
     public void CheckTargetLost()
     {
-        // プレイヤーとの間に障害物があるかどうか
-        Vector3 origin = _enemy.transform.position;                                                              // 原点
-        Vector3 direction = Vector3.Normalize(_player.transform.position - _enemy.transform.position);     // X軸方向を表すベクトル
-        Ray ray = new Ray(origin, direction);                                                                    // Rayを生成;
-
-        RaycastHit hit;
-        LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
-        if (Physics.Raycast(ray, out hit, Vector3.Distance(_enemy.transform.position, _player.transform.position), layer))                                                 // もしRayを投射して何らかのコライダーに衝突したら
+        if(EnemyUtility.CheckViewPlayer(_ID, !_IsTargetlost))                                              // もしRayを投射して何らかのコライダーに衝突したら
         {
-            string tag = hit.collider.gameObject.tag;                                                            // 衝突した相手オブジェクトの名前を取得
-
+            _IsTargetlost = false;
+        }
+        else
+        {
             // 見失っていたら
-            if (tag != "Player")
-            {
-                if (!_IsTargetlost) _lostTime = 0.0f;
-                _IsTargetlost = true;
-                //_enemy.StateChange(State.SEARCH);
-            }
-            else
-            {
-                _IsTargetlost = false;
-            }
+            if (!_IsTargetlost) _lostTime = 0.0f;
+            _IsTargetlost = true;
         }
 
         if (!_IsTargetlost) return;
 
         // 距離が一定以下なら警戒
         // 秒数が一定以上になったら警戒
-        _lostTime += Time.deltaTime;
+        if(!_enemy.isAbility) _lostTime += Time.deltaTime;
         if(_lostTime > 10.0f)
         {
             _enemy.StateChange(State.VIGILANCE);
             return;
         }
 
-
-        Vector3 start = _enemy.transform.position;
-        Vector3 end = Player.instance.transform.position;
-        start.y = 0;
-        end.y = 0;
-
-        float length = Vector3.Distance(start, end);
+        float length = EnemyUtility.EnemyToPlayerLength(_ID);
         if (length > _enemy.viewLength + 10)
         {
             _enemy.StateChange(State.VIGILANCE);

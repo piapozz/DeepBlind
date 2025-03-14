@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     public PlayerStatus status;
 
     bool isTired = false;                                           // 疲れているかを管理
+    public bool isLocker = false;                                   // ロッカーに入っているかを管理
 
     Vector3 offsetGenPos = new Vector3(0, 0, 0);                    // 初期位置        
 
@@ -175,12 +176,13 @@ public class Player : MonoBehaviour
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
     }
 
-    public void EnemyCaught(CinemachineVirtualCamera vcam, EnemyBase enemy)
+    public void EnemyCaught(CinemachineVirtualCamera vcam)
     {
+        // ロッカーに入っていたら
+
         AudioManager.instance.PlaySE(SE.CAUGHT);
-        enemy.SetScreamTrigger();
         vcam.Priority = 100;
-        UniTask task = WaitAction(1.0f, FadeChangeScene);
+        UniTask task = WaitAction(2.0f, FadeChangeScene);
 
     }
     public void FadeChangeScene()
