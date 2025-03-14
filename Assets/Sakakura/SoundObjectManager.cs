@@ -21,7 +21,7 @@ public class SoundObjectManager : MonoBehaviour
     /// <summary>âπåπÇÃç≈ëÂêî</summary>
     private const int _SOUND_MAX = 100;
 
-    public void Initialize()
+    public void Awake()
     {
         instance = this;
         _soundList = new List<SoundObject>(_SOUND_MAX);
