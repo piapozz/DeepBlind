@@ -1,3 +1,10 @@
+/*
+* @file StageManager.cs
+* @brief ステージの管理クラス
+* @author sakakura
+* @date 2025/3/14
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +29,7 @@ public class StageManager : SystemObject
 
     private Entity_StageData.Param _stageMaster = null;
 
-    private int _stageSectionCount = -1;
+    public int stageSectionCount { get; private set; } = -1;
 
     public const float SECTION_SIZE = 10.0f;
 
@@ -31,11 +38,11 @@ public class StageManager : SystemObject
     public override void Initialize()
     {
         _stageMaster = StageMasterUtility.GetStageMaster();
-        _stageSectionCount = _stageMaster.widthSize * _stageMaster.heightSize;
+        stageSectionCount = _stageMaster.widthSize * _stageMaster.heightSize;
         // 区画を初期化
-        _sectionList = new List<Section>(_stageSectionCount);
-        _unroomSectionIDList = new List<int>(_stageSectionCount);
-        for (int i = 0; i < _stageSectionCount; i++)
+        _sectionList = new List<Section>(stageSectionCount);
+        _unroomSectionIDList = new List<int>(stageSectionCount);
+        for (int i = 0; i < stageSectionCount; i++)
         {
             Section createSection = new Section();
             Vector2Int position = GetSectionPosition(i);

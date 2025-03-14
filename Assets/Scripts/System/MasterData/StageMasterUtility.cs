@@ -1,3 +1,10 @@
+/*
+* @file StageMasterUtility.cs
+* @brief ステージのマスターデータユーティリティ
+* @author sakakura
+* @date 2025/3/14
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

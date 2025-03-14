@@ -1,10 +1,17 @@
+/*
+* @file Section.cs
+* @brief ‹æ‰æ
+* @author sakakura
+* @date 2025/3/14
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Section
 {
-    private int _ID = -1;
+    public int ID { get; private set; } = -1;
     public Vector2Int position { get; private set; } = -Vector2Int.one;
     public RoomType roomType { get; private set; } = RoomType.Invalid;
     public bool[] isConnect = new bool[(int)Direction.Max];
@@ -14,8 +21,8 @@ public class Section
 
     public void Initialize(int setID, Vector2Int setPos)
     {
-        _ID = setID;
-        position = setPos;
+        ID = setID;
+        SetPosition(setPos);
         for (int i = 0, max = isConnect.Length; i < max; i++)
         {
             isConnect[i] = false;
@@ -36,14 +43,14 @@ public class Section
         roomType = setType;
     }
 
-    public void SetPosition(Vector2Int setPosition)
-    {
-        position = setPosition;
-    }
-
     public void SetIsConnect(Direction direction, bool connect)
     {
         isConnect[(int)direction] = connect;
+    }
+
+    private void SetPosition(Vector2Int setPosition)
+    {
+        position = setPosition;
     }
 
     /// <summary>
