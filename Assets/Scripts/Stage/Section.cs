@@ -16,8 +16,8 @@ public class Section
     public RoomType roomType { get; private set; } = RoomType.Invalid;
     public bool[] isConnect = new bool[(int)Direction.Max];
 
-    private const float _SEPARATE_VIRTICAL_OFFSET = StageManager.SECTION_SIZE / 2;
-    private const float _SEPARATE_HORIZONTAL_OFFSET = StageManager.SECTION_HEIGHT / 2;
+    private const float _SEPARATE_VIRTICAL_OFFSET = StageManager.SECTION_HEIGHT / 2;
+    private const float _SEPARATE_HORIZONTAL_OFFSET = StageManager.SECTION_SIZE / 2;
 
     public void Initialize(int setID, Vector2Int setPos)
     {
@@ -67,18 +67,20 @@ public class Section
             GameObject separateObject = null;
             // 隣に部屋があるか判定
             Section nextRoom = StageManager.instance.GetSectionDir(this, direction);
-            if (nextRoom == null) continue;
+            // エリア外なら壁
+            if (nextRoom == null)
+                separateObject = sectionObjectAssign.wallObject;
+            else
+            {
+                // 隣が部屋なら優先順位に応じてスキップ
+                if (nextRoom.IsRoom() &&
+                    (direction == Direction.Down || direction == Direction.Left))
+                    continue;
 
-            // 隣が部屋なら優先順位に応じてスキップ
-            if (nextRoom.IsRoom() && 
-                direction == Direction.Down || 
-                direction == Direction.Left) continue;
-
-            // つながっているかで判定
-            if (isConnect[i]) separateObject = sectionObjectAssign.doorObject;
-            else separateObject = sectionObjectAssign.wallObject;
-
-            if (separateObject == null) continue;
+                // つながっているかでドアか壁
+                if (isConnect[i]) separateObject = sectionObjectAssign.doorObject;
+                else separateObject = sectionObjectAssign.wallObject;
+            }
 
             GenerateSeparateObject(separateObject, (Direction)i, generateRoot);
         }

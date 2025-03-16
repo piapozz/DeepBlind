@@ -8,6 +8,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 using static CommonModule;
 
@@ -21,13 +22,19 @@ public class StageManager : SystemObject
     [SerializeField]
     private Transform _stageRoot = null;
 
+    private Entity_StageData.Param _stageMaster = null;
+
     /// <summary>区画のデータリスト</summary>
     private List<Section> _sectionList = null;
 
     /// <summary>部屋でない区画のIDリスト</summary>
     private List<int> _unroomSectionIDList = null;
 
-    private Entity_StageData.Param _stageMaster = null;
+    private Section startRoom = null;
+
+    private Section keyRoom = null;
+
+    private Direction keyRoomConnectDir = Direction.Invalid;
 
     public int stageSectionCount { get; private set; } = -1;
 
@@ -35,8 +42,15 @@ public class StageManager : SystemObject
 
     public const float SECTION_HEIGHT = 3.0f;
 
+    private void Start()
+    {
+        MasterDataManager.LoadAllData();
+        Initialize();
+    }
+
     public override void Initialize()
     {
+        instance = this;
         _stageMaster = StageMasterUtility.GetStageMaster();
         stageSectionCount = _stageMaster.widthSize * _stageMaster.heightSize;
         // 区画を初期化
@@ -51,8 +65,12 @@ public class StageManager : SystemObject
             _unroomSectionIDList.Add(i);
         }
 
-        CreateStage();
+        // ステージ作成
+        CreateInitialStage(_stageMaster.roomCount);
+        // ステージ生成
         GenerateStage();
+        
+        RegenerateSection(3);
     }
 
     /// <summary>
@@ -62,7 +80,7 @@ public class StageManager : SystemObject
 	/// <returns></returns>
 	public Vector2Int GetSectionPosition(int ID)
     {
-        if (ID < 0 || ID > _stageMaster.widthSize * _stageMaster.heightSize) return -Vector2Int.one;
+        if (ID < 0 || ID > stageSectionCount) return -Vector2Int.one;
 
         Vector2Int result = new Vector2Int();
         result.x = ID % _stageMaster.widthSize;
@@ -84,38 +102,62 @@ public class StageManager : SystemObject
     }
 
     /// <summary>
-    /// ステージの作成
+    /// 初期ステージの作成
     /// </summary>
-    private void CreateStage()
+    private void CreateInitialStage(int normalRoomCount)
     {
-        // 部屋の位置決定と接続
-        List<Section> roomList = DecideRoom();
+        // 部屋のリストの初期化
+        List<Section> roomList = InitializeRoomList(normalRoomCount + 2);
+        // スタート部屋決定
+        DecideStartRoom(roomList);
+        // 鍵部屋決定
+        DecideKeyRoom(roomList);
+        // 各部屋の位置を決定
+        DecideNormalRoom(normalRoomCount, roomList);
+        // 部屋をつなげる
         ConnectRoom(roomList);
     }
 
     /// <summary>
-    /// 部屋の位置を決める
+    /// 初期化した部屋のリストを取得
     /// </summary>
+    /// <param name="roomCount"></param>
     /// <returns></returns>
-    private List<Section> DecideRoom()
+    private List<Section> InitializeRoomList(int roomCount)
     {
-        List<Section> roomList = new List<Section>(_unroomSectionIDList.Count);
-        // スタート部屋決定
-        int startWidth = Random.Range(0, _stageMaster.widthSize + 1);
-        Section startRoom = DecideRoomType(new Vector2Int(startWidth, 0), RoomType.StartRoom);
-        roomList.Add(startRoom);
-
-        // 各部屋の位置を決定
-        DecideNormalRoom(_stageMaster.roomCount, roomList);
-
-        // 鍵部屋決定
-        int keyWidth = Random.Range(0, _stageMaster.widthSize + 1);
-        Section keyRoom = DecideRoomType(new Vector2Int(keyWidth, 0), RoomType.KeyRoom);
-        roomList.Add(keyRoom);
-
+        // 部屋のリストの初期化
+        List<Section> roomList = new List<Section>(roomCount);
+        for (int i = 0; i < roomCount; i++)
+        {
+            roomList.Add(null);
+        }
         return roomList;
     }
-    
+
+    /// <summary>
+    /// スタート部屋を決める
+    /// </summary>
+    /// <returns></returns>
+    private void DecideStartRoom(List<Section> roomList)
+    {
+        int startWidth = Random.Range(0, _stageMaster.widthSize);
+        Section setStartRoom = DecideRoomType(new Vector2Int(startWidth, 0), RoomType.StartRoom);
+        roomList[0] = setStartRoom;
+        startRoom = setStartRoom;
+    }
+
+    /// <summary>
+    /// 鍵部屋を決める
+    /// </summary>
+    /// <returns></returns>
+    private void DecideKeyRoom(List<Section> roomList)
+    {
+        int keyWidth = Random.Range(0, _stageMaster.widthSize);
+        Section setKeyRoom = DecideRoomType(new Vector2Int(keyWidth, _stageMaster.heightSize - 1), RoomType.KeyRoom);
+        roomList[roomList.Count - 1] = setKeyRoom;
+        keyRoom = setKeyRoom;
+    }
+
     /// <summary>
     /// 座標指定の部屋の種類決定
     /// </summary>
@@ -125,6 +167,8 @@ public class StageManager : SystemObject
     {
         int ID = GetSectionID(position);
         Section decideRoom = GetSection(ID);
+        if (decideRoom == null) return null;
+
         decideRoom.SetRoomType(type);
         _unroomSectionIDList.Remove(ID);
         return decideRoom;
@@ -152,11 +196,12 @@ public class StageManager : SystemObject
     {
         for (int i = 0; i < roomCount; i++)
         {
-            if (_unroomSectionIDList.Count <= 1) return;
+            if (_unroomSectionIDList.Count == 0) return;
             int randomIndex = Random.Range(0, _unroomSectionIDList.Count);
             int roomID = _unroomSectionIDList[randomIndex];
             Section normalRoom = DecideRoomType(roomID, RoomType.NormalRoom);
-            roomList.Add(normalRoom);
+            int unuseIndex = GetUnuseIndex(roomList);
+            roomList[unuseIndex] = normalRoom;
         }
     }
 
@@ -164,7 +209,7 @@ public class StageManager : SystemObject
     /// 部屋と部屋をつなぐ
     /// </summary>
     /// <param name="roomList"></param>
-    private void ConnectRoom(List<Section> roomList)
+    private void ConnectRoom(List<Section> roomList, Direction beforeConnectDir = Direction.Invalid)
     {
         // 部屋が隣接しているならつなぐ
         for (int i = 0, max = roomList.Count - 1; i < max; i++)
@@ -176,9 +221,11 @@ public class StageManager : SystemObject
         for (int i = 0, max = roomList.Count - 1; i < max; i++)
         {
             // A*で部屋1から部屋2をつなぐ
-            // 最短経路が複数ある場合は既存の道を最も利用しているルートにする
-            // ないならランダムでつなぐ
+            List<MoveData> route = RouteSearcher.RouteSearch(roomList[i].ID, roomList[i + 1].ID, beforeConnectDir);
+            if (route == null) continue;
 
+            // ルートから区画をつなげる
+            beforeConnectDir = ConnectRouteSection(route);
         }
     }
 
@@ -202,6 +249,30 @@ public class StageManager : SystemObject
             sourceSection.SetIsConnect(direction, true);
             nextSection.SetIsConnect(direction.ReverseDir(), true);
         }
+    }
+
+    /// <summary>
+    /// 指定のルート内の区画同士をつなげ、最後の方向を返す
+    /// </summary>
+    /// <param name="route"></param>
+    /// <returns></returns>
+    private Direction ConnectRouteSection(List<MoveData> route)
+    {
+        Direction lastDirection = Direction.Invalid;
+        for (int i = 0, max = route.Count; i < max; i++)
+        {
+            Direction direction = route[i].direction;
+            lastDirection = direction.ReverseDir();
+            // 接続元をつなげる
+            Section sourceSection = GetSection(route[i].sourceSectionID);
+            sourceSection.SetIsConnect(direction, true);
+            // 接続先をつなげる
+            Section targetSection = GetSection(route[i].targetSectionID);
+            targetSection.SetIsConnect(lastDirection, true);
+            if (targetSection.roomType == RoomType.KeyRoom)
+                keyRoomConnectDir = lastDirection;
+        }
+        return lastDirection;
     }
 
     /// <summary>
@@ -244,9 +315,11 @@ public class StageManager : SystemObject
                 break;
             case RoomType.StartRoom:
                 generateObject = sectionObjectAssign.startRoom;
+                rotateCount = (int)GetConnectSection(ID)[0].ReverseDir();
                 break;
             case RoomType.KeyRoom:
                 generateObject = sectionObjectAssign.keyRoom;
+                rotateCount = (int)GetConnectSection(ID)[0].ReverseDir();
                 break;
         }
         if (generateObject == null) return null;
@@ -304,12 +377,18 @@ public class StageManager : SystemObject
     /// 新しく部屋を追加してステージ再生成
     /// </summary>
     /// <param name="addRoomCount"></param>
-    public void RegenerateSection(int addRoomCount)
+    public async UniTask RegenerateSection(int addRoomCount)
     {
+        await UniTask.DelayFrame(300);
+        // オブジェクトの削除
         DestroyAllObject();
-        List<Section> addRoomList = new List<Section>(_unroomSectionIDList.Count);
-        DecideNormalRoom(addRoomCount, addRoomList);
-        ConnectRoom(addRoomList);
+        // 鍵部屋からスタート部屋に経路生成
+        List<Section> roomList = InitializeRoomList(addRoomCount + 2);
+        roomList[0] = keyRoom;
+        roomList[roomList.Count - 1] = startRoom;
+        DecideNormalRoom(addRoomCount, roomList);
+        ConnectRoom(roomList, keyRoomConnectDir);
+        // オブジェクトの生成し直し
         GenerateStage();
     }
 
@@ -337,6 +416,19 @@ public class StageManager : SystemObject
     }
 
     /// <summary>
+    /// ID指定の指定方向の区画を取得
+    /// </summary>
+    /// <param name="sourceSectionID"></param>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    public Section GetSectionDir(int sourceSectionID, Direction direction)
+    {
+        Section sourceSection = GetSection(sourceSectionID);
+        Vector2Int targetPosition = sourceSection.position + direction.Vector2();
+        return GetSection(GetSectionID(targetPosition));
+    }
+
+    /// <summary>
     /// ID指定の区画取得
     /// </summary>
     /// <param name="ID"></param>
@@ -345,5 +437,21 @@ public class StageManager : SystemObject
     {
         if (!IsEnableIndex(_sectionList, ID)) return null;
         return _sectionList[ID];
+    }
+
+    /// <summary>
+    /// つながっている方向を取得
+    /// </summary>
+    /// <param name="sectionID"></param>
+    /// <returns></returns>
+    public List<Direction> GetConnectSection(int sectionID)
+    {
+        List<Direction> connectDirection = new List<Direction>((int)Direction.Max);
+        Section section = GetSection(sectionID);
+        for (int i = 0, max = (int)Direction.Max; i < max; i++)
+        {
+            if (section.isConnect[i]) connectDirection.Add((Direction)i);
+        }
+        return connectDirection;
     }
 }
