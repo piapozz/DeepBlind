@@ -20,6 +20,13 @@ public static class ExpansionMethod
         return Vector2Int.zero;
     }
 
+    public static int Distance(this Vector2Int sourcePosition, Vector2Int targetPosition)
+    {
+        int diffX = Mathf.Abs(sourcePosition.x - targetPosition.x);
+        int diffY = Mathf.Abs(sourcePosition.y - targetPosition.y);
+        return diffX + diffY;
+    }
+
     public static Direction ReverseDir(this Direction direction)
     {
         int result = (int)direction + 2;

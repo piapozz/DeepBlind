@@ -97,6 +97,21 @@ public class CommonModule {
 		}
 	}
 
+    /// <summary>
+    /// リストの使用されていないインデクスを取得
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static int GetUnuseIndex<T>(List<T> list)
+    {
+        for (int i = 0, max = list.Count; i < max; i++)
+        {
+            if (list[i] == null) return i;
+        }
+        return -1;
+    }
+
 	/// <summary>
 	/// 複数のタスクの終了待ち
 	/// </summary>

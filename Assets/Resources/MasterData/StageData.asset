@@ -15,6 +15,6 @@ MonoBehaviour:
   sheets:
   - name: StageData
     list:
-    - widthSize: 8
-      heightSize: 8
-      roomCount: 20
+    - widthSize: 6
+      heightSize: 6
+      roomCount: 1
