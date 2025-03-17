@@ -77,9 +77,5 @@ public class BasicVigilance : IVigilance
 
             }
         }
-        else
-        {
-            _enemy.SetNavTarget(_enemy.target);
-        }
     }
 }
