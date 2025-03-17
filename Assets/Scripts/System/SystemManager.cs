@@ -21,6 +21,9 @@ public class SystemManager : MonoBehaviour
 
         // マネージャーを初期化
         Initialize();
+
+        // その他のマネージャーを初期化
+        SoundObjectManager.Initialize();
     }
 
     private void Initialize()

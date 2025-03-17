@@ -51,6 +51,8 @@ public class Player : MonoBehaviour
 
     private Color gamma;
 
+    private Light selfLight = null;
+
     private void Awake()
     {
         instance = this;
@@ -72,14 +74,18 @@ public class Player : MonoBehaviour
         status.stamina = STAMINA_MAX;
 
         volume.profile.TryGetSettings(out colorGranding);
-        transform.position = GenerateStage.instance.GetStartPos() + offsetGenPos;
+        transform.position = StageManager.instance.GetStartRoomPosition() + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
         gamma = colorGranding.gamma.value;
+        selfLight = new Light();
+        UnityEngine.Light light = GetComponentInChildren<UnityEngine.Light>();
+        selfLight.Initialize(light);
     }
 
     void Update()
     {
         Move();
+        selfLight.ConsumeBattery();
     }
 
     // カメラを考慮した移動(InputSystemとCharacterController使用)
@@ -231,15 +237,6 @@ public class Player : MonoBehaviour
 
         if (!(angleK > -75.0f && angleK < 75.0f)) temp = transform.rotation;
 
-    }
-
-    // どの区画にいるかを返す関数
-    public Vector2Int GetNowSection()
-    {
-        float width = transform.position.x / GenerateStage.instance.GetSectionSize() + 0.5f;
-        float height = transform.position.z / GenerateStage.instance.GetSectionSize() + 0.5f;
-
-        return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
     }
 
     public float GetStamina() { return status.stamina / STAMINA_MAX; }

@@ -12,6 +12,6 @@ public class BatteryUI : MonoBehaviour
     private void Update()
     {
         // FIX:ˆ—‚ÌŒy‚¢string‚Ì‡¬‚É‚·‚é
-        _TMP.text = LightManager.instance.GetBatteryPower().ToString() + "%";
+        _TMP.text = Light.instance.GetBatteryPower().ToString() + "%";
     }
 }
