@@ -26,6 +26,8 @@ public class BasicSearch : ISearch
         CheckTracking();
         // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
         CheckVigilance();
+
+        Debug.DrawLine(_enemy.transform.position, _enemy.target, Color.red);
     }
 
     /// <summary>
@@ -91,14 +93,8 @@ public class BasicSearch : ISearch
             if (!EnemyUtility.CheckSearchAnchor(_ID))
             {
                 // Ÿ‚ÌƒAƒ“ƒJ[‚ª‚È‚¢‚È‚ç
-                _enemy.SetSearchAnchor(StageManager.instance.GetRandomEnemyAnchor());
+                EnemyUtility.SetSearchAnchor(_ID);
             }
         }
-        else
-        {
-            EnemyUtility.SetSearchAnchor(_ID);
-        }
-
-        Debug.DrawLine(_enemy.transform.position, _enemy.target);
     }
 }

@@ -77,7 +77,7 @@ public class EnemyBase : MonoBehaviour
         if (_vigilance != null) _state.Add(_vigilance);
         if (_tracking != null) _state.Add(_tracking);
         // 現在のステート
-        _nowState = State.SEARCH;
+        StateChange(State.SEARCH);
         _skill?.Init(ID);
 
         // 取得
@@ -87,7 +87,7 @@ public class EnemyBase : MonoBehaviour
         if (_agent != null) _agent.speed = speed;
         // ターゲット設定
         searchAnchorList = new List<Transform>();
-
+        EnemyUtility.SetSearchAnchor(ID);
         if(!CommonModule.IsEnableIndex(searchAnchorList, 0)) return;
         target = searchAnchorList[0].position;
     }
@@ -175,6 +175,18 @@ public class EnemyBase : MonoBehaviour
     {
         if (_agent != null)
         {
+            if (!_agent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(_agent.transform.position, out hit, 5.0f, NavMesh.AllAreas))
+                {
+                    _agent.Warp(hit.position);  // NavMesh の有効な位置にワープ
+                }
+                else
+                {
+                    Debug.LogError("NavMesh 上の適切な位置が見つかりませんでした");
+                }
+            }
             target = targetPosition;
             _agent.SetDestination(target);
         }

@@ -121,11 +121,8 @@ public class RouteSearcher
         SectionData goalSection = StageManager.instance.GetSection(goalSectionID);
         Vector2Int goalPosition = goalSection.position;
         // ゴールノードにたどり着くまで処理
-        int procCount = 0;
         while (_nodeTable.goalNode == null)
         {
-            if (procCount > 10000) break;
-            procCount++;
             // ノードを開く処理
             OpenNodeProcess(goalPosition, goalSectionID);
         }

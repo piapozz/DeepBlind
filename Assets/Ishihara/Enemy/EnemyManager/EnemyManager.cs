@@ -32,6 +32,7 @@ public class EnemyManager : SystemObject
             return;
         }
         instance = this;
+
         // マスターデータの読み込み
         MasterDataManager.LoadAllData();
         // コールバックの設定

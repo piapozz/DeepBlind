@@ -23,6 +23,7 @@ public class ObjectManager : SystemObject
     {
         GenerateAllItem();
         GenerateLocker();
+        StageManager.instance.NavMeshBake();
     }
     
     /// <summary>

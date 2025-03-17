@@ -124,7 +124,7 @@ public class EnemyUtility : MonoBehaviour
     }
 
     /// <summary>
-    /// 次のアンカーを設定する
+    /// 次のアンカーリストを設定する
     /// </summary>
     /// <param name="ID"></param>
     public static void SetSearchAnchor(int ID)

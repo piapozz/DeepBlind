@@ -9,6 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Cysharp.Threading.Tasks;
+
 using static CommonModule;
 
 public class StageManager : SystemObject
@@ -75,11 +77,16 @@ public class StageManager : SystemObject
         CreateInitialStage(_stageMaster.normalRoomCount);
         // ステージ生成
         GenerateStage();
-        
-        // ベイク
-        _meshSurface.BuildNavMesh();
 
         //RegenerateSection(_stageMaster.addRoomCount);
+    }
+
+    /// <summary>
+    /// ベイクする
+    /// </summary>
+    public async UniTask NavMeshBake()
+    {
+        _meshSurface.BuildNavMesh();
     }
 
     /// <summary>
@@ -596,7 +603,6 @@ public class StageManager : SystemObject
     {
         Vector2Int sectionPosition = GetSectionPosition(position);
         int sectionID = GetSectionID(sectionPosition);
-        return null;
         return _sectionObjectList[sectionID].GetEnemyAnchor();
     }
 
