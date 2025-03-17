@@ -1,44 +1,65 @@
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class OutlineManager : MonoBehaviour
 {
-    public Camera mainCamera;  // ƒvƒŒƒCƒ„[‚ÌƒJƒƒ‰
-    public float maxDistance = 10f; // ƒŒƒC‚ÌÅ‘å‹——£
-    public float maxOutlineStrength = 1.5f; // Å‘åƒAƒEƒgƒ‰ƒCƒ“‹­“x
-    public float fadeDistance = 3f; // ƒAƒEƒgƒ‰ƒCƒ“‚ªã‚Ü‚é‹——£
-    public string targetTag = "ItemObject"; // ƒ^ƒO‚ğİ’è
+    public string targetTag = "ItemObject";
+    public float maxDistance = 100f;
+    private Camera mainCamera;
+    private HashSet<Outline> outlineObjectList = new HashSet<Outline>();
 
-    private Material lastHitMaterial; // ÅŒã‚Éƒqƒbƒg‚µ‚½ƒIƒuƒWƒFƒNƒg‚Ìƒ}ƒeƒŠƒAƒ‹
+    void Start()
+    {
+        mainCamera = Camera.main;
+        ResetAllOutlines();
+    }
 
     void Update()
     {
-        Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, maxDistance))
+        // ã‚«ãƒ¡ãƒ©ã®ä¸­å¤®ã‹ã‚‰ Ray ã‚’é£›ã°ã™
+        Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance))
         {
-            if (hit.collider.CompareTag(targetTag)) // “Á’è‚Ìƒ^ƒO‚ğ‚ÂƒIƒuƒWƒFƒNƒg‚Ì‚İ“K—p
+            // å½“ãŸã£ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¿ã‚°ã‚’ç¢ºèª
+            if (hit.collider.CompareTag(targetTag))
             {
-                Debug.Log("bbb");
-                Renderer rend = hit.collider.GetComponent<Renderer>();
-                if (rend != null)
-                {
-                    Material mat = rend.material;
-                    lastHitMaterial = mat;
-
-                    float distance = hit.distance;
-                    float outlineStrength = Mathf.Lerp(maxOutlineStrength, 0, distance / fadeDistance);
-                    mat.SetFloat("_OutlineStrength", outlineStrength);
-                }
+                SetOutlineWidth(hit.collider.gameObject, 2f);
             }
         }
+
         else
         {
-            // ƒqƒbƒg‚µ‚È‚©‚Á‚½‚çƒAƒEƒgƒ‰ƒCƒ“‚ğÁ‚·
-            if (lastHitMaterial != null)
+            ResetAllOutlines();
+        }
+    }
+
+    /// <summary>
+    /// Outlineã®å¹…ã‚’å¤‰æ›´ã™ã‚‹
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="width"></param>
+    private void SetOutlineWidth(GameObject obj, float width)
+    {
+        Outline outline = obj.GetComponent<Outline>();
+        if (outline != null)
+        {
+            outline.OutlineWidth = width;
+            outlineObjectList.Add(outline); // ç®¡ç†ãƒªã‚¹ãƒˆã«è¿½åŠ 
+        }
+    }
+    
+    /// <summary>
+    /// Outlineã®å¹…ã‚’ãƒªã‚»ãƒƒãƒˆ
+    /// </summary>
+    private void ResetAllOutlines()
+    {
+        foreach (Outline outline in outlineObjectList)
+        {
+            if (outline != null)
             {
-                lastHitMaterial.SetFloat("_OutlineStrength", 0);
-                lastHitMaterial = null;
+                outline.OutlineWidth = 0f;
             }
         }
+        outlineObjectList.Clear();
     }
 }

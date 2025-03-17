@@ -2,22 +2,25 @@
  * @file ItemKey.cs
  * @brief 鍵を実装
  * @author sein
- * @date 2025/1/18
+ * @date 2025/3/17
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// 派生クラス：消耗品アイテム
-[CreateAssetMenu(fileName = "ItemObject", menuName = "ScriptableObjects/Items/Key")]
-
-public class ItemKey : BaseItem
+public class ItemKey : ItemBase
 {
     public float distance = 5f;
     public LayerMask doorLayer;
 
-    public override bool ItemEffect()
+    public override void Initialize()
+    {
+        base.Initialize();
+    }
+    public override void Proc()
+    {
+        FollowCamera();
+    }
+    public override bool Effect()
     {
         Player player = Player.instance;
         Ray ray = new Ray(player.GetPosition(), player.GetTransform().forward);
@@ -40,3 +43,4 @@ public class ItemKey : BaseItem
         return false;
     }
 }
+

@@ -12,13 +12,20 @@ public class Compass : ItemBase
 
     private Vector3 _goalPos;
 
-    protected override void Init()
+    public override bool Effect()
     {
+        return false;
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
         // ƒS[ƒ‹‚ÌÀ•W‚ğæ“¾
         _goalPos = StageManager.instance.GetKeyRoomPosition();
     }
 
-    protected override void Proc()
+    public override void Proc()
     {
         TurnTarget3D(_goalPos);
     }

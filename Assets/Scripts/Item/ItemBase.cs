@@ -4,39 +4,42 @@ using UnityEngine;
 
 public abstract class ItemBase : MonoBehaviour
 {
+    [SerializeField] private ItemData itemData;
+
+    public string itemName { get; private set; }
+    public Sprite icon { get; private set; }
+    public bool canStack { get; private set; }
+    public bool isConsume { get; private set; }
+    public bool isPassive { get; private set; }
+     
     private readonly float _ITEM_DISTANCE = 0.5f;
     private readonly float _ITEM_HEIGHT = 0.5f;
 
     private Transform _cameraTransform = null;
 
-    enum ItemCategory
+    public virtual void Initialize()
     {
-        BatteryS = 0,
-        BatteryL,
-        Medicine,
-        Map,
-        Compass,
-        Max
-    }
-
-    protected abstract void Init();
-    protected abstract void Proc();
-
-    private void Start()
-    {
-        Init();
+        itemName = itemData.itemName;
+        icon = itemData.icon;
+        canStack = itemData.canStack;
+        isConsume = itemData.isConsume;
 
         _cameraTransform = Camera.main.transform;
     }
 
-    private void Update()
-    {
-        Proc();
+    /// <summary>
+    /// アイテムのパッシブ効果を実装
+    /// </summary>
+    public abstract void Proc();
 
-        FollowCamera();
-    }
+    /// <summary>
+    /// アイテムのアクティブ効果を実装
+    /// 戻り値がtrueならアイテムを消費、falseならアイテムの消費をなし
+    /// </summary>
+    /// <returns></returns>
+    public abstract bool Effect();
 
-    private void FollowCamera()
+    protected void FollowCamera()
     {
         float angle = _cameraTransform.localEulerAngles.y;
         Vector3 offset = Vector3.zero;

@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a29f0e917d69a9488df7fd528562149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: 4b3fa4fc9cfedb54c8098a4232f763d1, type: 2}
   _sectionRoot: {fileID: 6787046780337336250}
   _pointRoot: {fileID: 7015762881670166158}
   room: {fileID: 1539194726388688077, guid: dd4d1169c19631b4bb6526dd22919031, type: 3}

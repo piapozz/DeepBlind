@@ -15,34 +15,21 @@ using static CommonModule;
 
 public class InventoryManager : SystemObject
 {
-    [SerializeField] private List<BaseItem> itemList = null;
     [SerializeField] private List<BaseInventorySlot> itemsList = null;
-
-    [SerializeField] private Image mainSlotUI = null;
     [SerializeField] private Sprite iconBatsu = null;
-
-    [SerializeField] private GameObject compassObject = null;
-    [SerializeField] private GameObject mapObject = null;
-
-    private int selectedSlot = -1;
     private readonly int SELECTEDSLOT_INITIAL = 0;
     private readonly int INVENTORYSLOT_INITIAL = 5;
+    private Image _mainSlotUI = null;
+    private int _selectedSlot = -1;
 
     static public InventoryManager instance { get; private set; } = null;
 
     public override void Initialize()
     {
         instance = this;
-        itemList = new List<BaseItem>();
+        _mainSlotUI = GameObject.Find("MainSlot").GetComponent<Image>();
         itemsList = new List<BaseInventorySlot>(INVENTORYSLOT_INITIAL);
-        selectedSlot = SELECTEDSLOT_INITIAL;
-    }
-    public void Start()
-    {
-        instance = this;
-        itemList = new List<BaseItem>();
-        itemsList = new List<BaseInventorySlot>(INVENTORYSLOT_INITIAL);
-        selectedSlot = SELECTEDSLOT_INITIAL;
+        _selectedSlot = SELECTEDSLOT_INITIAL;
     }
 
     // マウスホイールでアイテム変更の処理
@@ -50,27 +37,25 @@ public class InventoryManager : SystemObject
     {
         if (IsEmpty(itemsList))
         {
-            mainSlotUI.sprite = iconBatsu;
+            _mainSlotUI.sprite = iconBatsu;
             return;
         }
 
+        // 選択アイテムの切り替え
         ChangeSlot();
 
-        // 手荷物系のアイテムだったら
-        if (itemsList[selectedSlot].item is ItemMap)
+        // 持っていないアイテムを非表示
+        for (int i = 0, max = itemsList.Count; i < max; i++)
         {
-            mapObject.SetActive(true);
+            if (_selectedSlot != i) itemsList[i].ObjectActive(false);
+            else itemsList[i].ObjectActive(true);
         }
-        else { mapObject.SetActive(false); }
-
-        if (itemsList[selectedSlot].item is ItemCompass)
-        {
-            compassObject.SetActive(true);
-        }
-        else { compassObject.SetActive(false); }
+        // アイテムのパッシブ効果
+        ItemBase item = itemsList[_selectedSlot].item;
+        item.Proc();
     }
 
-    public void AddItem(BaseItem item)
+    public void AddItem(GameObject item)
     {
         // アイテムのスタック処理
         for (int i = 0, max = itemsList.Count; i < max; i++)
@@ -83,17 +68,16 @@ public class InventoryManager : SystemObject
             }
         }
 
-        // すでに所持していなかったら
+        // すでに所持していなかったらスロットを生成
         BaseInventorySlot inventorySlot = new BaseInventorySlot();
-        inventorySlot.item = item;
-        inventorySlot.itemCount = 1;
-
+        // アイテムを生成
+        GameObject itemObject = Instantiate(item);
+        // スロットの初期設定
+        inventorySlot.Setup(itemObject);
+        // スロット内のアイテムを初期化
+        inventorySlot.item.Initialize();
+        // スロットをリストに追加
         itemsList.Add(inventorySlot);
-    }
-
-    public void RemoveItem(BaseItem item)
-    {
-        itemList.Remove(item);
     }
 
     public void ClearItems()
@@ -104,41 +88,46 @@ public class InventoryManager : SystemObject
     public void ChangeSlot()
     {
         int inventoryCount = itemsList.Count;
-        if (selectedSlot < inventoryCount)
+        if (_selectedSlot < inventoryCount)
         {
-            mainSlotUI.sprite = itemsList[selectedSlot].item.icon;
+            _mainSlotUI.sprite = itemsList[_selectedSlot].item.icon;
         }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll > 0f)
         {
-            selectedSlot = (selectedSlot - 1 + inventoryCount) % inventoryCount;
+            _selectedSlot = (_selectedSlot - 1 + inventoryCount) % inventoryCount;
         }
         else if (scroll < 0f)
         {
-            selectedSlot = (selectedSlot + 1) % inventoryCount;
+            _selectedSlot = (_selectedSlot + 1) % inventoryCount;
         }
     }
 
-    public void UseItem(InputAction.CallbackContext context)
+    public void UseItemEffect(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
         if (IsEmpty(itemsList)) return;
 
-        BaseItem useItem = itemsList[selectedSlot].item;
-        // アイテムの効果を実行 ※falseが失敗 trueが成功
-        bool result = useItem.ItemEffect();
+        // 使用予定のアイテムを取得
+        ItemBase useItem = itemsList[_selectedSlot].item;
+        // 持つだけのアイテムだったら除外
+        if(useItem.isPassive == true) return;
 
+        // アイテムの効果を実行 ※trueがアイテムを消費 falseがアイテム消費なし
+        bool result = useItem.Effect();
+
+        // アイテムの効果が失敗したら除外
         if (!result) return;
+        // 消費アイテムだったら実行
         if (useItem.isConsume == true)
         {
-            // アイテム消費処理
-            if (itemsList[selectedSlot].itemCount >= 1) itemsList[selectedSlot].itemCount -= 1;
+            if (itemsList[_selectedSlot].itemCount >= 1) itemsList[_selectedSlot].itemCount -= 1;
             // アイテムがなくなったらリストから削除
-            if (itemsList[selectedSlot].itemCount <= 0)
+            if (itemsList[_selectedSlot].itemCount <= 0)
             {
-                itemsList.RemoveAt(selectedSlot);
-                if (selectedSlot != 0) selectedSlot--;
+                itemsList.RemoveAt(_selectedSlot);
+                if (_selectedSlot != 0) _selectedSlot--;
             }
         }
     }
