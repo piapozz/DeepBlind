@@ -8,7 +8,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 using static CommonModule;
 
 public class StageManager : SystemObject
@@ -19,6 +19,8 @@ public class StageManager : SystemObject
     /// <summary>ステージの生成元</summary>
     [SerializeField]
     private Transform _stageRoot = null;
+    [SerializeField]
+    private NavMeshSurface _meshSurface = null;
     /// <summary>ステージのマスターデータ</summary>
     private Entity_StageData.Param _stageMaster = null;
     /// <summary>区画のデータリスト</summary>
@@ -29,11 +31,11 @@ public class StageManager : SystemObject
     /// <summary>部屋でない区画のIDリスト</summary>
     private List<int> _unroomSectionIDList = null;
     /// <summary>スタート部屋</summary>
-    public SectionData startRoom { get; private set; } = null;
+    private SectionData _startRoom = null;
     /// <summary>鍵部屋</summary>
-    private SectionData keyRoom = null;
+    private SectionData _keyRoom = null;
     /// <summary>鍵部屋の接続方向</summary>
-    private Direction keyRoomConnectDir = Direction.Invalid;
+    private Direction _keyRoomConnectDir = Direction.Invalid;
     private List<Transform> _enemyAnchorList = null;
     private List<Transform> _itemAnchorList = null;
     private List<Transform> _lockerAnchorList = null;
@@ -74,6 +76,9 @@ public class StageManager : SystemObject
         // ステージ生成
         GenerateStage();
         
+        // ベイク
+        _meshSurface.BuildNavMesh();
+
         //RegenerateSection(_stageMaster.addRoomCount);
     }
 
@@ -159,7 +164,7 @@ public class StageManager : SystemObject
         int startWidth = Random.Range(0, _stageMaster.widthSize);
         SectionData setStartRoom = DecideRoomType(new Vector2Int(startWidth, 0), RoomType.StartRoom);
         roomList[0] = setStartRoom;
-        startRoom = setStartRoom;
+        _startRoom = setStartRoom;
     }
 
     /// <summary>
@@ -171,7 +176,7 @@ public class StageManager : SystemObject
         int keyWidth = Random.Range(0, _stageMaster.widthSize);
         SectionData setKeyRoom = DecideRoomType(new Vector2Int(keyWidth, _stageMaster.heightSize - 1), RoomType.KeyRoom);
         roomList[roomList.Count - 1] = setKeyRoom;
-        keyRoom = setKeyRoom;
+        _keyRoom = setKeyRoom;
     }
 
     /// <summary>
@@ -286,7 +291,7 @@ public class StageManager : SystemObject
             SectionData targetSection = GetSection(route[i].targetSectionID);
             targetSection.SetIsConnect(lastDirection, true);
             if (targetSection.roomType == RoomType.KeyRoom)
-                keyRoomConnectDir = lastDirection;
+                _keyRoomConnectDir = lastDirection;
             targetSection.SetPreConnect(lastDirection);
         }
         return lastDirection;
@@ -462,10 +467,10 @@ public class StageManager : SystemObject
         DestroyAllObject();
         // 鍵部屋からスタート部屋に経路生成
         List<SectionData> roomList = InitializeRoomList(addRoomCount + 2);
-        roomList[0] = keyRoom;
-        roomList[roomList.Count - 1] = startRoom;
+        roomList[0] = _keyRoom;
+        roomList[roomList.Count - 1] = _startRoom;
         DecideNormalRoom(addRoomCount, roomList);
-        ConnectRoom(roomList, keyRoomConnectDir);
+        ConnectRoom(roomList, _keyRoomConnectDir);
         // オブジェクトの生成し直し
         GenerateStage();
     }
@@ -539,7 +544,7 @@ public class StageManager : SystemObject
     /// <returns></returns>
     public Vector3 GetStartRoomPosition()
     {
-        Vector2Int startPosition = startRoom.position;
+        Vector2Int startPosition = _startRoom.position;
         return GetSectionWorldPosition(startPosition);
     }
 
@@ -549,7 +554,7 @@ public class StageManager : SystemObject
     /// <returns></returns>
     public Vector3 GetKeyRoomPosition()
     {
-        Vector2Int keyPosition = keyRoom.position;
+        Vector2Int keyPosition = _keyRoom.position;
         return GetSectionWorldPosition(keyPosition);
     }
 
@@ -563,6 +568,7 @@ public class StageManager : SystemObject
         List<Transform> result = new List<Transform>();
         for (int i = 0; i < getCount; i++)
         {
+            if (_enemyAnchorList[i] == null) continue;
             int randomIndex = Random.Range(0, _enemyAnchorList.Count);
             result.Add(_enemyAnchorList[randomIndex]);
             _enemyAnchorList.RemoveAt(randomIndex);
@@ -590,6 +596,7 @@ public class StageManager : SystemObject
     {
         Vector2Int sectionPosition = GetSectionPosition(position);
         int sectionID = GetSectionID(sectionPosition);
+        return null;
         return _sectionObjectList[sectionID].GetEnemyAnchor();
     }
 
@@ -603,5 +610,31 @@ public class StageManager : SystemObject
         float width = pos.x / SECTION_SIZE + 0.5f;
         float height = pos.z / SECTION_SIZE + 0.5f;
         return new Vector2Int(Mathf.FloorToInt(width), Mathf.FloorToInt(height));
+    }
+
+    /// <summary>
+    /// ランダムなアイテムアンカーを取得
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetRandomItemAnchor()
+    {
+        if (IsEmpty(_itemAnchorList)) return null;
+        int randomIndex = Random.Range(0, _itemAnchorList.Count);
+        Transform result = _itemAnchorList[randomIndex];
+        _itemAnchorList.RemoveAt(randomIndex);
+        return result;
+    }
+
+    /// <summary>
+    /// ランダムなロッカーアンカーを取得
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetRandomLockerAnchor()
+    {
+        if (IsEmpty(_lockerAnchorList)) return null;
+        int randomIndex = Random.Range(0, _lockerAnchorList.Count);
+        Transform result = _lockerAnchorList[randomIndex];
+        _lockerAnchorList.RemoveAt(randomIndex);
+        return result;
     }
 }

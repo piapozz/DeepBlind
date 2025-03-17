@@ -11,7 +11,7 @@ using UnityEngine;
 
 using static Entity_StageData;
 
-public class StageMasterUtility : MonoBehaviour
+public class StageMasterUtility
 {
     /// <summary>
     /// ステージマスターデータ取得

@@ -1547,9 +1547,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f792061495c3a704787849c03124f983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyAnchor: []
-  _itemAnchor: []
-  _lockerAnchor: []
+  _enemyAnchor:
+  - {fileID: 6620250936693340212}
+  - {fileID: 587013945852242746}
+  - {fileID: 4182848043059341986}
+  - {fileID: 653688770938969475}
+  _itemAnchor:
+  - {fileID: 8632178905695971643}
+  - {fileID: 8728700019302155589}
+  - {fileID: 243820323451968782}
+  _lockerAnchor:
+  - {fileID: 2629855906680081408}
 --- !u!1 &5794389502552005419
 GameObject:
   m_ObjectHideFlags: 0

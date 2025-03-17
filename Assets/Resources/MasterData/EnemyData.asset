@@ -21,7 +21,7 @@ MonoBehaviour:
       ThreatRange: 25
       ViewLength: 25
       FieldOfView: 90
-      Seach: BasicSeach
+      Search: BasicSeach
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: StopLookAt
@@ -31,7 +31,7 @@ MonoBehaviour:
       ThreatRange: 25
       ViewLength: 25
       FieldOfView: 90
-      Seach: BasicSeach
+      Search: BasicSeach
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: Norm
