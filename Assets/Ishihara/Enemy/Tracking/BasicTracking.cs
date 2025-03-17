@@ -5,12 +5,12 @@ using static EnemyBase;
 
 public class BasicTracking : ITracking
 {
-    private int _ID = -1;
-    private EnemyBase _enemy;
-    private Player _player;
+    private int _ID = -1;               // ID
+    private EnemyBase _enemy;           // 敵
+    private Player _player;             // プレイヤー
 
-    private bool _IsTargetlost = false;
-    private float _lostTime = 0;
+    private bool _IsTargetlost = false; // 見失ったかどうか
+    private float _lostTime = 0;        // 見失っている時間
 
     /// <summary>
     /// 行動
@@ -23,7 +23,6 @@ public class BasicTracking : ITracking
         if (_enemy == null) return;
         // 取得
         GetTarget();
-
         // 見失ったかどうか
         CheckTargetLost();
     }
@@ -45,7 +44,8 @@ public class BasicTracking : ITracking
     /// </summary>
     public void CheckTargetLost()
     {
-        if(EnemyUtility.CheckViewPlayer(_ID, !_IsTargetlost))                                              // もしRayを投射して何らかのコライダーに衝突したら
+        // 視界に入っているかどうか
+        if (EnemyUtility.CheckViewPlayer(_ID, !_IsTargetlost))
         {
             _IsTargetlost = false;
         }
@@ -66,7 +66,7 @@ public class BasicTracking : ITracking
             _enemy.StateChange(State.VIGILANCE);
             return;
         }
-
+        // 距離が一定以下なら警戒
         float length = EnemyUtility.EnemyToPlayerLength(_ID);
         if (length > _enemy.viewLength + 10)
         {

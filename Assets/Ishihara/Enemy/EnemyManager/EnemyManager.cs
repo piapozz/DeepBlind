@@ -5,71 +5,84 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using static CommonModule;
 
+// エネミーの管理、生成
+
 public class EnemyManager : SystemObject
 {
     public static EnemyManager instance { get; private set; } = null;
 
     [SerializeField]
-    private Transform _useObjectRoot = null;
+    private Transform _useObjectRoot = null;                            // 有効オブジェクト
 
     [SerializeField]
-    private Transform _unuseObjectRoot = null;
+    private Transform _unuseObjectRoot = null;                          // 無効オブジェクト
 
     [SerializeField]
-    EnemyPrefabs enemyOrigin;
+    EnemyPrefabs enemyOrigin;                                           // プレハブ一覧
 
-    private List<EnemyBase> _useList = new List<EnemyBase>();
-    private List<GameObject> _useObjectList = new List<GameObject>();
+    private List<EnemyBase> _useList = new List<EnemyBase>();           // 使用中リスト
+    private List<GameObject> _useObjectList = new List<GameObject>();   // 使用中オブジェクトリスト
 
-    private BGM bgm;
+    private BGM bgm;                                                    // 再生中のBGM
 
-    public override void Initialize()
+    public override async void Initialize()
     {
         if (instance != null)
         {
-            Debug.LogError("EnemyManager instance already exists!");
             return;
         }
         instance = this;
+        // マスターデータの読み込み
         MasterDataManager.LoadAllData();
+        // コールバックの設定
         EnemyBase.SetGetObjectCallback(GetCharacterObject);
-
+        // リストの初期化
         int enemyMax = MasterDataManager.enemyData[0].Count;
         _useList.Capacity = enemyMax;
         _useObjectList.Capacity = enemyMax;
-
+        // BGMの再生
         AudioManager.instance.PlayBGM(BGM.MAIN_NORMAL);
         bgm = BGM.MAIN_NORMAL;
-
-        CreateEnemy().Forget();
+        // エネミーの生成
+        await CreateEnemy();
         StartEnemyBehaviorLoop().Forget();
     }
 
+    /// <summary>
+    /// エネミーの行動ループ
+    /// </summary>
+    /// <returns></returns>
     private async UniTask StartEnemyBehaviorLoop()
     {
         while (true)
         {
+            // エネミーの行動
             ExecuteAll(enemy => enemy.Active());
             CheckChangeBGM();
 
-            if(ExecuteAll(enemy => {
+            // プレイヤーの捕獲判定
+            if (ExecuteAll(enemy => {
                 if (enemy.CheckCaughtPlayer())
                 {
+                    // プレイヤー捕獲
                     Player.instance.EnemyCaught(enemy._camera);
-                    enemy.SetAnimationSpeed(1);
-                    enemy.SetScreamTrigger();
+                    enemy.CaughtPlayer();
                     return true;
                 }
 
                 return false;
             }))
             {
+                // ループ終了
                 break;
             }
             await UniTask.DelayFrame(1);
         }
     }
 
+    /// <summary>
+    /// BGMの変更
+    /// </summary>
     private void CheckChangeBGM()
     {
         bool tracking = _useList.Exists(enemy => enemy._nowState == EnemyBase.State.TRACKING);
@@ -86,11 +99,19 @@ public class EnemyManager : SystemObject
         }
     }
 
+    /// <summary>
+    /// ランダムなマップの座標を取得
+    /// </summary>
+    /// <returns></returns>
     public Vector3 DispatchTargetPosition()
     {
         return GenerateStage.instance.GetRandCorridorPos();
     }
 
+    /// <summary>
+    /// エネミーの生成
+    /// </summary>
+    /// <returns></returns>
     private async UniTask CreateEnemy()
     {
         foreach (var param in MasterDataManager.enemyData[0])
@@ -101,17 +122,29 @@ public class EnemyManager : SystemObject
         }
     }
 
+    /// <summary>
+    /// エネミーの使用
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="masterID"></param>
     public void UseEnemy(Vector3 position, int masterID)
     {
         int useID = UseCharacter(masterID);
         if (useID >= 0)
         {
+            // セットアップ
             _useList[useID]?.Setup(useID, position, masterID);
         }
     }
 
+    /// <summary>
+    /// キャラクターの使用
+    /// </summary>
+    /// <param name="masterID"></param>
+    /// <returns></returns>
     private int UseCharacter(int masterID)
     {
+        // 使用可能なIDを取得
         int useID = _useList.FindIndex(enemy => enemy == null);
         if (useID == -1)
         {
@@ -119,16 +152,21 @@ public class EnemyManager : SystemObject
             _useList.Add(null);
         }
 
+        // キャラクターの生成
         Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
         GameObject useObject = Instantiate(enemyOrigin.enemies[masterID]);
         useObject.transform.SetParent(_useObjectRoot);
-
+        // キャラクターの初期化
         _useList[useID] = useObject.AddComponent<EnemyBase>();
         _useObjectList.Insert(useID, useObject);
 
         return useID;
     }
 
+    /// <summary>
+    /// エネミーの未使用
+    /// </summary>
+    /// <param name="unuseEnemy"></param>
     public void UnuseEnemy(EnemyBase unuseEnemy)
     {
         if (unuseEnemy == null) return;
@@ -143,6 +181,10 @@ public class EnemyManager : SystemObject
         UnuseObject(unuseID);
     }
 
+    /// <summary>
+    /// オブジェクトの未使用
+    /// </summary>
+    /// <param name="unuseID"></param>
     private void UnuseObject(int unuseID)
     {
         if (!IsEnableIndex(_useObjectList, unuseID)) return;
@@ -155,16 +197,30 @@ public class EnemyManager : SystemObject
         }
     }
 
+    /// <summary>
+    /// キャラクターオブジェクトの取得
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns></returns>
     private GameObject GetCharacterObject(int ID)
     {
         return IsEnableIndex(_useObjectList, ID) ? _useObjectList[ID] : null;
     }
 
+    /// <summary>
+    /// キャラクターデータ取得
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns></returns>
     public EnemyBase Get(int ID)
     {
         return IsEnableIndex(_useList, ID) ? _useList[ID] : null;
     }
 
+    /// <summary>
+    /// 全てのキャラクターに処理実行
+    /// </summary>
+    /// <param name="action"></param>
     public void ExecuteAll(System.Action<EnemyBase> action)
     {
         if (action == null) return;
@@ -174,6 +230,11 @@ public class EnemyManager : SystemObject
         }
     }
 
+    /// <summary>
+    /// 全てのキャラクターに処理実行
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public bool ExecuteAll(System.Func<EnemyBase, bool> action)
     {
         if (action == null) return false;
@@ -183,7 +244,12 @@ public class EnemyManager : SystemObject
         }
         return false;
     }
-
+    
+    /// <summary>
+    /// 全てのキャラクターにタスク実行
+    /// </summary>
+    /// <param name="task"></param>
+    /// <returns></returns>
     public async UniTask ExecuteAllTask(System.Func<EnemyBase, UniTask> task)
     {
         if (task == null) return;
