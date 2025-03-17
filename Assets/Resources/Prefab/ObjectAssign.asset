@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 720cd8ea682aef64aa4bc9a5146ef0f6, type: 3}
+  m_Name: ObjectAssign
+  m_EditorClassIdentifier: 
+  itemObjectList:
+  - {fileID: 4226501587566825988, guid: 70cb2e984d62bb14ab5ee1d0efcb9137, type: 3}
+  - {fileID: 8977971572442568254, guid: 4d14bef462ca638439fb68113e10d226, type: 3}
+  - {fileID: 6841273850495552377, guid: b307a5b992aea1d4487b64b73e631c5a, type: 3}
+  - {fileID: 5017503177893218543, guid: f6dc180b5f2e70e4a81a0a733c4467c6, type: 3}
+  - {fileID: 2536200145778063256, guid: 824e8f6ff061dfa46aefc9706f060898, type: 3}
+  lockerObject: {fileID: 4195336494632926888, guid: 9cb874383a5089b4ebeaa98da1ed44a1, type: 3}
+  flavorObjectList: []
