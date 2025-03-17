@@ -13,6 +13,7 @@ using System;
 
 public class FadeScreen : MonoBehaviour
 {
+    [SerializeField] private Canvas canvas;
     [SerializeField] private Image fade;            // 黒画面
 
     [SerializeField] private float fadeInSpeed = 0.05f;       // フェードインしていくスピード       
@@ -31,6 +32,7 @@ public class FadeScreen : MonoBehaviour
     private void Start()
     {
         instance = this;
+        canvas = UIManager.instance.canvas.GetComponent<Canvas>();
     }
 
     private void Update()
@@ -61,7 +63,7 @@ public class FadeScreen : MonoBehaviour
 
             fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
         }
-
+        canvas.sortingOrder = 0;
         fadeIn = false;
     }
 
@@ -71,6 +73,7 @@ public class FadeScreen : MonoBehaviour
     /// <returns></returns>
     private async UniTask FadeOut()
     {
+        canvas.sortingOrder = 5;
         while (alphaValue <= ALPHA_VALUE_MAX)
         {
             alphaValue += fadeOutSpeed * Time.deltaTime;

@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     const float WALK_SPEED = 2.5f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
+    private readonly float FOOTSTEP_INTERVAL;
 
     // プレイヤーのステータス値
     public struct PlayerStatus
@@ -57,9 +58,6 @@ public class Player : MonoBehaviour
     {
         instance = this;
 
-        // Virtual Camera 取得
-        //virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-
         if (hold == null) return;
 
         // InputActionReferenceのholdにハンドラを登録する
@@ -86,6 +84,14 @@ public class Player : MonoBehaviour
     {
         Move();
         selfLight.ConsumeBattery();
+
+        float soundCounter = 0;
+        soundCounter += Time.deltaTime;
+        if (soundCounter > 2.0f)
+        {
+            AudioManager.instance.PlaySE(SE.WALK);
+            soundCounter = 0;
+        }
     }
 
     // カメラを考慮した移動(InputSystemとCharacterController使用)
@@ -210,51 +216,18 @@ public class Player : MonoBehaviour
         FadeSceneChange.instance.ChangeSceneEvent("GameResult");
     }
 
-
-
-    //public async UniTask Footsteps(int speed)
-    //{
-    //    while (true)
-    //    {
-    //        AudioManager.instance.PlaySE(SE.WALK);
-    //        await UniTask.DelayFrame(500);
-    //    }
-    //}
-
-    // 回転
-    void Rotate()
-    {
-        Quaternion temp = transform.rotation;
-
-        // temp = Quaternion.Euler(0, inputCursor.x * rotateSpeed, 0) * temp * Quaternion.Euler(-inputCursor.y * rotateSpeed, 0, 0);
-
-        Vector3 angle = temp.eulerAngles;
-
-        float angleK = Mathf.Repeat(angle.x + 180, 360) - 180;
-
-        Debug.Log(inputCursor.x);
-        Debug.Log(angleK);
-
-        if (!(angleK > -75.0f && angleK < 75.0f)) temp = transform.rotation;
-
-    }
-
     public float GetStamina() { return status.stamina / STAMINA_MAX; }
 
     // 現在自身が出している音の範囲を返す
     public float GetSoundRange() { return status.soundRange; }
-
     // 現在の座標を返す関数
     public Vector3 GetPosition() { return transform.position; }
     // トランスフォームを返す関数
     public Transform GetTransform() { return transform; }
     // カメラを返す関数
     public Camera GetCamera() { return Camera.main; }
-
     // 現在の座標を返す関数
     public Vector3 GetMoveVec() { return Quaternion.Euler(0, -camera.gameObject.transform.eulerAngles.y, 0) * moveVec; }
-
     public void SetPosition(Vector3 position) { transform.position = position; }
-    public void SetRotate(Quaternion rotation) { camera.transform.rotation = rotation; }
     public void SetCharaController(bool isActive) { characterController.enabled = isActive; }
 }
