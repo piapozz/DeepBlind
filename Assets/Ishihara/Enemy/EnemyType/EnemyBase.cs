@@ -76,11 +76,6 @@ public class EnemyBase : MonoBehaviour
         if (_search != null) _state.Add(_search);
         if (_vigilance != null) _state.Add(_vigilance);
         if (_tracking != null) _state.Add(_tracking);
-        // 初期化
-        foreach (var state in _state)
-        {
-            state.Init(ID);
-        }
         // 現在のステート
         _nowState = State.SEARCH;
         _skill?.Init(ID);
@@ -202,6 +197,7 @@ public class EnemyBase : MonoBehaviour
     {
         if (state == State.TRACKING) EnemyUtility.GetPlayer().EnemyFound();
         _nowState = state;
+        _state?[(int)_nowState]?.Init(ID);
     }
 
     /// <summary>
