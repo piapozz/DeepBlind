@@ -5,14 +5,18 @@
  * @date 2025/1/17
  */
 
-using System.Collections;
-using System.Collections.Generic;
+using Cinemachine;
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static CommonModule;
 
 public class EventLocker : MonoBehaviour, IEvent
 {
     [SerializeField] private GameObject lockerEnterAnker = null;
     [SerializeField] private GameObject lockerExitAnker = null;
+    [SerializeField] private CinemachineVirtualCamera vcam = null;
 
     private UIManager uiManager = null;
     private Player player = null;
@@ -60,15 +64,14 @@ public class EventLocker : MonoBehaviour, IEvent
     public void ActionLocker()
     {
         Vector3 nextPos;
-        Quaternion nextRot;
 
         // ロッカーから出る
         if (inPlayer == true)
         {
             nextPos = lockerExitAnker.transform.position;
-            nextRot = lockerExitAnker.transform.rotation;
 
-            player.SetRotate(nextRot);
+            ChangeVirtualCameraPriority(0);
+
             player.SetPosition(nextPos);
             player.SetCharaController(true);
             inPlayer = false;
@@ -78,13 +81,26 @@ public class EventLocker : MonoBehaviour, IEvent
         else 
         {
             nextPos = lockerEnterAnker.transform.position;
-            nextRot = lockerEnterAnker.transform.rotation;
+
+            ChangeVirtualCameraPriority(50);
 
             player.SetCharaController(false);
-            player.SetRotate(nextRot);
-            player.SetPosition(nextPos);
+            // player.SetPosition(nextPos);
             inPlayer = true;
             player.isLocker = true;
+
+            UniTask task = WaitAction(2.0f, FadeInterval);
+            
         }
+    }
+
+    private void ChangeVirtualCameraPriority(int value)
+    {
+        vcam.Priority = value;
+    }
+
+    private void FadeInterval()
+    {
+        UniTask task = FadeScreen.instance.FadeInterval(0.3f);
     }
 }

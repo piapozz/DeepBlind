@@ -13,6 +13,16 @@ public enum ItemID
     EXIT_KEY,
 }
 
+enum ItemCategory
+{
+    BatteryS = 0,
+    BatteryL,
+    Medicine,
+    Map,
+    Compass,
+    Max
+}
+
 public enum BGM
 {
     TITLE = 0,

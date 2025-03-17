@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eb9abca8ca2fea488025b4b42ea7c9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  generateStage: {fileID: 0}
-  pin: {fileID: 9022277116362847876}
+  itemData: {fileID: 11400000, guid: e0d40f450cd7f3545ba308499eb449bb, type: 2}
+  _player: {fileID: 0}
+  _pin: {fileID: 0}
 --- !u!1 &4016496533831472599
 GameObject:
   m_ObjectHideFlags: 0
