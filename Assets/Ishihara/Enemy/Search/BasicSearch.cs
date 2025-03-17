@@ -96,7 +96,7 @@ public class BasicSearch : ISearch
         }
         else
         {
-            _enemy.SetNavTarget(_enemy.target);
+            EnemyUtility.SetSearchAnchor(_ID);
         }
 
         Debug.DrawLine(_enemy.transform.position, _enemy.target);
