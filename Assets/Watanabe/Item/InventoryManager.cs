@@ -27,7 +27,7 @@ public class InventoryManager : SystemObject
     public override void Initialize()
     {
         instance = this;
-        _mainSlotUI = GameObject.Find("MainSlot").GetComponent<Image>();
+        _mainSlotUI = UIManager.instance.mainSlotUI;
         itemsList = new List<BaseInventorySlot>(INVENTORYSLOT_INITIAL);
         _selectedSlot = SELECTEDSLOT_INITIAL;
     }

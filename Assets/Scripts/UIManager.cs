@@ -4,50 +4,42 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : SystemObject
 {
-    [SerializeField] GameObject intractUI;
-    [SerializeField] GameObject miniMapUI;
-    [SerializeField] GameObject compassUI;
-
     static public UIManager instance = null;
 
-    TextMeshProUGUI textMesh;
-    private void Awake()
+    [SerializeField] private GameObject canvasPrefab;
+    [SerializeField] private GameObject interactUIPrefab;
+    [SerializeField] private GameObject mainSlotUIPrefab;
+    private GameObject interactUI = null;
+    public GameObject canvas = null;
+    public Image mainSlotUI = null;
+
+    private TextMeshProUGUI textMesh;
+
+    public override void Initialize()
     {
         instance = this;
-    }
 
-    void Start()
-    {
-        textMesh = intractUI.GetComponentInChildren<TextMeshProUGUI>();
+        canvas = Instantiate(canvasPrefab);
+        interactUI = Instantiate(interactUIPrefab, canvas.transform);
+        GameObject mainSlotBasePrefab = Instantiate(mainSlotUIPrefab, canvas.transform);
+        GameObject mainSlotChild = mainSlotBasePrefab.transform.GetChild(0).gameObject;
+        mainSlotUI = mainSlotChild.GetComponent<Image>();
+        textMesh = interactUI.GetComponentInChildren<TextMeshProUGUI>();
+
         DisableIntractUI();
-    }
-
-    private void Update()
-    {
-        
     }
 
     public void DisplayIntractUI(string text)
     {
-        intractUI.SetActive(true);
+        interactUI.SetActive(true);
         textMesh.SetText(text);
     }
 
     public void DisableIntractUI()
     {
         textMesh.SetText("");
-        intractUI.SetActive(false);
-    }
-
-    public void DisplayMap()
-    {
-        miniMapUI.SetActive(true);
-    }
-
-    public void DisplayCompass()
-    {
-        compassUI.SetActive(true);
+        interactUI.SetActive(false);
     }
 }

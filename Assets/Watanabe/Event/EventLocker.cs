@@ -76,6 +76,8 @@ public class EventLocker : MonoBehaviour, IEvent
             player.SetCharaController(true);
             inPlayer = false;
             player.isLocker = false;
+
+            UniTask task = WaitAction(2.0f, FadeInterval);
         }
         // ƒƒbƒJ[‚É“ü‚é
         else 

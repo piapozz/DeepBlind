@@ -25,7 +25,7 @@ public class EventDoor : MonoBehaviour, IEvent
         GameObject targetObject = GameObject.Find("UIManager");
 
         // ïœêîÇÃèâä˙âª
-        uiManager = targetObject.GetComponent<UIManager>();
+        uiManager = UIManager.instance;
         animator = GetComponent<Animator>();
     }
 
@@ -85,13 +85,11 @@ public class EventDoor : MonoBehaviour, IEvent
         if (animator.GetBool("open") == true)
         {
             animator.SetBool("open", false);
-            AudioManager.instance.PlaySE(SE.DOOR_OPEN);
             SwitchDoorCollision(true);
         }
         else
         {
             animator.SetBool("open", true);
-            AudioManager.instance.PlaySE(SE.DOOR_OPEN);
             SwitchDoorCollision(false);
         }
 
@@ -120,4 +118,7 @@ public class EventDoor : MonoBehaviour, IEvent
     }
 
     public void SetDoorLock(bool isLock) { doorLock = isLock; }
+
+    public void OpenSound() { AudioManager.instance.PlaySE(SE.DOOR_OPEN); }
+    public void CloseSound() { AudioManager.instance.PlaySE(SE.DOOR_CLOSE); }
 }
