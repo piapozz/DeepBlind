@@ -13,13 +13,13 @@ public class SectionObject : MonoBehaviour
 {
     /// <summary>エネミーのアンカー</summary>
     [SerializeField]
-    private List<Transform> _enemyAnchor = null;
-
+    private List<Transform> _enemyAnchor = new List<Transform>();
+    /// <summary>アイテムのアンカー</summary>
     [SerializeField]
-    private List<Transform> _itemAnchor = null;
-
+    private List<Transform> _itemAnchor = new List<Transform>();
+    /// <summary>ロッカーのアンカー</summary>
     [SerializeField]
-    private List<Transform> _lockerAnchor = null;
+    private List<Transform> _lockerAnchor = new List<Transform>();
 
     /// <summary>
     /// エネミーのアンカーの取得
