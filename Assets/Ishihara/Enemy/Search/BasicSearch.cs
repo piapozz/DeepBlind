@@ -5,7 +5,7 @@ using static EnemyBase;
 using static UnityEngine.Rendering.HableCurve;
 using static UnityEngine.UI.GridLayoutGroup;
 
-public class BasicSeach : ISeach
+public class BasicSearch : ISearch
 {
     private int _ID = -1;
     private EnemyBase _enemy;
@@ -71,7 +71,7 @@ public class BasicSeach : ISeach
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance()
     {
-        Vector3 position = SoundObjectManager.instance.GetBigSoundPosition(_enemy.transform.position, 1);
+        Vector3 position = SoundObjectManager.GetBigSoundPosition(_enemy.transform.position, 1);
         if (position == Vector3.zero) return;
 
         // Œx‰úó‘Ô
@@ -87,8 +87,12 @@ public class BasicSeach : ISeach
     {
         if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
         {
-            // ’Tõ‰ÓŠ‚ğƒ‰ƒ“ƒ_ƒ€‚Éİ’è‚·‚é
-            _enemy.SetNavTarget(EnemyManager.instance.DispatchTargetPosition());
+            // ’Tõ‰ÓŠ‚ğİ’è‚·‚é
+            if (!EnemyUtility.CheckSearchAnchor(_ID))
+            {
+                // Ÿ‚ÌƒAƒ“ƒJ[‚ª‚È‚¢‚È‚ç
+                _enemy.SetSearchAnchor(StageManager.instance.GetRandomEnemyAnchor());
+            }
         }
         else
         {

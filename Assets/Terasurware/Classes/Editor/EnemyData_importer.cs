@@ -56,7 +56,7 @@ public class EnemyData_importer : AssetPostprocessor {
 					cell = row.GetCell(4); p.ThreatRange = (float)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(5); p.ViewLength = (float)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(6); p.FieldOfView = (float)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(7); p.Seach = (cell == null ? "" : cell.StringCellValue);
+					cell = row.GetCell(7); p.Search = (cell == null ? "" : cell.StringCellValue);
 					cell = row.GetCell(8); p.Vigilance = (cell == null ? "" : cell.StringCellValue);
 					cell = row.GetCell(9); p.Tracking = (cell == null ? "" : cell.StringCellValue);
 					cell = row.GetCell(10); p.Skill = (cell == null ? "" : cell.StringCellValue);

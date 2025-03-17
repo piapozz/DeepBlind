@@ -23,7 +23,7 @@ public class Entity_EnemyData : ScriptableObject
 		public float ThreatRange;
 		public float ViewLength;
 		public float FieldOfView;
-		public string Seach;
+		public string Search;
 		public string Vigilance;
 		public string Tracking;
 		public string Skill;

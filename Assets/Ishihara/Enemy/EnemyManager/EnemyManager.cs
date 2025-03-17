@@ -105,7 +105,8 @@ public class EnemyManager : SystemObject
     /// <returns></returns>
     public Vector3 DispatchTargetPosition()
     {
-        return GenerateStage.instance.GetRandCorridorPos();
+        List<Transform> anchorList = StageManager.instance.GetRandomEnemyAnchor();
+        return anchorList[0].position;
     }
 
     /// <summary>
