@@ -22,10 +22,8 @@ public class BasicSeach : ISeach
         if(_enemy == null) return;
         // 取得
         GetTarget();
-
         // 見つけたかどうか
         CheckTracking();
-
         // 警戒条件を満たしたかどうか
         CheckVigilance();
     }
@@ -48,13 +46,14 @@ public class BasicSeach : ISeach
         Vector3 playerPos = _player.transform.position;
         Vector3 enemyPos = _enemy.transform.position;
 
+        // プレイヤーが知覚範囲に入っているか
         if (EnemyUtility.CheckViewPlayer(_ID))
-        {                          
+        {
+            // 視野角判定
             float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,
                                    playerPos.x - enemyPos.x) * Mathf.Rad2Deg;
             Vector3 dir = _enemy.transform.forward;
             float myAngle = Mathf.Atan2(dir.z, dir.x) * Mathf.Rad2Deg;
-
             // 0 ~ 360にクランプ
             toPlayerAngle = Mathf.Repeat(toPlayerAngle, 360);
             myAngle = Mathf.Repeat(myAngle, 360);

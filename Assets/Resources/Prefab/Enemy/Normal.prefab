@@ -2055,8 +2055,8 @@ GameObject:
   - component: {fileID: 6950166818629066180}
   - component: {fileID: 8240649937055098006}
   - component: {fileID: 4078982785266578819}
-  - component: {fileID: 6281947954411203204}
-  - component: {fileID: 8104121017276227154}
+  - component: {fileID: 8588374304825122319}
+  - component: {fileID: 6051955411981377775}
   m_Layer: 0
   m_Name: Normal
   m_TagString: Enemy
@@ -2139,7 +2139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _seSourceOrigin: {fileID: 6128523467935815716, guid: cdec940d6d265454c9faf32495c840d1, type: 3}
   _seClip: {fileID: 11400000, guid: edf93e7ad527ebd47a0a0d1f33268f20, type: 2}
---- !u!136 &6281947954411203204
+--- !u!136 &8588374304825122319
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2147,13 +2147,13 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7832492252065794931}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.6
-  m_Height: 2
+  m_Radius: 1.5
+  m_Height: 2.2230003
   m_Direction: 1
-  m_Center: {x: 0, y: 0.7, z: 0}
---- !u!54 &8104121017276227154
+  m_Center: {x: 0, y: 0.61150014, z: -0.2986145}
+--- !u!54 &6051955411981377775
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

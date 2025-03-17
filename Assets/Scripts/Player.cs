@@ -182,7 +182,7 @@ public class Player : MonoBehaviour
 
     public async void EnemyFound()
     {
-        // ‰¹‚ğ–Â‚ç‚·
+        // ‰¹‚ğ–Â‚ç‚µ‚ÄƒJƒƒ‰‚ğ—h‚ç‚·
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
         impulseSource.GenerateImpulse(); 
         colorGranding.gamma.value = Color.red + gamma;
@@ -192,11 +192,13 @@ public class Player : MonoBehaviour
 
     public void EnemyCaught(CinemachineVirtualCamera vcam)
     {
+        // ‰¹‚ğ–Â‚ç‚µ‚ÄƒJƒƒ‰‚ğˆÚ“®‚³‚¹‚é
         AudioManager.instance.PlaySE(SE.CAUGHT);
         vcam.Priority = 100;
+        impulseSource.GenerateImpulseAt(vcam.transform.position,Vector3.up);
         UniTask task = WaitAction(2.0f, FadeChangeScene);
-
     }
+
     public void FadeChangeScene()
     {
         FadeSceneChange.instance.ChangeSceneEvent("GameResult");

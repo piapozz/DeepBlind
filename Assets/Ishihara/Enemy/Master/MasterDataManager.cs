@@ -1,10 +1,3 @@
-/**
- * @file MasterDataManager.cs
- * @brief マスターデータ管理
- * @author yao
- * @date 2025/2/4
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

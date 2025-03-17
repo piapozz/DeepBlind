@@ -2,19 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static EnemyBase;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
+// 見ている間停止する
 public class StopLookAt : ISkill
 {
     [SerializeField]
-    private GameObject _mesh;
+    private GameObject _mesh;           // メッシュ
 
-    private int ID;
-    private  Bounds bounds;
+    private int ID;                     // ID
+    private  Bounds bounds;             // メッシュの範囲
 
     public float detectionRange = 5.0f; // 近づいたとみなす距離
-    private bool canCollide = false;  // 当たり判定を持つか
+    private bool canCollide = false;    // 当たり判定を持つか
 
     /// <summary>
     /// 初期化
@@ -33,15 +32,13 @@ public class StopLookAt : ISkill
     public void Ability()
     {
         if(EnemyManager.instance.Get(ID) ==null) return;
-
         EnemyBase enemy = EnemyUtility.GetCharacter(ID);
         Transform player = EnemyUtility.GetPlayer().transform;
-
         SkinnedMeshRenderer filter = enemy.GetComponentInChildren<SkinnedMeshRenderer>();
         bounds = filter.bounds;
         detectionRange = bounds.size.magnitude / 2;
         Vector3[] targetPoints = new Vector3[8];
-
+        // メッシュの8つの頂点を取得
         targetPoints[0] = bounds.min + new Vector3(0.0f, 0.5f, 0.0f);
         targetPoints[1] = new Vector3(bounds.max.x, bounds.min.y + 0.5f, bounds.min.z);
         targetPoints[2] = new Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
@@ -50,7 +47,6 @@ public class StopLookAt : ISkill
         targetPoints[5] = new Vector3(bounds.max.x, bounds.min.y + 0.5f, bounds.max.z);
         targetPoints[6] = new Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
         targetPoints[7] = bounds.max;
-
         // 接触間近範囲なら
         float length = EnemyUtility.EnemyToPlayerLength(ID);
         bool isCloseEnough = false;
@@ -63,10 +59,9 @@ public class StopLookAt : ISkill
             isCloseEnough = false;
         }
 
-        //　カメラ内にオブジェクトがあるかどうか
+        // カメラ内にオブジェクトがあるかどうか
         bool isInsideCamera = false;
-
-        //　ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
+        // ターゲットポイントがカメラのビューポート内にあるかどうかを調べる
         foreach (var targetPoint in targetPoints)
         {
             Plane[] planes;
@@ -93,8 +88,9 @@ public class StopLookAt : ISkill
                 }
             }
         }
-
-        if(isCloseEnough && isInsideCamera && !enemy.isAbility)
+        // カメラ内にオブジェクトがあるかどうか
+        // 背後から接触間近まで近づいたか
+        if (isCloseEnough && isInsideCamera && !enemy.isAbility)
         {
             canCollide = true;
         }
@@ -107,15 +103,16 @@ public class StopLookAt : ISkill
             canCollide = true;
         }
 
-
         if (!canCollide)
         {
+            // 停止
             enemy.SetAnimationSpeed(0);
             enemy.SetNavSpeed(0);
             if(!enemy.isAbility) enemy.SetIsAbility();
         }
         else
         {
+            // 再開
             enemy.SetAnimationSpeed(Mathf.Min(enemy.speed, 2));
             enemy.SetNavSpeed(enemy.speed);
             if (enemy.isAbility) enemy.SetIsAbility();

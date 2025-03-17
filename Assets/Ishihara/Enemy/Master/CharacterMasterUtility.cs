@@ -1,10 +1,3 @@
-/**
- * @file CharacterMasterUtility.cs
- * @brief キャラクターマスターデータ実行処理
- * @author yao
- * @date 2025/2/4
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

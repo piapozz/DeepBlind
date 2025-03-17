@@ -5,8 +5,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
+// エネミーのユーティリティ
 public class EnemyUtility : MonoBehaviour
 {
+    /// <summary>
+    /// プレイヤー取得
+    /// </summary>
+    /// <returns></returns>
     public static Player GetPlayer()
     {
         return Player.instance;
@@ -41,6 +46,11 @@ public class EnemyUtility : MonoBehaviour
         await EnemyManager.instance.ExecuteAllTask(task);
     }
 
+    /// <summary>
+    /// キャラクターの死亡処理
+    /// </summary>
+    /// <param name="character"></param>
+    /// <returns></returns>
     public static async UniTask DeadCharacter(EnemyBase character)
     {
         // エネミー死亡の処理
@@ -49,6 +59,11 @@ public class EnemyUtility : MonoBehaviour
         await UniTask.CompletedTask;
     }
 
+    /// <summary>
+    /// エネミーからプレイヤーまでの距離を取得
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns></returns>
     public static float EnemyToPlayerLength(int ID)
     {
         EnemyBase enemy = GetCharacter(ID);
