@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static EnemyBase;
 
-public interface ISeach : IEnemyState
+public interface ISearch : IEnemyState
 {
     // –Ú•WˆÊ’u‚ÌŽæ“¾
     public void GetTarget();

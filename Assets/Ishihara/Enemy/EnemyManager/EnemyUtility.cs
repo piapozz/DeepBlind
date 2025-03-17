@@ -105,4 +105,33 @@ public class EnemyUtility : MonoBehaviour
 
         return isHit && hit.collider.tag == "Player";
     }
+
+    /// <summary>
+    /// アンカーが残っているか確認する
+    /// 残っていたら次のアンカーを返す
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns></returns>
+    public static bool CheckSearchAnchor(int ID)
+    {
+        EnemyBase enemy = GetCharacter(ID);
+        if (enemy == null) return false;
+        if (enemy.searchAnchorList.Count < 2) return false;
+        enemy.searchAnchorList.RemoveAt(0);
+        enemy.SetNavTarget(enemy.searchAnchorList[0].position);
+
+        return true;
+    }
+
+    /// <summary>
+    /// 次のアンカーを設定する
+    /// </summary>
+    /// <param name="ID"></param>
+    public static void SetSearchAnchor(int ID)
+    {
+        EnemyBase enemy = GetCharacter(ID);
+        if (enemy == null) return;
+        enemy.SetSearchAnchor(StageManager.instance.GetRandomEnemyAnchor());
+        enemy.SetNavTarget(enemy.searchAnchorList[0].position);
+    }
 }

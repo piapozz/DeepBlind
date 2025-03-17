@@ -36,8 +36,9 @@ public class EnemyBase : MonoBehaviour
     public float viewLength { get; private set; } = -1;     // 視界距離
     public float fieldOfView { get; private set; } = -1;    // 視野角度
     public bool isAbility { get; private set; } = false;    // スキル使用中か
+    public List<Transform> searchAnchorList { get; private set; } = null;    // 索敵アンカーリスト
 
-    private ISeach _seach;              // 索敵
+    private ISearch _search;              // 索敵
     private IVigilance _vigilance;      // 警戒
     private ITracking _tracking;        // 追跡
     private ISkill _skill;              // スキル
@@ -72,7 +73,7 @@ public class EnemyBase : MonoBehaviour
         // ステート設定
         int stateMax = (int)State.MAX;
         _state = new List<IEnemyState>(stateMax);
-        if (_seach != null) _state.Add(_seach);
+        if (_search != null) _state.Add(_search);
         if (_vigilance != null) _state.Add(_vigilance);
         if (_tracking != null) _state.Add(_tracking);
         // 初期化
@@ -90,7 +91,10 @@ public class EnemyBase : MonoBehaviour
         _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
         if (_agent != null) _agent.speed = speed;
         // ターゲット設定
-        target = position;
+        searchAnchorList = new List<Transform>();
+
+        if(!CommonModule.IsEnableIndex(searchAnchorList, 0)) return;
+        target = searchAnchorList[0].position;
     }
 
     /// <summary>
@@ -107,7 +111,7 @@ public class EnemyBase : MonoBehaviour
         SetThreatRange(characterMaster.ThreatRange);
         SetViewLength(characterMaster.ViewLength);
         SetFieldOfView(characterMaster.FieldOfView);
-        SetSeach(characterMaster.Seach);
+        SetSearch(characterMaster.Search);
         SetVigilance(characterMaster.Vigilance);
         SetTracking(characterMaster.Tracking);
         SetSkill(characterMaster.Skill);
@@ -132,12 +136,12 @@ public class EnemyBase : MonoBehaviour
     public void SetViewLength(float setViewLength) => viewLength = setViewLength;
     public void SetFieldOfView(float setFieldOfView) => fieldOfView = setFieldOfView;
 
-    public void SetSeach(string setSeach)
+    public void SetSearch(string setSearch)
     {
-        Type type = Type.GetType(setSeach);
+        Type type = Type.GetType(setSearch);
         if (type != null)
         {
-            _seach = Activator.CreateInstance(type) as ISeach;
+            _search = Activator.CreateInstance(type) as ISearch;
         }
     }
 
@@ -265,5 +269,10 @@ public class EnemyBase : MonoBehaviour
         {
             _animator.SetTrigger("scream");
         }
+    }
+
+    public void SetSearchAnchor(List<Transform> setAnchor)
+    {
+        searchAnchorList = setAnchor;
     }
 }

@@ -32,6 +32,7 @@ public class BasicVigilance : IVigilance
         _ID = setID;
         _enemy = EnemyUtility.GetCharacter(_ID);
         _player = EnemyUtility.GetPlayer();
+        _enemy.SetSearchAnchor(StageManager.instance.GetEnemyAnchor(_enemy.target));
     }
 
     public void CheckLookAround()
@@ -65,10 +66,16 @@ public class BasicVigilance : IVigilance
     /// </summary>
     public void GetTarget()
     {
-        // ターゲットが近くにいたら
+        // 探索ルートの設定
         if (Vector3.Distance(_enemy.target, _enemy.transform.position) < 2.0f)
         {
-            _enemy.StateChange(State.SEARCH);
+            if (!EnemyUtility.CheckSearchAnchor(_ID))
+            {
+                // 次のアンカーがないなら
+                _enemy.StateChange(State.SEARCH);
+                _enemy.SetSearchAnchor(StageManager.instance.GetRandomEnemyAnchor());
+
+            }
         }
         else
         {
