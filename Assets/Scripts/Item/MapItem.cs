@@ -27,8 +27,9 @@ public class MapItem : ItemBase
 
     private List<GameObject> _mapSectionObject = null;
 
-    protected override void Init()
+    public override void Initialize()
     {
+        base.Initialize();
         AjustMapSize();
         _mapSectionObject = new List<GameObject>(StageManager.instance.stageSectionCount);
         for (int i = 0, max = _mapSectionObject.Count; i < max; i++)
@@ -38,7 +39,7 @@ public class MapItem : ItemBase
         GenerateMap();
     }
 
-    protected override void Proc()
+    public override void Proc()
     {
         // プレイヤーの座標を取得
         Vector3 playerPos = Player.instance.GetPosition();
@@ -47,6 +48,11 @@ public class MapItem : ItemBase
         DisplaySection(sectionPos);
         // 赤点の更新
         PointProc(playerPos);
+    }
+
+    public override bool Effect()
+    {
+        return false;
     }
 
     private void AjustMapSize()

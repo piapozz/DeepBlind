@@ -98,5 +98,7 @@ public class BasicSearch : ISearch
         {
             EnemyUtility.SetSearchAnchor(_ID);
         }
+
+        Debug.DrawLine(_enemy.transform.position, _enemy.target);
     }
 }

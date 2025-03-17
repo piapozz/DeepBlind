@@ -5,12 +5,11 @@
  * @date 2025/1/17
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
+using System;
 
 public class FadeScreen : MonoBehaviour
 {
@@ -38,6 +37,14 @@ public class FadeScreen : MonoBehaviour
     {
         if (fadeOut) _ = FadeOut();
         if (fadeIn) _ = FadeIn();
+    }
+
+    /// <summary>
+    /// フェード用のCanvasを生成する
+    /// </summary>
+    public void GenerateFadeScreen()
+    {
+
     }
 
     /// <summary>
@@ -78,4 +85,11 @@ public class FadeScreen : MonoBehaviour
 
     public void FadeInRun() { fadeIn = true; }
     public void FadeOutRun() { fadeOut = true; }
+
+    public async UniTask FadeInterval(float sec)
+    {
+        FadeScreen.instance.FadeOutRun();
+        await Task.Delay(TimeSpan.FromSeconds(sec));
+        FadeScreen.instance.FadeInRun();
+    }
 }

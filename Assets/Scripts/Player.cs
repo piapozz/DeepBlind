@@ -51,7 +51,7 @@ public class Player : MonoBehaviour
 
     private Color gamma;
 
-    private Light selfLight = null;
+    public Light selfLight { get; private set; } = null;
 
     private void Awake()
     {

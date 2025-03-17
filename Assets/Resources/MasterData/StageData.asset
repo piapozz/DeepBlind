@@ -17,5 +17,5 @@ MonoBehaviour:
     list:
     - widthSize: 10
       heightSize: 10
-      normalRoomCount: 30
-      addRoomCount: 10
+      normalRoomCount: 0
+      addRoomCount: 0

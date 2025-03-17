@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9052878035143571771}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SmallBattery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
       propertyPath: m_LocalPosition.y
@@ -99,6 +99,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallBattery
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
+      propertyPath: m_TagString
+      value: ItemObject
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
 --- !u!1 &489137069430543483 stripped
@@ -117,8 +125,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Radius: 3
+  m_Center: {x: 0.000000059604645, y: 0, z: 2.47}
 --- !u!114 &1164909675132053126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 514c61780f01c1941b9131f482dff7cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: 6c69700a3aaee2947856da17a254dc9b, type: 2}
+  item: {fileID: 1858259656529254311, guid: 0aa9c448d9816544db534dc3f1ec4a64, type: 3}
 --- !u!114 &2223020374233189768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 0
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

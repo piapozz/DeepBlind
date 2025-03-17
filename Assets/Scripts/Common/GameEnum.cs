@@ -1,16 +1,23 @@
 public enum ItemType
 {
-
-}
-
-public enum ItemID
-{
     INVALID = -1,
     BATTERY_SMALL,
     BATTERY_LARGE,
-    LANDMARK,
+    MAP,
     COMPASS,
     EXIT_KEY,
+    LANDMARK,
+    MAX
+}
+
+enum ItemCategory
+{
+    BatteryS = 0,
+    BatteryL,
+    Medicine,
+    Map,
+    Compass,
+    Max
 }
 
 public enum BGM

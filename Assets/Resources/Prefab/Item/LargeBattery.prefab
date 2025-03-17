@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 942770083280369826}
   - component: {fileID: 5744096252484813393}
   - component: {fileID: 7287915508189874107}
+  - component: {fileID: 62615571956129936}
   m_Layer: 0
   m_Name: LargeBattery
-  m_TagString: Untagged
+  m_TagString: ItemObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 514c61780f01c1941b9131f482dff7cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: 51bb04d24a95689478308113452dd6c9, type: 2}
+  item: {fileID: 7794919697345794140, guid: 4e4acd4ef06329547b6099b1a74a6c8b, type: 3}
 --- !u!65 &7287915508189874107
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -62,6 +63,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.25, y: 0.5, z: 0.53}
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!114 &62615571956129936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977971572442568254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 0
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &1868365568089710391
 PrefabInstance:
   m_ObjectHideFlags: 0

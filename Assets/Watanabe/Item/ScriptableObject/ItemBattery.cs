@@ -2,23 +2,24 @@
  * @file ItemBattery.cs
  * @brief バッテリーを実装
  * @author sein
- * @date 2025/1/18
+ * @date 2025/3/17
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// 派生クラス：消耗品アイテム
-[CreateAssetMenu(fileName = "ItemObject", menuName = "ScriptableObjects/Items/Battery")]
-
-public class ItemBattery : BaseItem
+public class ItemBattery : ItemBase
 {
     [SerializeField] private int recoveryValue;
+    private Player _player;
 
-    public override bool ItemEffect()
+    public override void Proc()
     {
-        Light.instance.SetBattery(recoveryValue);
+        FollowCamera();
+    }
+    public override bool Effect()
+    {
+        Player.instance.selfLight.SetBattery(recoveryValue);
         return true;
     }
+
 }

@@ -10,7 +10,7 @@ public class EventItem : MonoBehaviour, IEvent
 
     private bool isUsed = false;
 
-    [SerializeField] private BaseItem item = null;
+    [SerializeField] private GameObject item = null;
 
     void Start()
     {
