@@ -192,6 +192,11 @@ public class Player : MonoBehaviour
         inputDash = context.ReadValue<float>();
     }
 
+    public void OnLight(InputAction.CallbackContext context)
+    {
+        selfLight.SwitchLight();
+    }
+
     public async void EnemyFound()
     {
         // ‰¹‚ğ–Â‚ç‚µ‚ÄƒJƒƒ‰‚ğ—h‚ç‚·
