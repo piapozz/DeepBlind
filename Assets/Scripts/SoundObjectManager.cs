@@ -10,20 +10,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // ‰¹‚ğ–Â‚ç‚·‚Æ‰¹—Ê‚ğŒ¸‚ç‚µ‚È‚ª‚çÁ‚¦‚Ä‚¢‚­
-public class SoundObjectManager : MonoBehaviour
+public class SoundObjectManager
 {
-    public static SoundObjectManager instance = null;
-
-    private List<SoundObject> _soundList = null;
+    private static List<SoundObject> _soundList = null;
 
     /// <summary>‰¹‚Ì“Í‚­•W€‹——£</summary>
     private const float _DEFAULT_ECHO_RADIUS = 100.0f;
     /// <summary>‰¹Œ¹‚ÌÅ‘å”</summary>
     private const int _SOUND_MAX = 100;
 
-    public void Awake()
+    public static void Initialize()
     {
-        instance = this;
         _soundList = new List<SoundObject>(_SOUND_MAX);
         for (int i = 0; i < _SOUND_MAX; i++)
         {
@@ -77,7 +74,7 @@ public class SoundObjectManager : MonoBehaviour
     /// <param name="position"></param>
     /// <param name="sensMinVolume">‰Â’®‰¹—Ê(0`1)</param>
     /// <returns></returns>
-    public Vector3 GetBigSoundPosition(Vector3 position, float sensMinVolume)
+    public static Vector3 GetBigSoundPosition(Vector3 position, float sensMinVolume)
     {
         float maxVolume = float.MinValue;
         Vector3 resultPos = Vector3.zero;
@@ -99,7 +96,7 @@ public class SoundObjectManager : MonoBehaviour
     /// w’è‚µ‚½ID‚Ì‰¹Œ¹‚ğÁ‚·
     /// </summary>
     /// <param name="ID"></param>
-    public void RemoveSound(int ID)
+    public static void RemoveSound(int ID)
     {
         _soundList[ID] = null;
     }

@@ -41,7 +41,7 @@ public class RouteSearcher
         /// <returns></returns>
         public int GetScore(Vector2Int goalPosition)
         {
-            Section section = StageManager.instance.GetSection(ID);
+            SectionData section = StageManager.instance.GetSection(ID);
             Vector2Int position = section.position;
             return cost + position.Distance(goalPosition);
         }
@@ -118,7 +118,7 @@ public class RouteSearcher
         _nodeTable.closeNodeList.Add(startNode);
 
         // ゴール座標を取得
-        Section goalSection = StageManager.instance.GetSection(goalSectionID);
+        SectionData goalSection = StageManager.instance.GetSection(goalSectionID);
         Vector2Int goalPosition = goalSection.position;
         // ゴールノードにたどり着くまで処理
         int procCount = 0;
@@ -232,11 +232,11 @@ public class RouteSearcher
     {
         if (baseNode == null) return;
 
-        Section baseSection = StageManager.instance.GetSection(baseNode.ID);
+        SectionData baseSection = StageManager.instance.GetSection(baseNode.ID);
         for (int i = 0, max = directionList.Count; i < max; i++)
         {
             // オープンするノードの取得
-            Section openSection = StageManager.instance.GetSectionDir(baseSection, directionList[i]);
+            SectionData openSection = StageManager.instance.GetSectionDir(baseSection, directionList[i]);
             if (openSection == null) continue;
 
             // オープンできないならスキップ
@@ -272,12 +272,12 @@ public class RouteSearcher
     {
         if (baseNode == null) return;
 
-        Section baseSection = StageManager.instance.GetSection(baseNode.ID);
+        SectionData baseSection = StageManager.instance.GetSection(baseNode.ID);
         for (int i = 0, max = (int)Direction.Max; i < max; i++)
         {
             Direction direction = (Direction)i;
             // オープンするノードの取得
-            Section openSection = StageManager.instance.GetSectionDir(baseSection, direction);
+            SectionData openSection = StageManager.instance.GetSectionDir(baseSection, direction);
             if (openSection == null) continue;
 
             // オープンできないならスキップ
@@ -323,7 +323,7 @@ public class RouteSearcher
     {
         for (int i = 0, max = (int)Direction.Max; i < max; i++)
         {
-            Section nextSection = StageManager.instance.GetSectionDir(baseID, (Direction)i);
+            SectionData nextSection = StageManager.instance.GetSectionDir(baseID, (Direction)i);
             if (nextSection == null) continue;
             int aroundID = nextSection.ID;
             if (!_nodeTable.openNodeList.Exists(node => node.ID == aroundID)) return false;

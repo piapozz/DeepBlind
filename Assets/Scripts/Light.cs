@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class LightManager : MonoBehaviour
+public class Light
 {
     private readonly float _BATTERY_MAX = 100;
     private readonly float _BATTERY_CONSUME = 0.01f;
 
-    private Light _light = null;
+    private UnityEngine.Light _light = null;
     public bool _nowSwitch = true;
     private float _batteryPower = -1;
-    public static LightManager instance { get; private set; } = null;
+    public static Light instance { get; private set; } = null;
 
-    private void Start()
+    public void Initialize(UnityEngine.Light light)
     {
         instance = this;
         _batteryPower = _BATTERY_MAX;
-        _light = GetComponentInChildren<Light>();
-    }
-
-    private void Update()
-    {
-        ConsumeBattery();
+        _light = light;
     }
 
     /// <summary>

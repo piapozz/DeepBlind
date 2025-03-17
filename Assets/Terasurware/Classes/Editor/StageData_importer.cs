@@ -52,7 +52,8 @@ public class StageData_importer : AssetPostprocessor {
 						
 					cell = row.GetCell(0); p.widthSize = (int)(cell == null ? 0 : cell.NumericCellValue);
 					cell = row.GetCell(1); p.heightSize = (int)(cell == null ? 0 : cell.NumericCellValue);
-					cell = row.GetCell(2); p.roomCount = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(2); p.normalRoomCount = (int)(cell == null ? 0 : cell.NumericCellValue);
+					cell = row.GetCell(3); p.addRoomCount = (int)(cell == null ? 0 : cell.NumericCellValue);
 						s.list.Add (p);
 					}
 					data.sheets.Add(s);

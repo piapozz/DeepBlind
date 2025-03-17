@@ -18,7 +18,7 @@ public class ItemBattery : BaseItem
 
     public override bool ItemEffect()
     {
-        LightManager.instance.SetBattery(recoveryValue);
+        Light.instance.SetBattery(recoveryValue);
         return true;
     }
 }

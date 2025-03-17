@@ -19,7 +19,8 @@ public class Entity_StageData : ScriptableObject
 		
 		public int widthSize;
 		public int heightSize;
-		public int roomCount;
+		public int normalRoomCount;
+		public int addRoomCount;
 	}
 }
 

@@ -54,6 +54,6 @@ public class SoundObject
         ID = -1;
         position = Vector3.zero;
         volume = -1;
-        SoundObjectManager.instance.RemoveSound(ID);
+        SoundObjectManager.RemoveSound(ID);
     }
 }

@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29028ee6ceddeb644a235921a235ae73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sectionObjectAssign: {fileID: 11400000, guid: 2f828e8eec69f4d4a9d1be84d79ee042, type: 2}
+  sectionObjectAssign: {fileID: 11400000, guid: 2f828e8eec69f4d4a9d1be84d79ee042, type: 2}
   _stageRoot: {fileID: 2001586959543071285}
