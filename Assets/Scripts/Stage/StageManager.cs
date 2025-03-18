@@ -28,7 +28,7 @@ public class StageManager : SystemObject
     /// <summary>区画のデータリスト</summary>
     private List<SectionData> _sectionDataList = null;
     private List<SectionObject> _sectionObjectList = null;
-    private List<SectionData> _roomList = null;
+    private List<SectionData> _enemySearchRoomList = null;
     private List<SectionData> _corridorList = null;
     /// <summary>部屋でない区画のIDリスト</summary>
     private List<int> _unroomSectionIDList = null;
@@ -60,7 +60,7 @@ public class StageManager : SystemObject
         // 区画を初期化
         _sectionDataList = new List<SectionData>(stageSectionCount);
         _sectionObjectList = new List<SectionObject>(stageSectionCount);
-        _roomList = new List<SectionData>(stageSectionCount);
+        _enemySearchRoomList = new List<SectionData>(stageSectionCount);
         _corridorList = new List<SectionData>(stageSectionCount);
         _unroomSectionIDList = new List<int>(stageSectionCount);
         for (int i = 0; i < stageSectionCount; i++)
@@ -346,6 +346,7 @@ public class StageManager : SystemObject
                 int randomIndex = Random.Range(0, roomObject.Length);
                 generateObject = roomObject[randomIndex];
                 rotateCount = Random.Range(0, (int)Direction.Max);
+                _enemySearchRoomList.Add(room);
                 break;
             case RoomType.StartRoom:
                 generateObject = sectionObjectAssign.startRoom;
@@ -358,7 +359,6 @@ public class StageManager : SystemObject
         }
         if (generateObject == null) return null;
 
-        _roomList.Add(room);
         // 座標、回転を設定して生成
         return GenerateObject(generateObject, room, rotateCount);
     }
@@ -589,8 +589,8 @@ public class StageManager : SystemObject
     /// <returns></returns>
     public List<Transform> GetRandomEnemyAnchor()
     {
-        int randomIndex = Random.Range(0, _roomList.Count);
-        int sectionID = _roomList[randomIndex].ID;
+        int randomIndex = Random.Range(0, _enemySearchRoomList.Count);
+        int sectionID = _enemySearchRoomList[randomIndex].ID;
         return _sectionObjectList[sectionID].GetEnemyAnchor();
     }
 

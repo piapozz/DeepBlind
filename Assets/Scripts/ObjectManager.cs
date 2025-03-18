@@ -19,8 +19,11 @@ public class ObjectManager : SystemObject
     [SerializeField]
     private ObjectAssign _objectAssign = null;
 
+    private List<GameObject> _itemObjectList = null;
+
     public override void Initialize()
     {
+        _itemObjectList = new List<GameObject>();
         GenerateAllItem();
         GenerateLocker();
         StageManager.instance.NavMeshBake();
@@ -31,7 +34,7 @@ public class ObjectManager : SystemObject
     /// </summary>
     private void GenerateAllItem()
     {
-        for (int i = 0, max = (int)ObjectType.EXIT_KEY; i < max; i++)
+        for (int i = 0, max = (int)ObjectType.EXIT_KEY; i <= max; i++)
         {
             GenerateItem((ObjectType)i);
         }
@@ -51,7 +54,8 @@ public class ObjectManager : SystemObject
             if (itemAnchor == null) return;
 
             GameObject genObj = _objectAssign.itemObjectList[typeIndex];
-            Instantiate(genObj, itemAnchor.position, itemAnchor.rotation, itemAnchor);
+            GameObject itemObject = Instantiate(genObj, itemAnchor.position, itemAnchor.rotation, itemAnchor);
+            _itemObjectList.Add(itemObject);
         }
     }
 
@@ -75,5 +79,14 @@ public class ObjectManager : SystemObject
     private void GenerateFlavorObject()
     {
 
+    }
+
+    /// <summary>
+    /// アイテムオブジェクトの取得
+    /// </summary>
+    /// <returns></returns>
+    public List<GameObject> GetItemObjectList()
+    {
+        return _itemObjectList;
     }
 }
