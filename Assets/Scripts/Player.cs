@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
         status.stamina = STAMINA_MAX;
 
         volume.profile.TryGetSettings(out colorGranding);
-        transform.position = StageManager.instance.GetStartRoomPosition() + offsetGenPos;
+        transform.position = StageManager.instance.GetPlayerStartPosition().position + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
         gamma = colorGranding.gamma.value;
         selfLight = new Light();

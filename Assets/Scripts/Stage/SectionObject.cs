@@ -11,6 +11,9 @@ using UnityEngine;
 
 public class SectionObject : MonoBehaviour
 {
+    /// <summary>プレイヤーのアンカー</summary>
+    [SerializeField]
+    private List<Transform> _playerAnchor = new List<Transform>();
     /// <summary>エネミーのアンカー</summary>
     [SerializeField]
     private List<Transform> _enemyAnchor = new List<Transform>();
@@ -20,6 +23,15 @@ public class SectionObject : MonoBehaviour
     /// <summary>ロッカーのアンカー</summary>
     [SerializeField]
     private List<Transform> _lockerAnchor = new List<Transform>();
+
+    /// <summary>
+    /// プレイヤーのアンカーの取得
+    /// </summary>
+    /// <returns></returns>
+    public List<Transform> GetPlayerAnchor()
+    {
+        return _playerAnchor;
+    }
 
     /// <summary>
     /// エネミーのアンカーの取得

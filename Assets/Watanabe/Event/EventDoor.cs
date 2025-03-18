@@ -11,7 +11,7 @@ using UnityEngine;
 
 public class EventDoor : MonoBehaviour, IEvent
 {
-    [SerializeField] private UIManager uiManager;
+    private UIManager uiManager;
 
     [SerializeField] private BoxCollider[] _doorCollision = null;
 
