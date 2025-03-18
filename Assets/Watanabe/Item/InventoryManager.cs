@@ -19,8 +19,9 @@ public class InventoryManager : SystemObject
     [SerializeField] private Sprite iconBatsu = null;
     private readonly int SELECTEDSLOT_INITIAL = 0;
     private readonly int INVENTORYSLOT_INITIAL = 5;
-    private GameObject playerObject = null;
-    private Image _mainSlotUI = null;
+    private UIManager uiManager = null;
+    private Transform _playerTransform = null;
+    private Transform itemAnkerTransform = null;
     private int _selectedSlot = -1;
 
     static public InventoryManager instance { get; private set; } = null;
@@ -28,10 +29,11 @@ public class InventoryManager : SystemObject
     public override void Initialize()
     {
         instance = this;
-        _mainSlotUI = UIManager.instance.mainSlotUI;
         itemsList = new List<BaseInventorySlot>(INVENTORYSLOT_INITIAL);
         _selectedSlot = SELECTEDSLOT_INITIAL;
-        playerObject = Player.instance.gameObject;
+        uiManager = UIManager.instance;
+        _playerTransform = Player.instance.transform;
+        itemAnkerTransform = Player.instance.itemAnker;
     }
 
     // マウスホイールでアイテム変更の処理
@@ -39,7 +41,7 @@ public class InventoryManager : SystemObject
     {
         if (IsEmpty(itemsList))
         {
-            _mainSlotUI.sprite = iconBatsu;
+            uiManager.ViewItemSlot(uiManager.noneItemIcon, -1);
             return;
         }
 
@@ -52,9 +54,11 @@ public class InventoryManager : SystemObject
             if (_selectedSlot != i) itemsList[i].ObjectActive(false);
             else itemsList[i].ObjectActive(true);
         }
+
         // アイテムのパッシブ効果
         ItemBase item = itemsList[_selectedSlot].item;
         item.Proc();
+        item.FollowCamera();
     }
 
     public void AddItem(GameObject item)
@@ -73,7 +77,7 @@ public class InventoryManager : SystemObject
         // すでに所持していなかったらスロットを生成
         BaseInventorySlot inventorySlot = new BaseInventorySlot();
         // アイテムを生成
-        GameObject itemObject = Instantiate(item, playerObject.transform);
+        GameObject itemObject = Instantiate(item, itemAnkerTransform.position, itemAnkerTransform.rotation, _playerTransform);
         // スロットの初期設定
         inventorySlot.Setup(itemObject);
         // スロット内のアイテムを初期化
@@ -92,7 +96,9 @@ public class InventoryManager : SystemObject
         int inventoryCount = itemsList.Count;
         if (_selectedSlot < inventoryCount)
         {
-            _mainSlotUI.sprite = itemsList[_selectedSlot].item.icon;
+            Sprite itemSprite = itemsList[_selectedSlot].item.icon;
+            int itemCount = itemsList[_selectedSlot].itemCount;
+            uiManager.ViewItemSlot(itemSprite, itemCount);
         }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -106,15 +112,14 @@ public class InventoryManager : SystemObject
         }
     }
 
-    public void UseItemEffect(InputAction.CallbackContext context)
+    public void UseItemEffect()
     {
-        if (!context.performed) return;
         if (IsEmpty(itemsList)) return;
 
         // 使用予定のアイテムを取得
         ItemBase useItem = itemsList[_selectedSlot].item;
         // 持つだけのアイテムだったら除外
-        if(useItem.isPassive == true) return;
+        if (useItem.isPassive) return;
 
         // アイテムの効果を実行 ※trueがアイテムを消費 falseがアイテム消費なし
         bool result = useItem.Effect();
@@ -122,15 +127,15 @@ public class InventoryManager : SystemObject
         // アイテムの効果が失敗したら除外
         if (!result) return;
         // 消費アイテムだったら実行
-        if (useItem.isConsume == true)
+        if (!useItem.isConsume) return;
+
+        if (itemsList[_selectedSlot].itemCount >= 1) itemsList[_selectedSlot].itemCount -= 1;
+        // アイテムがなくなったらリストから削除
+        if (itemsList[_selectedSlot].itemCount <= 0)
         {
-            if (itemsList[_selectedSlot].itemCount >= 1) itemsList[_selectedSlot].itemCount -= 1;
-            // アイテムがなくなったらリストから削除
-            if (itemsList[_selectedSlot].itemCount <= 0)
-            {
-                itemsList.RemoveAt(_selectedSlot);
-                if (_selectedSlot != 0) _selectedSlot--;
-            }
+            itemsList[_selectedSlot].Teardown();
+            itemsList.RemoveAt(_selectedSlot);
+            if (_selectedSlot != 0) _selectedSlot--;
         }
     }
 }

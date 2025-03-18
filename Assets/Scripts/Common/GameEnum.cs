@@ -10,6 +10,16 @@ public enum ItemType
     MAX
 }
 
+public enum ItemIcomID
+{
+    NONE = -1,
+    BATTERY_SMALL,
+    BATTERY_LARGE,
+    MAP,
+    COMPASS,
+    KEY,
+}
+
 enum ItemCategory
 {
     BatteryS = 0,

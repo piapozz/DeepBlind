@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [SerializeField] private InputActionReference hold;             // 長押しを受け取る対象のAction
     [SerializeField] CinemachineImpulseSource impulseSource;
     [SerializeField] PostProcessVolume volume;
+    [SerializeField] public Transform itemAnker = null;
 
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
     [SerializeField] float rotationSpeed = 1.0f;
@@ -72,8 +73,8 @@ public class Player : MonoBehaviour
         status.stamina = STAMINA_MAX;
 
         volume.profile.TryGetSettings(out colorGranding);
-        transform.position = StageManager.instance.GetPlayerStartPosition().position + offsetGenPos;
         Cursor.lockState = CursorLockMode.Locked;
+        transform.position = StageManager.instance.GetPlayerStartPosition().position + offsetGenPos;
         gamma = colorGranding.gamma.value;
         selfLight = new Light();
         UnityEngine.Light light = GetComponentInChildren<UnityEngine.Light>();
@@ -108,7 +109,7 @@ public class Player : MonoBehaviour
 
         // フレームごとの移動量を計算し動かす
         characterController.Move(moveVec * Time.deltaTime * status.speed);
-        
+
 
         // スタミナを見て疲れていたら＆デバッグ状態ではなかったら、疲れてる状態に変える
         if (status.stamina <= 0.0f && isDebug != true) isTired = true;
@@ -197,14 +198,20 @@ public class Player : MonoBehaviour
         selfLight.SwitchLight();
     }
 
+    public void OnUse(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        InventoryManager.instance.UseItemEffect();
+    }
+
     public async void EnemyFound()
     {
         // 音を鳴らしてカメラを揺らす
         AudioManager.instance.PlaySE(SE.PLAYER_SURPRISE);
-        impulseSource.GenerateImpulse(); 
+        impulseSource.GenerateImpulse();
         colorGranding.gamma.value = Color.red + gamma;
         await UniTask.Delay(1000);
-        colorGranding.gamma.value = gamma; 
+        colorGranding.gamma.value = gamma;
     }
 
     public void EnemyCaught(CinemachineVirtualCamera vcam)
@@ -212,7 +219,7 @@ public class Player : MonoBehaviour
         // 音を鳴らしてカメラを移動させる
         AudioManager.instance.PlaySE(SE.CAUGHT);
         vcam.Priority = 100;
-        impulseSource.GenerateImpulseAt(vcam.transform.position,Vector3.up);
+        impulseSource.GenerateImpulseAt(vcam.transform.position, Vector3.up);
         UniTask task = WaitAction(2.0f, FadeChangeScene);
     }
 
