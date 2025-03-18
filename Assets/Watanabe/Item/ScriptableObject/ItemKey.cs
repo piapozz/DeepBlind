@@ -29,7 +29,21 @@ public class ItemKey : ItemBase
 
         if (Physics.Raycast(ray, out hit, distance, doorLayer))
         {
-            if (hit.collider.CompareTag("Door"))
+            //if (hit.collider.CompareTag("Door"))
+            //{
+            //    EventDoor eventDoor = hit.collider.GetComponent<EventDoor>();
+            //    if (eventDoor.doorLock == true)
+            //    {
+            //        AudioManager.instance.PlaySE(SE.DOOR_UNLOCK);
+            //        eventDoor.UnlockDoor();
+            //        return true;
+            //    }
+            //}
+
+            var obj = hit.collider;
+            IEvent objEvent = obj as IEvent;
+            if (objEvent == null) return false;
+            if(objEvent is EventDoor)
             {
                 EventDoor eventDoor = hit.collider.GetComponent<EventDoor>();
                 if (eventDoor.doorLock == true)
