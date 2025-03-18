@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Compass : ItemBase
 {
     [SerializeField]
-    private Transform _player;
-    [SerializeField]
     private Transform _pin;
 
+    private Transform _player;
     private Vector3 _goalPos;
 
     public override bool Effect()
@@ -21,6 +21,7 @@ public class Compass : ItemBase
     {
         base.Initialize();
 
+        _player = Player.instance.transform;
         // ƒS[ƒ‹‚ÌÀ•W‚ğæ“¾
         _goalPos = StageManager.instance.GetKeyRoomPosition();
     }

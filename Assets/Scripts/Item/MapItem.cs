@@ -31,8 +31,9 @@ public class MapItem : ItemBase
     {
         base.Initialize();
         AjustMapSize();
-        _mapSectionObject = new List<GameObject>(StageManager.instance.stageSectionCount);
-        for (int i = 0, max = _mapSectionObject.Count; i < max; i++)
+        int sectionCount = StageManager.instance.stageSectionCount;
+        _mapSectionObject = new List<GameObject>(sectionCount);
+        for (int i = 0; i < sectionCount; i++)
         {
             _mapSectionObject.Add(null);
         }
