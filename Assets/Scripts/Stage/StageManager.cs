@@ -48,6 +48,8 @@ public class StageManager : SystemObject
     public const float SECTION_SIZE = 10.0f;
     /// <summary>区画の高さ</summary>
     public const float SECTION_HEIGHT = 3.0f;
+    /// <summary>区画の余白</summary>
+    private const float _SECTION_MARGIN = 0.12f;
 
     public override void Initialize()
     {
@@ -350,11 +352,11 @@ public class StageManager : SystemObject
                 break;
             case RoomType.StartRoom:
                 generateObject = sectionObjectAssign.startRoom;
-                rotateCount = (int)GetConnectSection(ID)[0].ReverseDir();
+                rotateCount = (int)GetConnectSection(ID)[0];
                 break;
             case RoomType.KeyRoom:
                 generateObject = sectionObjectAssign.keyRoom;
-                rotateCount = (int)GetConnectSection(ID)[0].ReverseDir();
+                rotateCount = (int)GetConnectSection(ID)[0];
                 break;
         }
         if (generateObject == null) return null;
@@ -410,8 +412,8 @@ public class StageManager : SystemObject
     /// <returns></returns>
     public Vector3 GetSectionWorldPosition(Vector2Int position)
     {
-        float x = position.x * SECTION_SIZE;
-        float z = position.y * SECTION_SIZE;
+        float x = position.x * SECTION_SIZE + position.x * _SECTION_MARGIN;
+        float z = position.y * SECTION_SIZE + position.y * _SECTION_MARGIN;
 
         return new Vector3(x, 0, z);
     }
@@ -642,5 +644,14 @@ public class StageManager : SystemObject
         Transform result = _lockerAnchorList[randomIndex];
         _lockerAnchorList.RemoveAt(randomIndex);
         return result;
+    }
+
+    /// <summary>
+    /// プレイヤーの初期位置を取得
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetPlayerStartPosition()
+    {
+        return _sectionObjectList[_startRoom.ID].GetPlayerAnchor()[0];
     }
 }
