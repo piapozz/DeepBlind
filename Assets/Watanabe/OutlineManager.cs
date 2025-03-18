@@ -16,6 +16,9 @@ public class OutlineManager : MonoBehaviour
 
     void Update()
     {
+        // Outline状況のリセット
+        ResetAllOutlines();
+
         // カメラの中央から Ray を飛ばす
         Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance))
@@ -25,11 +28,6 @@ public class OutlineManager : MonoBehaviour
             {
                 SetOutlineWidth(hit.collider.gameObject, 2f);
             }
-        }
-
-        else
-        {
-            ResetAllOutlines();
         }
     }
 

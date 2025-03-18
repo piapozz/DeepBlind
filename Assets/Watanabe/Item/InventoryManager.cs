@@ -19,6 +19,7 @@ public class InventoryManager : SystemObject
     [SerializeField] private Sprite iconBatsu = null;
     private readonly int SELECTEDSLOT_INITIAL = 0;
     private readonly int INVENTORYSLOT_INITIAL = 5;
+    private GameObject playerObject = null;
     private Image _mainSlotUI = null;
     private int _selectedSlot = -1;
 
@@ -30,6 +31,7 @@ public class InventoryManager : SystemObject
         _mainSlotUI = UIManager.instance.mainSlotUI;
         itemsList = new List<BaseInventorySlot>(INVENTORYSLOT_INITIAL);
         _selectedSlot = SELECTEDSLOT_INITIAL;
+        playerObject = Player.instance.gameObject;
     }
 
     // マウスホイールでアイテム変更の処理
@@ -60,18 +62,18 @@ public class InventoryManager : SystemObject
         // アイテムのスタック処理
         for (int i = 0, max = itemsList.Count; i < max; i++)
         {
-            if (itemsList[i].item == item)
+            ItemBase itemBase = item.GetComponent<ItemBase>();
+            if (itemsList[i].item.itemName == itemBase.itemName)
             {
                 if (itemsList[i].item.canStack == false) break;
                 itemsList[i].itemCount += 1;
                 return;
             }
         }
-
         // すでに所持していなかったらスロットを生成
         BaseInventorySlot inventorySlot = new BaseInventorySlot();
         // アイテムを生成
-        GameObject itemObject = Instantiate(item);
+        GameObject itemObject = Instantiate(item, playerObject.transform);
         // スロットの初期設定
         inventorySlot.Setup(itemObject);
         // スロット内のアイテムを初期化

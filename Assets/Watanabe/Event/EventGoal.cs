@@ -18,6 +18,7 @@ using static SceneChanger;
 public class EventGoal : MonoBehaviour, IEvent 
 {
     private UIManager uiManager;
+    public bool canGoal;
 
     void Start()
     {
@@ -29,7 +30,7 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void Event()
     {
-        _ = SceneChange();
+        if(canGoal) _ = SceneChange();
     }
 
     /// <summary>
@@ -37,7 +38,8 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void EnableInteractUI()
     {
-        uiManager.DisplayIntractUI("Finally:E");
+        if (canGoal) uiManager.DisplayIntractUI("Finally:E");
+        else uiManager.DisplayIntractUI("");
     }
 
     /// <summary>
