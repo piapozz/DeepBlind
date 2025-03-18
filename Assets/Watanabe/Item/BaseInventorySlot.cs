@@ -16,5 +16,12 @@ public class BaseInventorySlot
         itemCount = _ITEM_COUNT_INITIAL;
     }
 
+    public void Teardown()
+    {
+        ObjectActive(false);
+        item = null;
+        itemCount = -1;
+    }
+
     public void ObjectActive(bool active) { itemObject.SetActive(active); }
 }

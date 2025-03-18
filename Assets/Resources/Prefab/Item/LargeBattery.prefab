@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 514c61780f01c1941b9131f482dff7cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 7794919697345794140, guid: 4e4acd4ef06329547b6099b1a74a6c8b, type: 3}
+  item: {fileID: 4950374220006491021, guid: 24ba9ab788ccfda46a74ad9cab7f2f88, type: 3}
 --- !u!65 &7287915508189874107
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -114,7 +114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.162
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0cb84790aebc59f43a787ca8c17f6041, type: 3}
       propertyPath: m_LocalRotation.w

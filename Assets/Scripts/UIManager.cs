@@ -11,9 +11,11 @@ public class UIManager : SystemObject
     [SerializeField] private GameObject canvasPrefab;
     [SerializeField] private GameObject interactUIPrefab;
     [SerializeField] private GameObject mainSlotUIPrefab;
+    [SerializeField] public Sprite noneItemIcon;
     private GameObject interactUI = null;
     public GameObject canvas = null;
-    public Image mainSlotUI = null;
+    private Image mainSlotUI = null;
+    private TextMeshProUGUI mainTextUI = null;
 
     private TextMeshProUGUI textMesh;
 
@@ -24,8 +26,10 @@ public class UIManager : SystemObject
         canvas = Instantiate(canvasPrefab);
         interactUI = Instantiate(interactUIPrefab, canvas.transform);
         GameObject mainSlotBasePrefab = Instantiate(mainSlotUIPrefab, canvas.transform);
-        GameObject mainSlotChild = mainSlotBasePrefab.transform.GetChild(0).gameObject;
-        mainSlotUI = mainSlotChild.GetComponent<Image>();
+        GameObject mainSlotImage = mainSlotBasePrefab.transform.GetChild(0).gameObject;
+        GameObject mainSlotCount = mainSlotBasePrefab.transform.GetChild(1).gameObject;
+        mainSlotUI = mainSlotImage.GetComponent<Image>();
+        mainTextUI = mainSlotCount.GetComponent<TextMeshProUGUI>();
         textMesh = interactUI.GetComponentInChildren<TextMeshProUGUI>();
 
         DisableIntractUI();
@@ -41,5 +45,13 @@ public class UIManager : SystemObject
     {
         textMesh.SetText("");
         interactUI.SetActive(false);
+    }
+
+    public void ChangeSlotImage(Sprite sprite) { mainSlotUI.sprite = sprite; }
+    public void ViewItemSlot(Sprite sprite, int value)
+    {
+        mainSlotUI.sprite = sprite;
+        if (value > 0) mainTextUI.text = value.ToString();
+        else mainTextUI.text = ("").ToString();
     }
 }

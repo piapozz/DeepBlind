@@ -61,4 +61,9 @@ public class EventGoal : MonoBehaviour, IEvent
 
         FadeScreen.instance.FadeInRun();
     }
+
+    public void UnlockDoor()
+    {
+        canGoal = true;
+    }
 }

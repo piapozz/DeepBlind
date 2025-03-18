@@ -12,8 +12,9 @@ public abstract class ItemBase : MonoBehaviour
     public bool isConsume { get; private set; }
     public bool isPassive { get; private set; }
      
-    private readonly float _ITEM_DISTANCE = 0.5f;
+    private readonly float _ITEM_DISTANCE = 0.4f;
     private readonly float _ITEM_HEIGHT = 0.5f;
+    private readonly float _ITEM_WIDTH = 0.5f;
 
     private Transform _cameraTransform = null;
 
@@ -39,7 +40,7 @@ public abstract class ItemBase : MonoBehaviour
     /// <returns></returns>
     public abstract bool Effect();
 
-    protected void FollowCamera()
+    public void FollowCamera()
     {
         float angle = _cameraTransform.localEulerAngles.y;
         Vector3 offset = Vector3.zero;

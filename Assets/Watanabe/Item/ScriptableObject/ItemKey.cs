@@ -45,11 +45,21 @@ public class ItemKey : ItemBase
             if (objEvent == null) return false;
             if(objEvent is EventDoor)
             {
-                EventDoor eventDoor = hit.collider.GetComponent<EventDoor>();
+                EventDoor eventDoor = objEvent as EventDoor;
                 if (eventDoor.doorLock == true)
                 {
                     AudioManager.instance.PlaySE(SE.DOOR_UNLOCK);
                     eventDoor.UnlockDoor();
+                    return true;
+                }
+            }
+            else if (objEvent is EventGoal)
+            {
+                EventGoal eventGoal = objEvent as EventGoal;
+                if (eventGoal.canGoal != true)
+                {
+                    AudioManager.instance.PlaySE(SE.DOOR_UNLOCK);
+                    eventGoal.UnlockDoor();
                     return true;
                 }
             }
