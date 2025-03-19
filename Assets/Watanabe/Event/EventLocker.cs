@@ -7,6 +7,7 @@
 
 using Cinemachine;
 using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,10 @@ public class EventLocker : MonoBehaviour, IEvent
     [SerializeField] private GameObject lockerEnterAnker = null;
     [SerializeField] private GameObject lockerExitAnker = null;
     [SerializeField] private CinemachineVirtualCamera vcam = null;
+
+    private readonly float LOCKER_ACTION_SPEED = 1.0f;
+    private readonly float FADE_SPEED = 0.7f;
+    private readonly float FADE_DELAY = 0.5f;
 
     private UIManager uiManager = null;
     private Player player = null;
@@ -35,7 +40,7 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void Event()
     {
-        ActionLocker();
+        _ = ActionLocker();
     }
 
     /// <summary>
@@ -61,7 +66,7 @@ public class EventLocker : MonoBehaviour, IEvent
     /// <summary>
     /// ドアの開閉処理
     /// </summary>
-    public void ActionLocker()
+    public async UniTask ActionLocker()
     {
         Vector3 nextPos;
 
@@ -77,7 +82,9 @@ public class EventLocker : MonoBehaviour, IEvent
             inPlayer = false;
             player.isLocker = false;
 
-            UniTask task = WaitAction(2.0f, FadeInterval);
+            await FadeScreen.instance.FadeOut(FADE_SPEED);
+            await Task.Delay(TimeSpan.FromSeconds(FADE_DELAY));
+            await FadeScreen.instance.FadeIn(FADE_SPEED);
         }
         // ロッカーに入る
         else 
@@ -91,18 +98,15 @@ public class EventLocker : MonoBehaviour, IEvent
             inPlayer = true;
             player.isLocker = true;
 
-            UniTask task = WaitAction(2.0f, FadeInterval);
-            
+            await FadeScreen.instance.FadeOut(FADE_SPEED);
+            await Task.Delay(TimeSpan.FromSeconds(FADE_DELAY));
+            await FadeScreen.instance.FadeIn(FADE_SPEED);
+
         }
     }
 
     private void ChangeVirtualCameraPriority(int value)
     {
         vcam.Priority = value;
-    }
-
-    private void FadeInterval()
-    {
-        UniTask task = FadeScreen.instance.FadeInterval(0.3f);
     }
 }

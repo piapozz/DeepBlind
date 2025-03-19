@@ -1577,6 +1577,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoalDoor
       objectReference: {fileID: 0}
+    - target: {fileID: 1875786076311551548, guid: 2aa872209e2491a4d8dddf8456fda5f7, type: 3}
+      propertyPath: canGoal
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3876349082570383068, guid: 2aa872209e2491a4d8dddf8456fda5f7, type: 3}
       propertyPath: m_RootOrder
       value: 8

@@ -67,6 +67,7 @@ public class InventoryManager : SystemObject
         for (int i = 0, max = itemsList.Count; i < max; i++)
         {
             ItemBase itemBase = item.GetComponent<ItemBase>();
+
             if (itemsList[i].item.itemName == itemBase.itemName)
             {
                 if (itemsList[i].item.canStack == false) break;

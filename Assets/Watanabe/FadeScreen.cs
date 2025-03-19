@@ -16,29 +16,19 @@ public class FadeScreen : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image fade;            // 黒画面
 
-    [SerializeField] private float fadeInSpeed = 0.05f;       // フェードインしていくスピード       
-    [SerializeField] private float fadeOutSpeed = 0.05f;      // フェードアウトしていくスピード
-
     [SerializeField] public float alphaValue = 0.0f;               // Fadeイメージのアルファ値を管理
 
-    public bool fadeIn = false;             // 現在フェードインしているかを管理
-    public bool fadeOut = false;            // 現在フェードアウトしているかを管理
+    private readonly float ALPHA_VALUE_MAX = 1.0f;     // アルファ値の最大値
+    private readonly float ALPHA_VALUE_MIN = 0.0f;     // アルファ値の最小値
+    private readonly float DEFAULT_FADE_SPEED = 5.0f;
 
-    const float ALPHA_VALUE_MAX = 1.0f;     // アルファ値の最大値
-    const float ALPHA_VALUE_MIN = 0.0f;     // アルファ値の最小値
 
     public static FadeScreen instance { get; private set; } = null;
 
     private void Start()
     {
         instance = this;
-        canvas = UIManager.instance.canvas.GetComponent<Canvas>();
-    }
-
-    private void Update()
-    {
-        if (fadeOut) _ = FadeOut();
-        if (fadeIn) _ = FadeIn();
+        // canvas = UIManager.instance.canvas.GetComponent<Canvas>();
     }
 
     /// <summary>
@@ -53,46 +43,52 @@ public class FadeScreen : MonoBehaviour
     /// 黒画面を解除する処理
     /// </summary>
     /// <returns></returns>
-    private async UniTask FadeIn()
+    public async UniTask FadeIn(float fadeInSpeed = 5.0f)
     {
-        while (alphaValue >= ALPHA_VALUE_MIN)
+        float elapsedTime = 0f;
+        while (elapsedTime < fadeInSpeed)
         {
-            alphaValue -= fadeInSpeed * Time.deltaTime;
-
-            await UniTask.DelayFrame(1);
-
+            float delta = Time.deltaTime / fadeInSpeed;
+            alphaValue = Mathf.Clamp01(alphaValue - delta);
             fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
+
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
         }
-        canvas.sortingOrder = 0;
-        fadeIn = false;
+
+        // 最後にしっかり ALPHA_VALUE_MIN に設定
+        alphaValue = ALPHA_VALUE_MIN;
+        fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
+        canvas.sortingOrder = 3;
     }
 
     /// <summary>
     /// 黒画面にする処理
     /// </summary>
     /// <returns></returns>
-    private async UniTask FadeOut()
+    public async UniTask FadeOut(float fadeOutSpeed = 2.5f)
     {
-        canvas.sortingOrder = 5;
-        while (alphaValue <= ALPHA_VALUE_MAX)
+        float elapsedTime = 0f;
+        canvas.sortingOrder = -1;
+        while (elapsedTime < fadeOutSpeed)
         {
-            alphaValue += fadeOutSpeed * Time.deltaTime;
-
-            await UniTask.DelayFrame(1);
-
+            float delta = Time.deltaTime / fadeOutSpeed;
+            alphaValue = Mathf.Clamp01(alphaValue + delta);
             fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
+
+            elapsedTime += Time.deltaTime;
+            await UniTask.DelayFrame(1);
         }
 
-        fadeOut = false;
+        // 最後にしっかり ALPHA_VALUE_MAX に設定
+        alphaValue = ALPHA_VALUE_MAX;
+        fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
     }
-
-    public void FadeInRun() { fadeIn = true; }
-    public void FadeOutRun() { fadeOut = true; }
 
     public async UniTask FadeInterval(float sec)
     {
-        FadeScreen.instance.FadeOutRun();
+        await FadeScreen.instance.FadeOut(DEFAULT_FADE_SPEED);
         await Task.Delay(TimeSpan.FromSeconds(sec));
-        FadeScreen.instance.FadeInRun();
+        await FadeScreen.instance.FadeIn(DEFAULT_FADE_SPEED);
     }
 }
