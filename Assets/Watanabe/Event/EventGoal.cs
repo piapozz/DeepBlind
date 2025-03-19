@@ -7,18 +7,17 @@
 
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static SceneChanger;
 
 public class EventGoal : MonoBehaviour, IEvent 
 {
     private UIManager uiManager;
     public bool canGoal;
+
+    private readonly float FADE_SPEED = 0.35f;
+    private readonly float FADE_DELAY = 0.5f;
 
     void Start()
     {
@@ -52,14 +51,10 @@ public class EventGoal : MonoBehaviour, IEvent
 
     public async UniTask SceneChange()
     {
-        FadeScreen.instance.FadeOutRun();
-
-        // 3•bŠÔ‘Ò‚Â
-        await Task.Delay(TimeSpan.FromSeconds(2));
-
+        await FadeScreen.instance.FadeOut(FADE_SPEED);
+        await Task.Delay(TimeSpan.FromSeconds(FADE_DELAY));
         SceneManager.LoadScene("GameResult");
-
-        FadeScreen.instance.FadeInRun();
+        await FadeScreen.instance.FadeIn(FADE_SPEED);
     }
 
     public void UnlockDoor()

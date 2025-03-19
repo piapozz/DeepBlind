@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
@@ -9,12 +7,16 @@ using System.Threading.Tasks;
 public class FadeSceneChange : MonoBehaviour
 {
     public static FadeSceneChange instance = null;
-    public bool cursorLock = false;
 
+    private readonly float DEFAULT_DELAY_SECOND = 2.0f;
     private void Start()
     {
         instance = this;
-        if(cursorLock)
+    }
+
+    public void SetCursorLock(bool isLock)
+    {
+        if (isLock)
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -36,28 +38,23 @@ public class FadeSceneChange : MonoBehaviour
         _ = EndGame();
     }
 
-    public async UniTask EndGame()
+    private async UniTask ChangeScene(string sceneName, float sec = 2.0f)
     {
-        FadeScreen.instance.FadeOutRun();
+    
+        await FadeScreen.instance.FadeOut();
+        await Task.Delay(TimeSpan.FromSeconds(sec));
+        SceneManager.LoadScene(sceneName);
+        await FadeScreen.instance.FadeIn();
+    }
 
-        await Task.Delay(TimeSpan.FromSeconds(2));
-
+    private async UniTask EndGame(float sec = 2.0f)
+    {
+        await FadeScreen.instance.FadeOut();
+        await Task.Delay(TimeSpan.FromSeconds(sec));
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
 #else
     Application.Quit();//ゲームプレイ終了
 #endif
-    }
-
-    public async UniTask ChangeScene(string sceneName)
-    {
-        FadeScreen.instance.FadeOutRun();
-
-        // 3秒間待つ
-        await Task.Delay(TimeSpan.FromSeconds(2));
-
-        SceneManager.LoadScene(sceneName);
-
-        FadeScreen.instance.FadeInRun();
     }
 }

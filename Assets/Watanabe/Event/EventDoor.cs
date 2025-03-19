@@ -21,9 +21,6 @@ public class EventDoor : MonoBehaviour, IEvent
 
     void Start()
     {
-        // UIManager‚ğæ“¾
-        GameObject targetObject = GameObject.Find("UIManager");
-
         // •Ï”‚Ì‰Šú‰»
         uiManager = UIManager.instance;
         animator = GetComponent<Animator>();
