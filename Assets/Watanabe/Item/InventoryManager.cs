@@ -63,22 +63,26 @@ public class InventoryManager : SystemObject
 
     public void AddItem(GameObject item)
     {
+        // アイテムを生成
+        GameObject itemObject = Instantiate(item, itemAnkerTransform.position, itemAnkerTransform.rotation, _playerTransform);
+        ItemBase itemBase = itemObject.GetComponent<ItemBase>();
+        itemBase.Initialize();
+        // ItemBase itemBase = item.GetComponent<ItemBase>();
         // アイテムのスタック処理
         for (int i = 0, max = itemsList.Count; i < max; i++)
         {
-            ItemBase itemBase = item.GetComponent<ItemBase>();
-
             if (itemsList[i].item.itemName == itemBase.itemName)
             {
                 if (itemsList[i].item.canStack == false) break;
                 itemsList[i].itemCount += 1;
+                itemObject.SetActive(false);
                 return;
             }
         }
         // すでに所持していなかったらスロットを生成
         BaseInventorySlot inventorySlot = new BaseInventorySlot();
         // アイテムを生成
-        GameObject itemObject = Instantiate(item, itemAnkerTransform.position, itemAnkerTransform.rotation, _playerTransform);
+        // GameObject itemObject = Instantiate(item, itemAnkerTransform.position, itemAnkerTransform.rotation, _playerTransform);
         // スロットの初期設定
         inventorySlot.Setup(itemObject);
         // スロット内のアイテムを初期化
@@ -99,6 +103,7 @@ public class InventoryManager : SystemObject
         {
             Sprite itemSprite = itemsList[_selectedSlot].item.icon;
             int itemCount = itemsList[_selectedSlot].itemCount;
+            if (!itemsList[_selectedSlot].item.canStack) itemCount = -1;
             uiManager.ViewItemSlot(itemSprite, itemCount);
         }
 
