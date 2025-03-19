@@ -36,8 +36,6 @@ public class StageManager : SystemObject
     private SectionData _startRoom = null;
     /// <summary>鍵部屋</summary>
     private SectionData _keyRoom = null;
-    /// <summary>鍵部屋の接続方向</summary>
-    private Direction _keyRoomConnectDir = Direction.Invalid;
     private List<Transform> _enemyAnchorList = null;
     private List<Transform> _itemAnchorList = null;
     private List<Transform> _lockerAnchorList = null;
@@ -239,23 +237,19 @@ public class StageManager : SystemObject
     /// 部屋と部屋をつなぐ
     /// </summary>
     /// <param name="roomList"></param>
-    private void ConnectRoom(List<SectionData> roomList, Direction beforeConnectDir = Direction.Invalid)
+    private void ConnectRoom(List<SectionData> roomList)
     {
+        int procCount = roomList.Count - 1;
         // 部屋が隣接しているならつなぐ
-        for (int i = 0, max = roomList.Count - 1; i < max; i++)
+        for (int i = 0; i < procCount; i++)
         {
-            ConnectNextRoom(roomList[i]);
+            ConnectAroundRoom(roomList[i]);
         }
 
         // 部屋を順番につないでいく
-        for (int i = 0, max = roomList.Count - 1; i < max; i++)
+        for (int i = 0; i < procCount; i++)
         {
-            // A*で部屋1から部屋2をつなぐ
-            List<MoveData> route = RouteSearcher.RouteSearch(roomList[i].ID, roomList[i + 1].ID, beforeConnectDir);
-            if (route == null) continue;
-
-            // ルートから区画をつなげる
-            beforeConnectDir = ConnectRouteSection(route);
+            ConnectNextRoom(roomList, i);
         }
     }
 
@@ -263,7 +257,7 @@ public class StageManager : SystemObject
     /// 部屋を周囲の部屋とつなげる
     /// </summary>
     /// <param name="sourceSection"></param>
-    private void ConnectNextRoom(SectionData sourceSection)
+    private void ConnectAroundRoom(SectionData sourceSection)
     {
         if (!sourceSection.IsRoom()) return;
 
@@ -282,11 +276,32 @@ public class StageManager : SystemObject
     }
 
     /// <summary>
+    /// 次の部屋とつなげる
+    /// </summary>
+    /// <param name="roomList"></param>
+    /// <param name="roomCount"></param>
+    private void ConnectNextRoom(List<SectionData> roomList, int roomCount)
+    {
+        // 最後の部屋なら最初とつなげる
+        int nextRoomCount = roomCount + 1;
+        if (nextRoomCount >= roomList.Count)
+            nextRoomCount = 0;
+
+        List<MoveData> route;
+        // A*で部屋1から部屋2をつなぐ
+        route = RouteSearcher.RouteSearch(roomList[roomCount].ID, roomList[nextRoomCount].ID, roomList[roomCount].preConnect);
+        if (route == null) return;
+
+        // ルートから区画をつなげる
+        ConnectRouteSection(route);
+    }
+
+    /// <summary>
     /// 指定のルート内の区画同士をつなげ、最後の方向を返す
     /// </summary>
     /// <param name="route"></param>
     /// <returns></returns>
-    private Direction ConnectRouteSection(List<MoveData> route)
+    private void ConnectRouteSection(List<MoveData> route)
     {
         Direction lastDirection = Direction.Invalid;
         for (int i = 0, max = route.Count; i < max; i++)
@@ -299,11 +314,8 @@ public class StageManager : SystemObject
             // 接続先をつなげる
             SectionData targetSection = GetSection(route[i].targetSectionID);
             targetSection.SetIsConnect(lastDirection, true);
-            if (targetSection.roomType == RoomType.KeyRoom)
-                _keyRoomConnectDir = lastDirection;
             targetSection.SetPreConnect(lastDirection);
         }
-        return lastDirection;
     }
 
     /// <summary>
@@ -314,13 +326,17 @@ public class StageManager : SystemObject
         for (int i = 0, max = _sectionDataList.Count; i < max; i++)
         {
             SectionData section = GetSection(i);
+            if (section == null) continue;
+
+            Transform generateRoot;
             if (section.IsRoom())
-            {
-                Transform generateRoot = GenerateRoom(i);
-                if (generateRoot == null) continue;
-                section.GenerateSeparate(generateRoot);
-            }
-            else GenerateCorridor(i);
+                generateRoot = GenerateRoom(i);
+            else
+                generateRoot = GenerateCorridor(i);
+
+            if (generateRoot == null) continue;
+
+            section.GenerateSeparate(generateRoot);
         }
 
         // 各種アンカーの取得
@@ -369,21 +385,22 @@ public class StageManager : SystemObject
     /// 廊下の生成
     /// </summary>
     /// <param name="ID"></param>
-    private void GenerateCorridor(int ID)
+    private Transform GenerateCorridor(int ID)
     {
         // 廊下の種類決定
         SectionData corridor = GetSection(ID);
         _sectionDataList[ID].SetCorridorType();
         CorridorType corridorType = _sectionDataList[ID].corridorType;
-        if (corridorType == CorridorType.Invalid) return;
+        if (corridorType == CorridorType.Invalid) return null;
+        corridor.SetCorridorType(corridorType);
         GameObject generateObject = sectionObjectAssign.corridorObjectList[(int)corridorType];
-        if (generateObject == null) return;
+        if (generateObject == null) return null;
 
         _corridorList.Add(corridor);
         // 回転決定
         int rotateCount = (int)corridor.GetRotate();
         // 座標、回転を設定して生成
-        GenerateObject(generateObject, corridor, rotateCount);
+        return GenerateObject(generateObject, corridor, rotateCount);
     }
 
     /// <summary>
@@ -479,7 +496,7 @@ public class StageManager : SystemObject
         roomList[0] = _keyRoom;
         roomList[roomList.Count - 1] = _startRoom;
         DecideNormalRoom(addRoomCount, roomList);
-        ConnectRoom(roomList, _keyRoomConnectDir);
+        ConnectRoom(roomList);
         // オブジェクトの生成し直し
         GenerateStage();
     }

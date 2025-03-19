@@ -22,6 +22,8 @@ public class BasicVigilance : IVigilance
         CheckLookAround();
         // ターゲット取得
         GetTarget();
+
+        Debug.DrawLine(_enemy.transform.position, _enemy.target, Color.yellow);
     }
 
     /// <summary>
@@ -41,7 +43,7 @@ public class BasicVigilance : IVigilance
         Vector3 playerPos = _player.transform.position;
         Vector3 enemyPos = _enemy.transform.position;
         // プレイヤーが知覚範囲に入っているか
-        if (EnemyUtility.CheckViewPlayer(_ID))
+        if (EnemyUtility.CheckViewPlayer(_ID, false))
         {
             // 視野角判定
             float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,
