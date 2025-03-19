@@ -25,6 +25,8 @@ public class BasicTracking : ITracking
         GetTarget();
         // Œ©Ž¸‚Á‚½‚©‚Ç‚¤‚©
         CheckTargetLost();
+
+        Debug.DrawLine(_enemy.transform.position, _enemy.target, Color.red);
     }
 
     /// <summary>
@@ -61,7 +63,7 @@ public class BasicTracking : ITracking
         // ‹——£‚ªˆê’èˆÈ‰º‚È‚çŒx‰ú
         // •b”‚ªˆê’èˆÈã‚É‚È‚Á‚½‚çŒx‰ú
         if(!_enemy.isAbility) _lostTime += Time.deltaTime;
-        if(_lostTime > 10.0f)
+        if(_lostTime > 3.0f)
         {
             _enemy.StateChange(State.VIGILANCE);
             return;

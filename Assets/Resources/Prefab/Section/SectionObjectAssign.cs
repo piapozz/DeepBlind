@@ -16,4 +16,6 @@ public class SectionObjectAssign : ScriptableObject
     public GameObject wallObject = null;
 
     public GameObject doorObject = null;
+
+    public GameObject frameObject = null;
 }

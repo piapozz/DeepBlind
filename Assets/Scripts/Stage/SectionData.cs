@@ -86,9 +86,6 @@ public class SectionData
     /// </summary>
     public void GenerateSeparate(Transform generateRoot)
     {
-        // 部屋以外は処理しない
-        if (!IsRoom()) return;
-
         var sectionObjectAssign = StageManager.instance.sectionObjectAssign;
         for (int i = 0, max = isConnect.Length; i < max; i++)
         {
@@ -98,13 +95,30 @@ public class SectionData
             SectionData nextRoom = StageManager.instance.GetSectionDir(this, direction);
             // エリア外なら壁
             if (nextRoom == null)
+            {
+                // つながっていなくて廊下ならスキップ
+                if (!isConnect[i] && IsCorridor()) continue;
+
                 separateObject = sectionObjectAssign.wallObject;
+            }
             else
             {
-                // 隣が部屋なら優先順位に応じてスキップ
+                // 優先順位に応じてスキップ
                 if (nextRoom.IsRoom() &&
                     (direction == Direction.Down || direction == Direction.Left))
                     continue;
+
+                // つながっていなくて廊下ならスキップ
+                if (!isConnect[i] && IsCorridor()) continue;
+
+                if (!IsCorridor() || (direction == Direction.Down || direction == Direction.Left))
+                {
+                    // フレームを生成
+                    separateObject = sectionObjectAssign.frameObject;
+                    GenerateSeparateObject(separateObject, (Direction)i, generateRoot);
+                }
+
+                if (IsCorridor()) continue;
 
                 // つながっているかでドアか壁
                 if (isConnect[i]) separateObject = sectionObjectAssign.doorObject;

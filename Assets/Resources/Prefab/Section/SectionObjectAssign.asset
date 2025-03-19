@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: SectionObjectAssign
   m_EditorClassIdentifier: 
   roomObjectList:
+  - {fileID: 5258148220410605350, guid: 29f3e10e883b6ae4b8d3068f412f6c64, type: 3}
+  - {fileID: 3275000728696388139, guid: edb926f34304ec346a5c960c33ee0250, type: 3}
+  - {fileID: 6990899887506411831, guid: b88fd0b2de2cf6c40815bcaeb126ee50, type: 3}
+  - {fileID: 7997936466766637969, guid: caf41752222ca2340976afc1308e4f10, type: 3}
   - {fileID: 1589342586715616632, guid: b21a5d40b7c6be1448de26986c7976af, type: 3}
+  - {fileID: 560881872016823741, guid: d5017d0a451e33349b53e37ca1362e55, type: 3}
   startRoom: {fileID: 3230757647874220705, guid: dd587d2cfe63e6b439360c64d5d11b43, type: 3}
   keyRoom: {fileID: 5712717929810291837, guid: 0563a44832b46bd4b839e32fb787cf47, type: 3}
   corridorObjectList:
@@ -23,3 +28,4 @@ MonoBehaviour:
   - {fileID: 398994191585729828, guid: d6d63a37bb0119c4cb7e5daf2004e7c2, type: 3}
   wallObject: {fileID: 7066392458623672592, guid: d2cb35151fbb6714098c058752ea7a93, type: 3}
   doorObject: {fileID: 1617343635293591955, guid: f57cc6e2d44a14244aa7d5e8dd4d00d7, type: 3}
+  frameObject: {fileID: 9113082229070823601, guid: e8f08b9c2ad92784bb76244708fc45d4, type: 3}

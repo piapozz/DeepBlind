@@ -27,7 +27,7 @@ public class BasicSearch : ISearch
         // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
         CheckVigilance();
 
-        Debug.DrawLine(_enemy.transform.position, _enemy.target, Color.red);
+        Debug.DrawLine(_enemy.transform.position, _enemy.target, Color.green);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ public class BasicSearch : ISearch
         Vector3 enemyPos = _enemy.transform.position;
 
         // ƒvƒŒƒCƒ„[‚ª’mŠo”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚é‚©
-        if (EnemyUtility.CheckViewPlayer(_ID))
+        if (EnemyUtility.CheckViewPlayer(_ID, false))
         {
             // ‹–ìŠp”»’è
             float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,
@@ -73,7 +73,7 @@ public class BasicSearch : ISearch
     // Œx‰úğŒ‚ğ–‚½‚µ‚½‚©‚Ç‚¤‚©
     public void CheckVigilance()
     {
-        Vector3 position = SoundObjectManager.GetBigSoundPosition(_enemy.transform.position, 1);
+        Vector3 position = SoundObjectManager.GetBigSoundPosition(_enemy.transform.position, 0.1f);
         if (position == Vector3.zero) return;
 
         // Œx‰úó‘Ô

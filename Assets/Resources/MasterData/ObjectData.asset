@@ -16,9 +16,9 @@ MonoBehaviour:
   - name: ObjectData
     list:
     - ID: 0
-      generateCount: 10
+      generateCount: 8
     - ID: 1
-      generateCount: 10
+      generateCount: 4
     - ID: 2
       generateCount: 0
     - ID: 3
@@ -26,4 +26,4 @@ MonoBehaviour:
     - ID: 4
       generateCount: 0
     - ID: 5
-      generateCount: 10
+      generateCount: 5

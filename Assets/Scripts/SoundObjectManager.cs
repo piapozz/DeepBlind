@@ -10,14 +10,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 音を鳴らすと音量を減らしながら消えていく
-public class SoundObjectManager
+public class SoundObjectManager : MonoBehaviour
 {
     private static List<SoundObject> _soundList = null;
 
     /// <summary>音の届く標準距離</summary>
     private const float _DEFAULT_ECHO_RADIUS = 100.0f;
     /// <summary>音源の最大数</summary>
-    private const int _SOUND_MAX = 100;
+    private const int _SOUND_MAX = 1000;
 
     public static void Initialize()
     {
@@ -28,23 +28,31 @@ public class SoundObjectManager
         }
     }
 
+    // デバッグ用
+    private void Update()
+    {
+        for (int i = 0, max = _soundList.Count; i < max; i++)
+        {
+            DebugCircle.AddCircle(_soundList[i].position, _soundList[i].volume * _DEFAULT_ECHO_RADIUS);
+        }
+    }
+
     /// <summary>
     /// パラメーターを指定して音源リストに加える
     /// </summary>
     /// <param name="setPosition"></param>
     /// <param name="volume"></param>
     /// <returns></returns>
-    public int SetSound(Vector3 setPosition, float volume)
+    public static int SetSound(Vector3 setPosition, float volume)
     {
-        SoundObject setSound = new SoundObject();
         int setID = SearchSoundID();
         if (setID >= 0)
         {
-            setSound.SetParam(setID, setPosition, volume);
-            _soundList[setID] = setSound;
+            _soundList[setID].SetParam(setID, setPosition, volume);
         }
         else
         {
+            SoundObject setSound = new SoundObject();
             setID = _soundList.Count;
             setSound.SetParam(setID, setPosition, volume);
             _soundList.Add(setSound);
@@ -56,11 +64,11 @@ public class SoundObjectManager
     /// 使用可能なIDを探す
     /// </summary>
     /// <returns></returns>
-    private int SearchSoundID()
+    private static int SearchSoundID()
     {
         for (int i = 0; i < _soundList.Count; i++)
         {
-            if (_soundList[i] == null)
+            if (_soundList[i].ID < 0)
             {
                 return i;
             }
@@ -80,24 +88,17 @@ public class SoundObjectManager
         Vector3 resultPos = Vector3.zero;
         for (int i = 0, max = _soundList.Count; i < max; i++)
         {
+            if (_soundList[i].ID < 0) continue;
+
             // オブジェクトの距離
             float objectDistance = Vector3.Distance(position, _soundList[i].position);
             // 指定の座標での音量
-            float listenVolume = _soundList[i].volume * (1 - objectDistance / _DEFAULT_ECHO_RADIUS);
-            // 大きい音かつ感知音量なら
-            if (listenVolume <= maxVolume || listenVolume < sensMinVolume) continue;
-            maxVolume = listenVolume;
+            float listenVolume = _soundList[i].volume - (objectDistance / _DEFAULT_ECHO_RADIUS);
+            // 聞こえない音量ならスキップ
+            if (listenVolume < sensMinVolume || listenVolume <= maxVolume) continue;
             resultPos = _soundList[i].position;
+            maxVolume = listenVolume;
         }
         return resultPos;
-    }
-
-    /// <summary>
-    /// 指定したIDの音源を消す
-    /// </summary>
-    /// <param name="ID"></param>
-    public static void RemoveSound(int ID)
-    {
-        _soundList[ID] = null;
     }
 }

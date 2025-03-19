@@ -72,7 +72,7 @@ public class RouteSearcher
     private static NodeTable _nodeTable = null;
 
     /// <summary>基準の実スコア</summary>
-    private const int _DEFAULT_ACTUAL_SCORE = 2;
+    private const int _DEFAULT_ACTUAL_SCORE = 10;
     /// <summary>接続の実スコア</summary>
     private const int _CONNECT_ACTUAL_SCORE = 1;
 

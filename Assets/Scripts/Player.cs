@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.PostProcessing;
 using static CommonModule;
-using static UnityEditor.Rendering.CameraUI;
 
 public class Player : MonoBehaviour
 {
@@ -23,11 +22,16 @@ public class Player : MonoBehaviour
     [SerializeField] bool isDebug = false;                          // 疲れないようにする
     [SerializeField] float rotationSpeed = 1.0f;
 
+    private float _stepInterval = 0.0f;
+
     const float STAMINA_MAX = 10.0f;               // スタミナの最大値
     const float WALK_SPEED = 2.5f;                                  // 歩く速度
     const float DASH_SPEED = 5.0f;                                  // 走る速度
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
-    private readonly float FOOTSTEP_INTERVAL;
+
+    private readonly float _STEP_INTERVAL_SEC = 0.5f;
+    private readonly float _WALK_SOUND_VOLUME = 0.1f;
+    private readonly float _DASH_SOUND_VOLUME = 0.2f;
 
     // プレイヤーのステータス値
     public struct PlayerStatus
@@ -133,10 +137,11 @@ public class Player : MonoBehaviour
                 if (status.stamina >= STAMINA_MAX) isTired = false;
                 return;
             }
-
             // スタミナが足りていたらただの歩き
             else
             {
+                OccurrenceSound(_WALK_SOUND_VOLUME);
+
                 // 歩く速さを変更
                 status.speed = WALK_SPEED;
 
@@ -147,6 +152,8 @@ public class Player : MonoBehaviour
             // ダッシュのキーが押されたとき移動する速さを変更する
             if (inputDash != 0 && isTired == false)
             {
+                OccurrenceSound(_DASH_SOUND_VOLUME);
+
                 // 走っていたら速度変更
                 status.speed = DASH_SPEED;
 
@@ -157,12 +164,27 @@ public class Player : MonoBehaviour
                 NoiseValue(1.5f, 1.5f);
             }
         }
-
         // 止まっていたらノイズの変更なし
         else
         {
             NoiseValue(0.5f, 1.0f);
             if (status.stamina <= STAMINA_MAX) status.stamina += Time.deltaTime * 1.0f;
+        }
+    }
+
+    /// <summary>
+    /// 音を出す
+    /// </summary>
+    /// <param name="volume"></param>
+    /// <returns></returns>
+    private void OccurrenceSound(float volume)
+    {
+        if (_stepInterval < _STEP_INTERVAL_SEC)
+            _stepInterval += Time.deltaTime;
+        else
+        {
+            _stepInterval = 0;
+            SoundObjectManager.SetSound(transform.position, volume);
         }
     }
 

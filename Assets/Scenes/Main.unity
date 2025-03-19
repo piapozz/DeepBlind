@@ -14,13 +14,13 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0, g: 0, b: 0, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.1
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 0
@@ -1328,6 +1328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1735833091}
   - component: {fileID: 1735833090}
+  - component: {fileID: 1735833092}
   m_Layer: 0
   m_Name: SystemObject
   m_TagString: Untagged
@@ -1351,7 +1352,6 @@ MonoBehaviour:
   - {fileID: 7444886754234939135, guid: 2ae1eff5b3705a24ca832d2910f7186b, type: 3}
   - {fileID: -8306265954106227757, guid: a80482b9d27bead4ea98bf51a91a2618, type: 3}
   - {fileID: -8293484843707741882, guid: c30ba3e6d7f99f94598e09f3e72e5f77, type: 3}
-  - {fileID: 3668009338227965922, guid: 71c3781517fd71143beb714ea4322bbe, type: 3}
   - {fileID: 4875356472242084498, guid: c95b7d4818e340c4f9aad2992a08b581, type: 3}
   - {fileID: 335813479528004642, guid: c102d60262b1f9d4c963ca1d6f0eb4f1, type: 3}
 --- !u!4 &1735833091
@@ -1369,6 +1369,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1735833092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735833089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a5decd31cf104f4aabaad393ead358a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1942836984
 GameObject:
   m_ObjectHideFlags: 0
