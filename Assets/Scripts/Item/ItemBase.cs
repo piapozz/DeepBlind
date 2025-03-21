@@ -6,8 +6,9 @@ public abstract class ItemBase : MonoBehaviour
 {
     [SerializeField] private ItemData itemData;
 
+    public GameObject itemModel {  get; private set; } = null;
+    public Sprite itemIcon { get; private set; } = null;
     public string itemName { get; private set; }
-    public Sprite icon { get; private set; }
     public bool canStack { get; private set; }
     public bool isConsume { get; private set; }
     public bool isPassive { get; private set; }
@@ -21,7 +22,7 @@ public abstract class ItemBase : MonoBehaviour
     public virtual void Initialize()
     {
         itemName = itemData.itemName;
-        icon = itemData.icon;
+        itemIcon = itemData.itemIcon;
         canStack = itemData.canStack;
         isConsume = itemData.isConsume;
 

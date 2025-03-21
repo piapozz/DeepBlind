@@ -56,7 +56,7 @@ public class InventoryManager : SystemObject
         }
 
         // アイテムのパッシブ効果
-        ItemBase item = itemsList[_selectedSlot].item;
+        ItemBase item = itemsList[_selectedSlot].GetItem();
         item.Proc();
         item.FollowCamera();
     }
@@ -71,10 +71,10 @@ public class InventoryManager : SystemObject
         // アイテムのスタック処理
         for (int i = 0, max = itemsList.Count; i < max; i++)
         {
-            if (itemsList[i].item.itemName == itemBase.itemName)
+            if (itemsList[i].GetItem().itemName == itemBase.itemName)
             {
-                if (itemsList[i].item.canStack == false) break;
-                itemsList[i].itemCount += 1;
+                if (itemsList[i].GetItem().canStack == false) break;
+                itemsList[i].AddCount(1);
                 itemObject.SetActive(false);
                 return;
             }
@@ -86,7 +86,7 @@ public class InventoryManager : SystemObject
         // スロットの初期設定
         inventorySlot.Setup(itemObject);
         // スロット内のアイテムを初期化
-        inventorySlot.item.Initialize();
+        inventorySlot.GetItem().Initialize();
         // スロットをリストに追加
         itemsList.Add(inventorySlot);
     }
@@ -101,9 +101,9 @@ public class InventoryManager : SystemObject
         int inventoryCount = itemsList.Count;
         if (_selectedSlot < inventoryCount)
         {
-            Sprite itemSprite = itemsList[_selectedSlot].item.icon;
-            int itemCount = itemsList[_selectedSlot].itemCount;
-            if (!itemsList[_selectedSlot].item.canStack) itemCount = -1;
+            Sprite itemSprite = itemsList[_selectedSlot].GetItemIcon();
+            int itemCount = itemsList[_selectedSlot].GetItemCount();
+            if (!itemsList[_selectedSlot].GetItem().canStack) itemCount = -1;
             uiManager.ViewItemSlot(itemSprite, itemCount);
         }
 
@@ -123,21 +123,15 @@ public class InventoryManager : SystemObject
         if (IsEmpty(itemsList)) return;
 
         // 使用予定のアイテムを取得
-        ItemBase useItem = itemsList[_selectedSlot].item;
+        ItemBase useItem = itemsList[_selectedSlot].GetItem();
         // 持つだけのアイテムだったら除外
         if (useItem.isPassive) return;
-
         // アイテムの効果を実行 ※trueがアイテムを消費 falseがアイテム消費なし
         bool result = useItem.Effect();
-
-        // アイテムの効果が失敗したら除外
         if (!result) return;
-        // 消費アイテムだったら実行
         if (!useItem.isConsume) return;
-
-        if (itemsList[_selectedSlot].itemCount >= 1) itemsList[_selectedSlot].itemCount -= 1;
-        // アイテムがなくなったらリストから削除
-        if (itemsList[_selectedSlot].itemCount <= 0)
+        if (itemsList[_selectedSlot].GetItemCount() >= 1) itemsList[_selectedSlot].RemoveCount(1);
+        if (itemsList[_selectedSlot].GetItemCount() <= 0)
         {
             itemsList[_selectedSlot].Teardown();
             itemsList.RemoveAt(_selectedSlot);
