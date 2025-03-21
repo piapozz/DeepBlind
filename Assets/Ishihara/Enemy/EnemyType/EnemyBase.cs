@@ -2,6 +2,7 @@ using Cinemachine;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -19,7 +20,7 @@ public class EnemyBase : MonoBehaviour
         MAX
     }
 
-    private static System.Func<int, GameObject> _GetObject = null;
+    private static Func<int, GameObject> _GetObject = null;
 
     public static void SetGetObjectCallback(Func<int, GameObject> setCallback)
     {
@@ -66,9 +67,15 @@ public class EnemyBase : MonoBehaviour
         GameObject obj = _GetObject(ID);
         if (obj == null) return;
         // 位置設定
-        obj.transform.position = position;
+        // 取得
+        _agent = obj.GetComponent<NavMeshAgent>();
+        _animator = obj.GetComponent<Animator>();
+        _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
+        _agent.enabled = false;
         obj.SetActive(true);
+        obj.transform.position = position;
         ResetStatus();
+        _agent.enabled = true;
 
         // ステート設定
         int stateMax = (int)State.MAX;
@@ -80,10 +87,6 @@ public class EnemyBase : MonoBehaviour
         StateChange(State.SEARCH);
         _skill?.Init(ID);
 
-        // 取得
-        _agent = obj.GetComponent<NavMeshAgent>();
-        _animator = obj.GetComponent<Animator>();
-        _camera = obj.GetComponentInChildren<CinemachineVirtualCamera>();
         if (_agent != null) _agent.speed = speed;
         // ターゲット設定
         searchAnchorList = new List<Transform>();
@@ -175,18 +178,6 @@ public class EnemyBase : MonoBehaviour
     {
         if (_agent != null)
         {
-            if (!_agent.isOnNavMesh)
-            {
-                NavMeshHit hit;
-                if (NavMesh.SamplePosition(_agent.transform.position, out hit, 5.0f, NavMesh.AllAreas))
-                {
-                    _agent.Warp(hit.position);  // NavMesh の有効な位置にワープ
-                }
-                else
-                {
-                    Debug.LogError("NavMesh 上の適切な位置が見つかりませんでした");
-                }
-            }
             target = targetPosition;
             _agent.SetDestination(target);
         }
@@ -282,5 +273,15 @@ public class EnemyBase : MonoBehaviour
     public void SetSearchAnchor(List<Transform> setAnchor)
     {
         searchAnchorList = setAnchor;
+    }
+
+    public void ShowSelfData()
+    {
+        GameObject obj = _GetObject(ID);
+        GUILayout.Label("ID: " + ID);
+        GUILayout.Label("Name: " + obj.name);
+        GUILayout.Label("SelfPosition: " + obj.transform.position);
+        GUILayout.Label("State: " + _nowState.ToStateName());
+        GUILayout.Label("IsAbilityt: " + isAbility);
     }
 }

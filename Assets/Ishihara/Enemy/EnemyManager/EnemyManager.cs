@@ -158,6 +158,7 @@ public class EnemyManager : SystemObject
         Entity_EnemyData.Param param = CharacterMasterUtility.GetCharacterMaster(masterID);
         GameObject useObject = Instantiate(enemyOrigin.enemies[masterID]);
         useObject.transform.SetParent(_useObjectRoot);
+        useObject.transform.position = Vector3.zero;
         // キャラクターの初期化
         _useList[useID] = useObject.AddComponent<EnemyBase>();
         _useObjectList.Insert(useID, useObject);
@@ -259,5 +260,32 @@ public class EnemyManager : SystemObject
         {
             if (enemy != null) await task(enemy);
         }
+    }
+
+
+    private void OnGUI()
+    {
+        Color oldColor = GUI.color;
+        GUI.color = Color.yellow;
+        using (new GUILayout.AreaScope(new Rect(0, 0, Screen.width, Screen.height)))
+        {
+            using (new GUILayout.VerticalScope())
+            {
+                using (new GUILayout.HorizontalScope())
+                {
+                    for(int i = 0; i < _useList.Count; i++)
+                    {
+                        using (new GUILayout.VerticalScope("box"))
+                        {
+                            _useList[i].ShowSelfData();
+                        }
+
+                        GUILayout.FlexibleSpace();
+                    }
+                }
+                GUILayout.FlexibleSpace();
+            }
+        }
+        GUI.color = oldColor;
     }
 }

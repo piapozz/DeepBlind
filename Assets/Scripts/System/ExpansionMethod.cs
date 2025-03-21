@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static EnemyBase;
 
 public static class ExpansionMethod
 {
@@ -33,5 +34,19 @@ public static class ExpansionMethod
         if (result >= (int)Direction.Max) result -= (int)Direction.Max;
 
         return (Direction)result;
+    }
+    public static string ToStateName(this State state)
+    {
+        switch (state)
+        {
+            case State.SEARCH:
+                return "SEARCH";
+            case State.VIGILANCE:
+                return "VOGILANCE";
+            case State.TRACKING:
+                return "TRACKING";
+        }
+
+        return string.Empty;
     }
 }
