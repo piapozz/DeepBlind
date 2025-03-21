@@ -4,24 +4,31 @@ using UnityEngine;
 
 public class BaseInventorySlot
 {
-    public GameObject itemObject;
-    public ItemBase item;
-    public int itemCount;
+    private GameObject _itemObject;
+    private ItemBase _item;
+    private int _itemCount;
     private readonly int _ITEM_COUNT_INITIAL = 1;
 
     public void Setup(GameObject itemPrefab)
     {
-        itemObject = itemPrefab;
-        item = itemObject.GetComponent<ItemBase>();
-        itemCount = _ITEM_COUNT_INITIAL;
+        _itemObject = itemPrefab;
+        _item = _itemObject.GetComponent<ItemBase>();
+        _itemCount = _ITEM_COUNT_INITIAL;
     }
 
     public void Teardown()
     {
         ObjectActive(false);
-        item = null;
-        itemCount = -1;
+        _item = null;
+        _itemCount = -1;
     }
 
-    public void ObjectActive(bool active) { itemObject.SetActive(active); }
+    public ItemBase GetItem() {  return _item; }
+    public Sprite GetItemIcon() { return _item.itemIcon; }
+    public int GetItemCount() { return _itemCount; }
+
+    public void AddCount(int value) { _itemCount += value; }
+    public void RemoveCount(int value) { _itemCount -= value; }
+    public void SetCount(int value) { _itemCount = value; }
+    public void ObjectActive(bool active) { _itemObject.SetActive(active); }
 }
