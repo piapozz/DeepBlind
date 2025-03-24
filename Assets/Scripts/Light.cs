@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,10 +29,10 @@ public class Light
         if (!_nowSwitch || _batteryPower <= 0) return;
 
         _batteryPower -= _BATTERY_CONSUME;
-        if (_batteryPower < 0)
+        if (_batteryPower <= 0)
         {
             _batteryPower = 0;
-            SwitchLight();
+            LightOff();
         }
     }
 
@@ -46,28 +47,40 @@ public class Light
             _batteryPower = _BATTERY_MAX;
     }
 
-    public void OnSwitchLight(InputAction.CallbackContext context)
-    {
-        if (!context.performed) return;
-
-        if (_batteryPower < 0) SwitchLight();
-    }
-
     /// <summary>
     /// ライトのオンオフを切り替える
     /// </summary>
     public void SwitchLight()
     {
-        if (_nowSwitch)
+        if (_batteryPower <= 0)
         {
-            SetLightParam(5.0f, 0.5f);
-            _nowSwitch = false;
+            LightOff();
         }
         else
         {
-            SetLightParam(10.0f, 1.0f);
-            _nowSwitch = true;
+            if (_nowSwitch)
+            {
+                LightOff();
+                _nowSwitch = false;
+            }
+            else
+            {
+                LightOn();
+                _nowSwitch = true;
+            }
         }
+    }
+
+    public void LightOn()
+    {
+        SetLightParam(10.0f, 1.0f);
+        _nowSwitch = true;
+    }
+
+    public void LightOff()
+    {
+        SetLightParam(5.0f, 0.5f);
+        _nowSwitch = false;
     }
 
     /// <summary>
