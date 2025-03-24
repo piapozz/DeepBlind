@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfcb961c949536b4bb9ebe3bc31700e8, type: 3}
   m_Name: ItemKey
   m_EditorClassIdentifier: 
+  itemModel: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 3eb4a311fd91ef94984192335d858aaa, type: 3}
   itemName: Key
-  icon: {fileID: 21300000, guid: 3eb4a311fd91ef94984192335d858aaa, type: 3}
   canStack: 1
   isConsume: 1
   isPassive: 0

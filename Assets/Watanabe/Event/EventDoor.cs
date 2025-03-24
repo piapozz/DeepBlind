@@ -11,8 +11,6 @@ using UnityEngine;
 
 public class EventDoor : MonoBehaviour, IEvent
 {
-    private UIManager uiManager;
-
     [SerializeField] private BoxCollider[] _doorCollision = null;
 
     [SerializeField] public bool doorLock = false;
@@ -21,8 +19,6 @@ public class EventDoor : MonoBehaviour, IEvent
 
     void Start()
     {
-        // 変数の初期化
-        uiManager = UIManager.instance;
         animator = GetComponent<Animator>();
     }
 
@@ -46,12 +42,12 @@ public class EventDoor : MonoBehaviour, IEvent
         {
             if (GetOpen() == true)
             {
-                uiManager.DisplayIntractUI("Close:E");
+                UIManager.instance.DisplayIntractUI("Close:E");
             }
 
             else
             {
-                uiManager.DisplayIntractUI("Open:E");
+                UIManager.instance.DisplayIntractUI("Open:E");
             }
         }
 
@@ -59,9 +55,9 @@ public class EventDoor : MonoBehaviour, IEvent
         else
         {
             // インベントリを見て鍵があったら
-            if (doorLock) { uiManager.DisplayIntractUI("Unlock the door:RightClick"); }
+            if (doorLock) { UIManager.instance.DisplayIntractUI("Unlock the door:RightClick"); }
             // 鍵が無かったら
-            else { uiManager.DisplayIntractUI("The door is locked..."); }
+            else { UIManager.instance.DisplayIntractUI("The door is locked..."); }
         }
     }
 
@@ -71,7 +67,7 @@ public class EventDoor : MonoBehaviour, IEvent
     public void DisableInteractUI()
     {
         // UIを非表示
-        uiManager.DisableIntractUI();
+        UIManager.instance.DisableIntractUI();
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OutlineManager : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class OutlineManager : MonoBehaviour
             outlineObjectList.Add(outline); // 管理リストに追加
         }
     }
-    
+
     /// <summary>
     /// Outlineの幅をリセット
     /// </summary>
@@ -60,4 +61,48 @@ public class OutlineManager : MonoBehaviour
         }
         outlineObjectList.Clear();
     }
+
+    //private Camera mainCamera = null;
+    //private List<Outline> _itemOutlineList = null;
+    //private List<Renderer> _itemRendererList = null;
+    //private List<GameObject> _itemObjectList = null;
+
+    //void Start()
+    //{
+    //    mainCamera = Camera.main;
+    //    _itemObjectList = ObjectManager.instance.GetItemObjectList();
+
+    //    for (int i = 0, max = _itemObjectList.Count; i < max; i++)
+    //    {
+    //        _itemRendererList[i] = _itemObjectList[i].GetComponent<Renderer>();
+    //        _itemOutlineList[i] = _itemObjectList[i].GetComponent<Outline>();
+    //        _itemOutlineList[i].enabled = false; // 初期は非表示
+    //    }
+    //}
+
+    //void Update()
+    //{
+    //    Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
+
+    //    for (int i = 0, max = _itemRendererList.Count; i < max; i++)
+    //    {
+    //        if (GeometryUtility.TestPlanesAABB(frustumPlanes, _itemRendererList[i].bounds))
+    //        {
+    //            Vector3 direction = _itemRendererList[i].bounds.center - mainCamera.transform.position;
+
+    //            if (!Physics.Raycast(mainCamera.transform.position, direction, out RaycastHit hit) || hit.transform == transform)
+    //            {
+    //                _itemOutlineList[i].enabled = true;
+    //            }
+    //            else
+    //            {
+    //                _itemOutlineList[i].enabled = false; // 壁に隠れている
+    //            }
+    //        }
+    //        else
+    //        {
+    //            _itemOutlineList[i].enabled = false;
+    //        }
+    //    }
+    //}
 }

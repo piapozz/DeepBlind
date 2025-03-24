@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ObjectManager : SystemObject
 {
+    public static ObjectManager instance;
     private enum ObjectType
     {
         INVALID = -1,
@@ -23,6 +24,7 @@ public class ObjectManager : SystemObject
 
     public override void Initialize()
     {
+        instance = this;
         _itemObjectList = new List<GameObject>();
         GenerateAllItem();
         GenerateLocker();

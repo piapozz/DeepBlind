@@ -5,26 +5,17 @@ using UnityEngine;
 
 public class EventItem : MonoBehaviour, IEvent
 {
-    private UIManager _uiManager = null;
-    private InventoryManager _inventory = null;
-
     private bool isUsed = false;
 
     [SerializeField] private GameObject item = null;
-
-    void Start()
-    {
-        _uiManager = UIManager.instance;
-        _inventory = InventoryManager.instance;
-    }
 
     public void Event()
     {
         if (isUsed != true)
         {
             AudioManager.instance.PlaySE(SE.ITEM_PICK);
-            _inventory.AddItem(item);
-            _uiManager.DisableIntractUI();
+            InventoryManager.instance.AddItem(item);
+            UIManager.instance.DisableIntractUI();
             isUsed = true;
             Destroy(this.gameObject);
         }
@@ -35,7 +26,7 @@ public class EventItem : MonoBehaviour, IEvent
     /// </summary>
     public void EnableInteractUI()
     {
-        _uiManager.DisplayIntractUI("Pick:E");
+        UIManager.instance.DisplayIntractUI("Pick:E");
     }
 
     /// <summary>
@@ -43,6 +34,6 @@ public class EventItem : MonoBehaviour, IEvent
     /// </summary>
     public void DisableInteractUI()
     {
-        _uiManager.DisableIntractUI();
+        UIManager.instance.DisableIntractUI();
     }
 }

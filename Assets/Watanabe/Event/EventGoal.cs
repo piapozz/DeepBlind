@@ -13,16 +13,10 @@ using UnityEngine.SceneManagement;
 
 public class EventGoal : MonoBehaviour, IEvent 
 {
-    private UIManager uiManager;
     public bool canGoal;
 
     private readonly float FADE_SPEED = 0.35f;
     private readonly float FADE_DELAY = 0.5f;
-
-    void Start()
-    {
-        uiManager = UIManager.instance;
-    }
 
     /// <summary>
     /// 実行されるイベント処理
@@ -37,8 +31,8 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void EnableInteractUI()
     {
-        if (canGoal) uiManager.DisplayIntractUI("Finally:E");
-        else uiManager.DisplayIntractUI("");
+        if (canGoal) UIManager.instance.DisplayIntractUI("Finally:E");
+        else UIManager.instance.DisplayIntractUI("");
     }
 
     /// <summary>
@@ -46,7 +40,7 @@ public class EventGoal : MonoBehaviour, IEvent
     /// </summary>
     public void DisableInteractUI()
     {
-        uiManager.DisableIntractUI();
+        UIManager.instance.DisableIntractUI();
     }
 
     public async UniTask SceneChange()

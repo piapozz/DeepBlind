@@ -50,9 +50,7 @@ public class Light
     {
         if (!context.performed) return;
 
-        if (_batteryPower <= 0) return;
-
-        SwitchLight();
+        if (_batteryPower < 0) SwitchLight();
     }
 
     /// <summary>
@@ -89,6 +87,6 @@ public class Light
     /// <returns></returns>
     public int GetBatteryPower()
     {
-        return (int)(_batteryPower / _BATTERY_MAX * 100) + 1;
+        return (int)(_batteryPower / _BATTERY_MAX * 100);
     }
 }
