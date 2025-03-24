@@ -11,6 +11,8 @@ public class LoadController : MonoBehaviour
     [SerializeField]
     private StageManager _stageManager;
 
+    private UniTask _task;
+
     private async void Start()
     {
         await Initialize();
@@ -30,6 +32,8 @@ public class LoadController : MonoBehaviour
         // 終わったらコンプリートオブジェクトを表示
         loadObject.SetActive(false);
         completedObject.SetActive(true);
+
+        await UniTask.DelayFrame(1);
     }
 
     private void Update()

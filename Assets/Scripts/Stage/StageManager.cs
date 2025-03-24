@@ -73,9 +73,9 @@ public class StageManager : MonoBehaviour
         }
 
         // ステージ作成
-        CreateInitialStage(_stageMaster.normalRoomCount);
+        await CreateInitialStage(_stageMaster.normalRoomCount);
         // ステージ生成
-        GenerateStage();
+        await GenerateStage();
 
         //RegenerateSection(_stageMaster.addRoomCount);
 
@@ -133,7 +133,7 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// 初期ステージの作成
     /// </summary>
-    private void CreateInitialStage(int normalRoomCount)
+    private async UniTask CreateInitialStage(int normalRoomCount)
     {
         // 部屋のリストの初期化
         List<SectionData> roomList = InitializeRoomList(normalRoomCount + 2);
@@ -144,7 +144,9 @@ public class StageManager : MonoBehaviour
         // 各部屋の位置を決定
         DecideNormalRoom(normalRoomCount, roomList);
         // 部屋をつなげる
-        ConnectRoom(roomList);
+        await ConnectRoom(roomList);
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -238,7 +240,7 @@ public class StageManager : MonoBehaviour
     /// 部屋と部屋をつなぐ
     /// </summary>
     /// <param name="roomList"></param>
-    private void ConnectRoom(List<SectionData> roomList)
+    private async UniTask ConnectRoom(List<SectionData> roomList)
     {
         int procCount = roomList.Count - 1;
         // 部屋が隣接しているならつなぐ
@@ -250,8 +252,10 @@ public class StageManager : MonoBehaviour
         // 部屋を順番につないでいく
         for (int i = 0; i < procCount; i++)
         {
-            ConnectNextRoom(roomList, i);
+            await ConnectNextRoom(roomList, i);
         }
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -281,7 +285,7 @@ public class StageManager : MonoBehaviour
     /// </summary>
     /// <param name="roomList"></param>
     /// <param name="roomCount"></param>
-    private void ConnectNextRoom(List<SectionData> roomList, int roomCount)
+    private async UniTask ConnectNextRoom(List<SectionData> roomList, int roomCount)
     {
         // 最後の部屋なら最初とつなげる
         int nextRoomCount = roomCount + 1;
@@ -290,11 +294,13 @@ public class StageManager : MonoBehaviour
 
         List<MoveData> route;
         // A*で部屋1から部屋2をつなぐ
-        route = RouteSearcher.RouteSearch(roomList[roomCount].ID, roomList[nextRoomCount].ID, roomList[roomCount].preConnect);
+        route = await RouteSearcher.RouteSearch(roomList[roomCount].ID, roomList[nextRoomCount].ID, roomList[roomCount].preConnect);
         if (route == null) return;
 
         // ルートから区画をつなげる
         ConnectRouteSection(route);
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -322,7 +328,7 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// ステージの生成
     /// </summary>
-    private void GenerateStage()
+    private async UniTask GenerateStage()
     {
         for (int i = 0, max = _sectionDataList.Count; i < max; i++)
         {
@@ -338,12 +344,16 @@ public class StageManager : MonoBehaviour
             if (generateRoot == null) continue;
 
             section.GenerateSeparate(generateRoot);
+
+            await UniTask.DelayFrame(1);
         }
 
         // 各種アンカーの取得
         CollectEnemyAnchor();
         CollectItemAnchor();
         CollectLockerAnchor();
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
