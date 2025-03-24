@@ -13,7 +13,7 @@ using Cysharp.Threading.Tasks;
 
 using static CommonModule;
 
-public class StageManager : SystemObject
+public class StageManager : MonoBehaviour
 {
     public static StageManager instance { get; private set; } = null;
     [SerializeField]
@@ -49,10 +49,9 @@ public class StageManager : SystemObject
     /// <summary>‹æ‰æ‚Ì—]”’</summary>
     private const float _SECTION_MARGIN = 0.12f;
 
-    public override void Initialize()
+    public async UniTask Initialize()
     {
         instance = this;
-        MasterDataManager.LoadAllData();
         SectionData.SetGetObjectCallback(GetSectionObject);
         _stageMaster = StageMasterUtility.GetStageMaster();
         stageSize = new Vector2Int(_stageMaster.widthSize, _stageMaster.heightSize);
@@ -79,6 +78,8 @@ public class StageManager : SystemObject
         GenerateStage();
 
         //RegenerateSection(_stageMaster.addRoomCount);
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>

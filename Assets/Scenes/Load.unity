@@ -197,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadObject: {fileID: 235364652}
   completedObject: {fileID: 1988711100}
-  stageManager: {fileID: 0}
+  _stageManager: {fileID: -8306265954106227757, guid: a80482b9d27bead4ea98bf51a91a2618, type: 3}
 --- !u!4 &273617086
 Transform:
   m_ObjectHideFlags: 0

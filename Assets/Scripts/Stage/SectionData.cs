@@ -124,6 +124,8 @@ public class SectionData
                 if (isConnect[i]) separateObject = sectionObjectAssign.doorObject;
                 else separateObject = sectionObjectAssign.wallObject;
             }
+            if (separateObject == null) continue;
+
             // オブジェクトの生成
             GenerateSeparateObject(separateObject, (Direction)i, generateRoot);
         }
