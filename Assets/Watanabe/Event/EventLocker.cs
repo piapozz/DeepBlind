@@ -23,15 +23,10 @@ public class EventLocker : MonoBehaviour, IEvent
     private readonly float FADE_SPEED = 0.7f;
     private readonly float FADE_DELAY = 0.5f;
 
-    private UIManager uiManager = null;
-    private Player player = null;
     private bool inPlayer; 
 
     void Start()
     {
-        uiManager = UIManager.instance;
-        player = Player.instance;
-
         inPlayer = false;
     }
 
@@ -49,9 +44,9 @@ public class EventLocker : MonoBehaviour, IEvent
     public void EnableInteractUI()
     {
         if (inPlayer == false)
-            uiManager.DisplayIntractUI("Enter:E");
+            UIManager.instance.DisplayIntractUI("Enter:E");
         else
-            uiManager.DisplayIntractUI("Exit:E");
+            UIManager.instance.DisplayIntractUI("Exit:E");
 
     }
 
@@ -60,7 +55,7 @@ public class EventLocker : MonoBehaviour, IEvent
     /// </summary>
     public void DisableInteractUI()
     {
-        uiManager.DisableIntractUI();
+        UIManager.instance.DisableIntractUI();
     }
 
     /// <summary>
@@ -77,10 +72,9 @@ public class EventLocker : MonoBehaviour, IEvent
 
             ChangeVirtualCameraPriority(0);
 
-            player.SetPosition(nextPos);
-            player.SetCharaController(true);
+            Player.instance.SetCharaController(true);
             inPlayer = false;
-            player.isLocker = false;
+            Player.instance.isLocker = false;
 
             await FadeScreen.instance.FadeOut(FADE_SPEED);
             await Task.Delay(TimeSpan.FromSeconds(FADE_DELAY));
@@ -93,10 +87,9 @@ public class EventLocker : MonoBehaviour, IEvent
 
             ChangeVirtualCameraPriority(50);
 
-            player.SetCharaController(false);
-            // player.SetPosition(nextPos);
+            Player.instance.SetCharaController(false);
             inPlayer = true;
-            player.isLocker = true;
+            Player.instance.isLocker = true;
 
             await FadeScreen.instance.FadeOut(FADE_SPEED);
             await Task.Delay(TimeSpan.FromSeconds(FADE_DELAY));

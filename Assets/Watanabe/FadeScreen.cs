@@ -59,7 +59,7 @@ public class FadeScreen : MonoBehaviour
         // ç≈å„Ç…ÇµÇ¡Ç©ÇË ALPHA_VALUE_MIN Ç…ê›íË
         alphaValue = ALPHA_VALUE_MIN;
         fade.color = new Color(0.0f, 0.0f, 0.0f, alphaValue);
-        canvas.sortingOrder = 3;
+        canvas.sortingOrder = 1;
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class FadeScreen : MonoBehaviour
     public async UniTask FadeOut(float fadeOutSpeed = 2.5f)
     {
         float elapsedTime = 0f;
-        canvas.sortingOrder = -1;
+        canvas.sortingOrder = 3;
         while (elapsedTime < fadeOutSpeed)
         {
             float delta = Time.deltaTime / fadeOutSpeed;
