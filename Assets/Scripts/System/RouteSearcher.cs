@@ -5,6 +5,7 @@
 * @date 2025/3/14
 */
 
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,10 +84,10 @@ public class RouteSearcher
     /// <param name="goalSectionID"></param>
     /// <param name="beforeConnectDir"></param>
     /// <returns></returns>
-    public static List<MoveData> RouteSearch(int startSectionID, int goalSectionID, Direction beforeConnectDir)
+    public static async UniTask<List<MoveData>> RouteSearch(int startSectionID, int goalSectionID, Direction beforeConnectDir)
     {
         // ゴールノードにたどり着くまでノードを開く
-        OpenNodeToGoal(startSectionID, goalSectionID, beforeConnectDir);
+        await OpenNodeToGoal(startSectionID, goalSectionID, beforeConnectDir);
         // 経路作成
         return CreateRoute();
     }
@@ -96,7 +97,7 @@ public class RouteSearcher
     /// </summary>
     /// <param name="startSectionID"></param>
     /// <param name="goalSectionID"></param>
-    private static void OpenNodeToGoal(int startSectionID, int goalSectionID, Direction beforeConnectDir)
+    private async static UniTask OpenNodeToGoal(int startSectionID, int goalSectionID, Direction beforeConnectDir)
     {
         InitializeNodeTable();
         // スタートをオープンリストに入れる
@@ -126,6 +127,8 @@ public class RouteSearcher
             // ノードを開く処理
             OpenNodeProcess(goalPosition, goalSectionID);
         }
+
+        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
