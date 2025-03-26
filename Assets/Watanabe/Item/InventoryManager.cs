@@ -85,8 +85,6 @@ public class InventoryManager : SystemObject
         // GameObject itemObject = Instantiate(item, itemAnkerTransform.position, itemAnkerTransform.rotation, _playerTransform);
         // スロットの初期設定
         inventorySlot.Setup(itemObject);
-        // スロット内のアイテムを初期化
-        inventorySlot.GetItem().Initialize();
         // スロットをリストに追加
         itemsList.Add(inventorySlot);
     }

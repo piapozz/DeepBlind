@@ -1208,7 +1208,7 @@ GameObject:
   - component: {fileID: 7699080429956043823}
   m_Layer: 7
   m_Name: Room5
-  m_TagString: Untagged
+  m_TagString: Section
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1248,6 +1248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f792061495c3a704787849c03124f983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sectionObject: {fileID: 0}
   _playerAnchor: []
   _enemyAnchor:
   - {fileID: 5682080247283253665}

@@ -17,7 +17,7 @@ public class SoundObjectManager : MonoBehaviour
     /// <summary>‰¹‚Ì“Í‚­•W€‹——£</summary>
     private const float _DEFAULT_ECHO_RADIUS = 100.0f;
     /// <summary>‰¹Œ¹‚ÌÅ‘å”</summary>
-    private const int _SOUND_MAX = 1000;
+    private const int _SOUND_MAX = 100;
 
     public static void Initialize()
     {

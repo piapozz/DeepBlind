@@ -26,4 +26,4 @@ MonoBehaviour:
     - ID: 4
       generateCount: 0
     - ID: 5
-      generateCount: 5
+      generateCount: 10

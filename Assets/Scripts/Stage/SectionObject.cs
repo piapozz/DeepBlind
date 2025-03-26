@@ -11,6 +11,9 @@ using UnityEngine;
 
 public class SectionObject : MonoBehaviour
 {
+    /// <summary>区画のオブジェクト</summary>
+    [SerializeField]
+    private GameObject _sectionObject = null;
     /// <summary>プレイヤーのアンカー</summary>
     [SerializeField]
     private List<Transform> _playerAnchor = new List<Transform>();
@@ -58,5 +61,22 @@ public class SectionObject : MonoBehaviour
     public List<Transform> GetLockerAnchor()
     {
         return _lockerAnchor;
+    }
+
+    /// <summary>
+    /// 区画の表示を切り替える
+    /// </summary>
+    /// <param name="visible"></param>
+    public void SetVisible(bool visible)
+    {
+        _sectionObject.SetActive(visible);
+    }
+
+    /// <summary>
+    /// 片付け
+    /// </summary>
+    public void Teardown()
+    {
+        Destroy(gameObject);
     }
 }

@@ -10,6 +10,7 @@ TagManager:
   - Door
   - ItemObject
   - Goal
+  - Section
   layers:
   - Default
   - TransparentFX

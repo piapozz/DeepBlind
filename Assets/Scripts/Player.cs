@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
 
     private readonly float _STEP_INTERVAL_SEC = 0.5f;
-    private readonly float _WALK_SOUND_VOLUME = 0.1f;
+    private readonly float _WALK_SOUND_VOLUME = 0.05f;
     private readonly float _DASH_SOUND_VOLUME = 0.2f;
 
     // プレイヤーのステータス値
@@ -78,7 +78,9 @@ public class Player : MonoBehaviour
 
         volume.profile.TryGetSettings(out colorGranding);
         Cursor.lockState = CursorLockMode.Locked;
-        transform.position = StageManager.instance.GetPlayerStartPosition().position + offsetGenPos;
+        Transform startTransform = StageManager.instance.GetPlayerStartTransform();
+        transform.position = startTransform.position + offsetGenPos;
+        transform.rotation = startTransform.rotation;
         gamma = colorGranding.gamma.value;
         selfLight = new Light();
         UnityEngine.Light light = GetComponentInChildren<UnityEngine.Light>();
@@ -248,6 +250,8 @@ public class Player : MonoBehaviour
     public void FadeChangeScene()
     {
         FadeSceneChange.instance.ChangeSceneEvent("GameResult");
+        Destroy(StageManager.instance.gameObject);
+        StageManager.instance.Teardown();
     }
 
     public float GetStamina() { return status.stamina / STAMINA_MAX; }
