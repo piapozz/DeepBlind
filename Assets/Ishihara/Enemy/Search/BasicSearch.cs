@@ -49,7 +49,7 @@ public class BasicSearch : ISearch
         Vector3 enemyPos = _enemy.transform.position;
 
         // プレイヤーが知覚範囲に入っているか
-        if (EnemyUtility.CheckViewPlayer(_ID, false))
+        if (EnemyUtility.CheckViewPlayer(_ID, _enemy.viewLength, false))
         {
             // 視野角判定
             float toPlayerAngle = Mathf.Atan2(playerPos.z - enemyPos.z,

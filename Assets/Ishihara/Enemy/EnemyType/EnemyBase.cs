@@ -242,6 +242,9 @@ public class EnemyBase : MonoBehaviour
     /// <returns></returns>
     public bool CheckCaughtPlayer()
     {
+        // í«ê’ÇÃÇ∆Ç´ÇæÇØïﬂÇ‹Ç¶ÇÈ
+        if(_nowState != State.TRACKING) return false;
+
         float length = EnemyUtility.EnemyToPlayerLength(ID);
 
         caught = (length < 0.7 && !isAbility) || caught;

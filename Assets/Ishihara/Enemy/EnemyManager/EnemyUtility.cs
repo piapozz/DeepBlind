@@ -83,7 +83,7 @@ public class EnemyUtility : MonoBehaviour
     /// <param name="ID"></param>
     /// <param name="locker">ƒƒbƒJ[‚ğ–³‹‚·‚é‚©‚Ç‚¤‚©</param>
     /// <returns></returns>
-    public static bool CheckViewPlayer(int ID, bool ignoreLocker = true)
+    public static bool CheckViewPlayer(int ID, float length, bool ignoreLocker = true)
     {
         bool isHit = false;
 
@@ -100,7 +100,7 @@ public class EnemyUtility : MonoBehaviour
 
         RaycastHit hit;
         LayerMask layer = LayerMask.GetMask("Player") | LayerMask.GetMask("Stage");
-        isHit = Physics.Raycast(ray, out hit, Vector3.Distance(enemy.transform.position, player.transform.position), layer);
+        isHit = Physics.Raycast(ray, out hit, length, layer);
 
         return isHit && hit.collider.tag == "Player";
     }

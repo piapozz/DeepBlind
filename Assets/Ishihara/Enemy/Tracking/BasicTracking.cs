@@ -47,7 +47,7 @@ public class BasicTracking : ITracking
     public void CheckTargetLost()
     {
         // Ž‹ŠE‚É“ü‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
-        if (EnemyUtility.CheckViewPlayer(_ID, !_IsTargetlost))
+        if (EnemyUtility.CheckViewPlayer(_ID, _enemy.viewLength, !_IsTargetlost))
         {
             _IsTargetlost = false;
         }
