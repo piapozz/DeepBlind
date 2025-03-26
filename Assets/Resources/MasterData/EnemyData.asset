@@ -35,3 +35,83 @@ MonoBehaviour:
       Vigilance: BasicVigilance
       Tracking: BasicTracking
       Skill: Norm
+    - ID: 1
+      Speed: 5
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Speed: 3
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: Norm
+    - ID: 1
+      Speed: 5
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Speed: 3
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: Norm
+    - ID: 1
+      Speed: 5
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Speed: 3
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: Norm
+    - ID: 1
+      Speed: 5
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: StopLookAt
+    - ID: 0
+      Speed: 3
+      SpeedDiameter: 2.5
+      ThreatRange: 25
+      ViewLength: 25
+      FieldOfView: 90
+      Search: BasicSearch
+      Vigilance: BasicVigilance
+      Tracking: BasicTracking
+      Skill: Norm
