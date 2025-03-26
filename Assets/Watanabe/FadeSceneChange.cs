@@ -59,4 +59,9 @@ public class FadeSceneChange : MonoBehaviour
     Application.Quit();//ゲームプレイ終了
 #endif
     }
+
+    public void NoneFadeChangeScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
 }

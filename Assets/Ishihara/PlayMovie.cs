@@ -21,6 +21,6 @@ public class PlayMovie : MonoBehaviour
 
     public void ChangeTitle(VideoPlayer SetPlayer)
     {
-        SceneChanger.SceneChange("Title");
+        FadeSceneChange.instance.NoneFadeChangeScene("Title");
     }
 }
