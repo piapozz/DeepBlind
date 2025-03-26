@@ -6,25 +6,24 @@ using UnityEngine.UI;
 public class MapItem : ItemBase
 {
     [SerializeField]
-    private Transform _sectionRoot;
+    private Transform _sectionRoot = null;
     [SerializeField]
-    private Transform _pointRoot;
+    private Transform _pointRoot = null;
 
-    [SerializeField] GameObject room;
-    [SerializeField] GameObject ICorridor;
-    [SerializeField] GameObject LCorridor;
-    [SerializeField] GameObject TCorridor;
-    [SerializeField] GameObject XCorridor;
-    [SerializeField] GameObject point;
+    [SerializeField] GameObject room = null;
+    [SerializeField] GameObject ICorridor = null;
+    [SerializeField] GameObject LCorridor = null;
+    [SerializeField] GameObject TCorridor = null;
+    [SerializeField] GameObject XCorridor = null;
+    [SerializeField] GameObject point = null;
 
     private readonly float EDGE_MARGIN_RATE = 0.1f;        // 余白の比率
     private readonly float POINT_SIZE_RATE = 0.05f;        // 赤点の大きさの比率
 
-    private float _edgeMargin;      // 余白の大きさ
-    private float _sectionSize;     // 区画の大きさ
+    private float _edgeMargin = 0;      // 余白の大きさ
+    private float _sectionSize = 0;     // 区画の大きさ
 
-    private GameObject _pointObj;
-
+    private GameObject _pointObj = null;
     private List<GameObject> _mapSectionObject = null;
 
     public override void Initialize()
@@ -63,13 +62,13 @@ public class MapItem : ItemBase
         // 短いほうのサイズに合わせる
         if (stageSize.x < stageSize.y)
         {
-            mapSize = transform.localScale.x;
+            mapSize = _sectionRoot.localScale.x;
             _edgeMargin = mapSize * EDGE_MARGIN_RATE;
             _sectionSize = (1 - _edgeMargin) / stageSize.y;
         }
         else
         {
-            mapSize = transform.localScale.y;
+            mapSize = _sectionRoot.localScale.y;
             _edgeMargin = mapSize * EDGE_MARGIN_RATE;
             _sectionSize = (1 - _edgeMargin) / stageSize.x;
         }
@@ -80,7 +79,7 @@ public class MapItem : ItemBase
     {
         // 赤点を生成
         Vector3 genPointPos = ChangeWorldToLocalPosition(Player.instance.GetPosition(), _pointRoot);
-        Quaternion genPointRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        Quaternion genPointRot = Quaternion.Euler(_sectionRoot.eulerAngles.x, _sectionRoot.eulerAngles.y, 0);
         _pointObj = Instantiate(point, genPointPos, genPointRot, _pointRoot);
         _pointObj.transform.localScale = new Vector3(POINT_SIZE_RATE, POINT_SIZE_RATE, 1);
 
@@ -93,7 +92,7 @@ public class MapItem : ItemBase
             // 座標指定
             Vector3 genPos = ChangeSectionToLocalPosition(section.position, _sectionRoot);
             // 回転指定
-            Quaternion genRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, -90 * (int)section.direction);
+            Quaternion genRot = Quaternion.Euler(_sectionRoot.eulerAngles.x, _sectionRoot.eulerAngles.y, -90 * (int)section.direction);
             // 生成
             GameObject genObj = Instantiate(sectionObject, genPos, genRot, _sectionRoot);
             genObj.transform.localScale = new Vector3(_sectionSize, _sectionSize, 1);

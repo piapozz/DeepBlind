@@ -20,7 +20,9 @@ public class StageManager : MonoBehaviour
     public SectionObjectAssign sectionObjectAssign = null;
     /// <summary>ステージの生成元</summary>
     [SerializeField]
-    private Transform _stageRoot = null;
+    private Transform _activeRoot = null;
+    [SerializeField]
+    private Transform _unactiveRoot = null;
     [SerializeField]
     private NavMeshSurface _meshSurface = null;
     /// <summary>ステージのマスターデータ</summary>
@@ -76,10 +78,6 @@ public class StageManager : MonoBehaviour
         await CreateInitialStage(_stageMaster.normalRoomCount);
         // ステージ生成
         await GenerateStage();
-
-        //RegenerateSection(_stageMaster.addRoomCount);
-
-        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -145,8 +143,6 @@ public class StageManager : MonoBehaviour
         DecideNormalRoom(normalRoomCount, roomList);
         // 部屋をつなげる
         await ConnectRoom(roomList);
-
-        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -242,15 +238,15 @@ public class StageManager : MonoBehaviour
     /// <param name="roomList"></param>
     private async UniTask ConnectRoom(List<SectionData> roomList)
     {
-        int procCount = roomList.Count - 1;
+        int roomCount = roomList.Count;
         // 部屋が隣接しているならつなぐ
-        for (int i = 0; i < procCount; i++)
+        for (int i = 0; i < roomCount - 1; i++)
         {
             ConnectAroundRoom(roomList[i]);
         }
 
         // 部屋を順番につないでいく
-        for (int i = 0; i < procCount; i++)
+        for (int i = 0; i < roomCount; i++)
         {
             await ConnectNextRoom(roomList, i);
         }
@@ -318,6 +314,7 @@ public class StageManager : MonoBehaviour
             // 接続元をつなげる
             SectionData sourceSection = GetSection(route[i].sourceSectionID);
             sourceSection.SetIsConnect(direction, true);
+            sourceSection.SetPreConnect(direction);
             // 接続先をつなげる
             SectionData targetSection = GetSection(route[i].targetSectionID);
             targetSection.SetIsConnect(lastDirection, true);
@@ -352,8 +349,6 @@ public class StageManager : MonoBehaviour
         CollectEnemyAnchor();
         CollectItemAnchor();
         CollectLockerAnchor();
-
-        await UniTask.DelayFrame(1);
     }
 
     /// <summary>
@@ -425,7 +420,8 @@ public class StageManager : MonoBehaviour
         Vector3 position = GetSectionWorldPosition(section.position);
         Quaternion rotation = Quaternion.Euler(0, 90 * rotateCount, 0);
         section.SetDirection((Direction)rotateCount);
-        Transform objectTransform = Instantiate(generateObject, position, rotation, _stageRoot).transform;
+
+        Transform objectTransform = Instantiate(generateObject, position, rotation, _activeRoot).transform;
         // 区画のオブジェクト取得
         SectionObject sectionObject = objectTransform.GetComponent<SectionObject>();
         int sectionID = section.ID;
@@ -517,7 +513,7 @@ public class StageManager : MonoBehaviour
     /// </summary>
     private void DestroyAllObject()
     {
-        foreach (Transform child in _stageRoot)
+        foreach (Transform child in _activeRoot)
         {
             Destroy(child.gameObject);
         }
@@ -678,8 +674,30 @@ public class StageManager : MonoBehaviour
     /// プレイヤーの初期位置を取得
     /// </summary>
     /// <returns></returns>
-    public Transform GetPlayerStartPosition()
+    public Transform GetPlayerStartTransform()
     {
         return _sectionObjectList[_startRoom.ID].GetPlayerAnchor()[0];
+    }
+
+    public Transform GetActiveRoot()
+    {
+        return _activeRoot;
+    }
+
+    public Transform GetUnactiveRoot()
+    {
+        return _unactiveRoot;
+    }
+
+    /// <summary>
+    /// 後片付けする
+    /// </summary>
+    public void Teardown()
+    {
+        // オブジェクトの削除
+        for (int i = 0, max = _sectionObjectList.Count; i < max; i++)
+        {
+            _sectionObjectList[i].Teardown();
+        }
     }
 }
