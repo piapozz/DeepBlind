@@ -36,9 +36,10 @@ public class LoadController : MonoBehaviour
         await UniTask.DelayFrame(1);
     }
 
-    private void Update()
+
+    public void CompletedEvent()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && completedObject.activeSelf)
+        if (completedObject.activeSelf)
             FadeSceneChange.instance.ChangeSceneEvent("Main");
     }
 }
