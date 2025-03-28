@@ -494,7 +494,7 @@ public class StageManager : MonoBehaviour
     /// 新しく部屋を追加してステージ再生成
     /// </summary>
     /// <param name="addRoomCount"></param>
-    public void RegenerateSection(int addRoomCount)
+    public async UniTask RegenerateSection(int addRoomCount)
     {
         // オブジェクトの削除
         DestroyAllObject();
@@ -503,9 +503,9 @@ public class StageManager : MonoBehaviour
         roomList[0] = _keyRoom;
         roomList[roomList.Count - 1] = _startRoom;
         DecideNormalRoom(addRoomCount, roomList);
-        ConnectRoom(roomList);
+        await ConnectRoom(roomList);
         // オブジェクトの生成し直し
-        GenerateStage();
+        await GenerateStage();
     }
 
     /// <summary>
@@ -569,16 +569,6 @@ public class StageManager : MonoBehaviour
             if (section.isConnect[i]) connectDirection.Add((Direction)i);
         }
         return connectDirection;
-    }
-
-    /// <summary>
-    /// スタート部屋の3次元座標を取得
-    /// </summary>
-    /// <returns></returns>
-    public Vector3 GetStartRoomPosition()
-    {
-        Vector2Int startPosition = _startRoom.position;
-        return GetSectionWorldPosition(startPosition);
     }
 
     /// <summary>
@@ -677,16 +667,6 @@ public class StageManager : MonoBehaviour
     public Transform GetPlayerStartTransform()
     {
         return _sectionObjectList[_startRoom.ID].GetPlayerAnchor()[0];
-    }
-
-    public Transform GetActiveRoot()
-    {
-        return _activeRoot;
-    }
-
-    public Transform GetUnactiveRoot()
-    {
-        return _unactiveRoot;
     }
 
     /// <summary>

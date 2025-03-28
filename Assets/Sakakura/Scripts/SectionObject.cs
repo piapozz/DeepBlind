@@ -16,16 +16,16 @@ public class SectionObject : MonoBehaviour
     private GameObject _sectionObject = null;
     /// <summary>プレイヤーのアンカー</summary>
     [SerializeField]
-    private List<Transform> _playerAnchor = new List<Transform>();
+    private Transform[] _playerAnchor = null;
     /// <summary>エネミーのアンカー</summary>
     [SerializeField]
-    private List<Transform> _enemyAnchor = new List<Transform>();
+    private Transform[] _enemyAnchor = null;
     /// <summary>アイテムのアンカー</summary>
     [SerializeField]
-    private List<Transform> _itemAnchor = new List<Transform>();
+    private Transform[] _itemAnchor = null;
     /// <summary>ロッカーのアンカー</summary>
     [SerializeField]
-    private List<Transform> _lockerAnchor = new List<Transform>();
+    private Transform[] _lockerAnchor = null;
 
     /// <summary>
     /// プレイヤーのアンカーの取得
@@ -33,7 +33,8 @@ public class SectionObject : MonoBehaviour
     /// <returns></returns>
     public List<Transform> GetPlayerAnchor()
     {
-        return _playerAnchor;
+        List<Transform> list = new List<Transform>(_playerAnchor);
+        return list;
     }
 
     /// <summary>
@@ -42,7 +43,8 @@ public class SectionObject : MonoBehaviour
     /// <returns></returns>
     public List<Transform> GetEnemyAnchor()
     {
-        return _enemyAnchor;
+        List<Transform> list = new List<Transform>(_enemyAnchor);
+        return list;
     }
 
     /// <summary>
@@ -51,7 +53,8 @@ public class SectionObject : MonoBehaviour
     /// <returns></returns>
     public List<Transform> GetItemAnchor()
     {
-        return _itemAnchor;
+        List<Transform> list = new List<Transform>(_itemAnchor);
+        return list;
     }
 
     /// <summary>
@@ -60,7 +63,8 @@ public class SectionObject : MonoBehaviour
     /// <returns></returns>
     public List<Transform> GetLockerAnchor()
     {
-        return _lockerAnchor;
+        List<Transform> list = new List<Transform>(_lockerAnchor);
+        return list;
     }
 
     /// <summary>

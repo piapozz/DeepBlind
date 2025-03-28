@@ -24,14 +24,14 @@ public class Player : MonoBehaviour
 
     private float _stepInterval = 0.0f;
 
-    const float STAMINA_MAX = 10.0f;               // スタミナの最大値
-    const float WALK_SPEED = 2.5f;                                  // 歩く速度
-    const float DASH_SPEED = 5.0f;                                  // 走る速度
-    const float TIRED_SPEED = WALK_SPEED;                           // 疲弊しているときの速度
+    const float STAMINA_MAX = 10.0f;            // スタミナの最大値
+    const float WALK_SPEED = 2.5f;              // 歩く速度
+    const float DASH_SPEED = 5.0f;              // 走る速度
+    const float TIRED_SPEED = WALK_SPEED;       // 疲弊しているときの速度
 
-    private readonly float _STEP_INTERVAL_SEC = 0.5f;
-    private readonly float _WALK_SOUND_VOLUME = 0.05f;
-    private readonly float _DASH_SOUND_VOLUME = 0.2f;
+    private readonly float _STEP_INTERVAL_SEC = 0.5f;   // 音を出す感覚
+    private readonly float _WALK_SOUND_VOLUME = 0.05f;  // 歩行時の環境音量
+    private readonly float _DASH_SOUND_VOLUME = 0.2f;   // 走り時の環境音量
 
     // プレイヤーのステータス値
     public struct PlayerStatus
@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
     bool isTired = false;                                           // 疲れているかを管理
     public bool isLocker = false;                                   // ロッカーに入っているかを管理
 
-    Vector3 offsetGenPos = new Vector3(0, 0, 0);                    // 初期位置        
+    Vector3 offsetGenPos = new Vector3(0, 0, 0);                    // 初期位置
 
     Vector2 inputMove;                                              // InputSystemで得たWASDの入力値を管理する
     Vector2 inputCursor;                                            // InputSystemで得たマウスのカーソルの入力値を管理する
@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Transform startTransform = StageManager.instance.GetPlayerStartTransform();
         transform.position = startTransform.position + offsetGenPos;
-        transform.rotation = startTransform.rotation;
+        camera.transform.rotation = startTransform.rotation;
         gamma = colorGranding.gamma.value;
         selfLight = new Light();
         UnityEngine.Light light = GetComponentInChildren<UnityEngine.Light>();
