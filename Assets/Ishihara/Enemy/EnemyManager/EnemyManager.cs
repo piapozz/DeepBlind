@@ -265,6 +265,8 @@ public class EnemyManager : SystemObject
 
     private void OnGUI()
     {
+
+#if UNITY_EDITOR
         Color oldColor = GUI.color;
         GUI.color = Color.yellow;
         using (new GUILayout.AreaScope(new Rect(0, 0, Screen.width, Screen.height)))
@@ -287,5 +289,7 @@ public class EnemyManager : SystemObject
             }
         }
         GUI.color = oldColor;
+#endif
+
     }
 }
