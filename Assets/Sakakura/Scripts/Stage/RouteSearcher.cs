@@ -73,7 +73,7 @@ public class RouteSearcher
     private static NodeTable _nodeTable = null;
 
     /// <summary>基準の実スコア</summary>
-    private const int _DEFAULT_ACTUAL_SCORE = 10;
+    private const int _DEFAULT_ACTUAL_SCORE = 2;
     /// <summary>接続の実スコア</summary>
     private const int _CONNECT_ACTUAL_SCORE = 1;
 
@@ -210,10 +210,17 @@ public class RouteSearcher
         // ノードがつながっているかつオープンされていないならリストに追加
         for (int i = 0; i < nodeCount; i++)
         {
-            List<Direction> connectDirection = StageManager.instance.GetConnectSection(minScoreNodeList[i].ID);
-            if (connectDirection.Count == 0 ||
-                _nodeTable.openNodeList.Exists(node => node.ID == minScoreNodeList[i].ID)) continue;
-            connectNodeList.Add(minScoreNodeList[i]);
+            int sourceID = minScoreNodeList[i].ID;
+            List<Direction> connectDirection = StageManager.instance.GetConnectSection(sourceID);
+            if (connectDirection.Count == 0) continue;
+
+            for (int j = 0, max = connectDirection.Count; j < max; j++)
+            {
+                int sectionID = StageManager.instance.GetSectionDir(sourceID, connectDirection[j]).ID;
+                if (!CanOpenNode(sectionID)) continue;
+                connectNodeList.Add(minScoreNodeList[i]);
+                break;
+            }
         }
 
         if (IsEmpty(connectNodeList)) return null;
