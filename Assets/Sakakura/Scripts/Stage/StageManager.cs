@@ -677,6 +677,7 @@ public class StageManager : MonoBehaviour
         // オブジェクトの削除
         for (int i = 0, max = _sectionObjectList.Count; i < max; i++)
         {
+            if (_sectionObjectList[i] == null) continue;
             _sectionObjectList[i].Teardown();
         }
     }
