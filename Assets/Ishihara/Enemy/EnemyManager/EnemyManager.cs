@@ -91,11 +91,13 @@ public class EnemyManager : SystemObject
         if (tracking && bgm == BGM.MAIN_NORMAL)
         {
             bgm = BGM.MAIN_TRACKING;
+            AudioManager.instance.StopBGM();
             AudioManager.instance.PlayBGM(bgm);
         }
         else if (!tracking && bgm == BGM.MAIN_TRACKING)
         {
             bgm = BGM.MAIN_NORMAL;
+            AudioManager.instance.StopBGM();
             AudioManager.instance.PlayBGM(bgm);
         }
     }
